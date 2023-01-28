@@ -55,7 +55,9 @@ jobs:
           which migrate
 
       - name: Run migrations
-        run: make migrateup
+        run: |
+          cd backend
+          make action_migrateup
 
       - name: Test
         run: make test
