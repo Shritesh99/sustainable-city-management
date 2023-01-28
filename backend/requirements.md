@@ -27,3 +27,8 @@ install viper with command: go get github.com/spf13/viper
 
 Common command line should be included in the Makefile file
 e.g. using 'make server' simply starts the application
+
+# GO MICRO
+
+https://micro.dev
+After installment, there may occur "command not found" error, $GOPATH setting up may needed, ask Ming.
