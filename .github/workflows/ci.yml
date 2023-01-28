@@ -61,5 +61,5 @@ jobs:
 
       - name: Test
         run: |
-        cd backend
-        make test
+          cd backend
+          make test
