@@ -60,4 +60,6 @@ jobs:
           make action_migrateup
 
       - name: Test
-        run: make test
+        run: |
+        cd backend
+        make test
