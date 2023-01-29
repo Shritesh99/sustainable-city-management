@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "sustinable-city-management",
-    "slug": "sustinable-city-management",
+    "name": "ExpoHttpDemo",
+    "slug": "ExpoHttpDemo",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
