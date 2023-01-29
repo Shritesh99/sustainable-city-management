@@ -22,7 +22,7 @@ expo init myProject
 ```
 
 ## Start Application
-cd to project directory, start the development server
+Go to project directory, start the application server. Follow the output prompts, you can run App on Simulators
 ```bash
 npm run start
 # or
@@ -30,7 +30,11 @@ yarn start
 # or
 pnpm start
 ```
-Scan the QR code with expo mobile app installed.
+If you want to install it on your mobile, use
+```
+npx expo start --tunnel
+```
+Scan the QR code with Expo Go (Android) or the Camera app (iOS) installed.
 
 # React-native CIL
 
