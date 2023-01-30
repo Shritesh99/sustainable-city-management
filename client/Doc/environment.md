@@ -98,7 +98,7 @@ Install Xcode via the Mac App Store, make sure it is version **10** or newer.
 
 #### Command Line Tools
 Open Xcode, then choose "Preferences..." from the Xcode menu. Go to the Locations panel and install the tools by selecting the most recent version in the Command Line Tools dropdown.
-![xcode](./images/Xcode_cmd_line.png)
+![xcode](./images/environment-Xcode_cmd_line.png)
 
 ### Running React Native application
 #### Step 1: Start Metro
