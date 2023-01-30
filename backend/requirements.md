@@ -6,6 +6,13 @@ Develop on branch: backend
 
 https://go.dev/doc/install --- Go version: 1.19
 
+Add `$GOPATH` to your `PATH` (for macOS add following to ~/.bashrc or ~/.zshrc):
+```
+# go
+export GOPATH=$(go env GOPATH)
+export PATH="$PATH:$GOPATH/bin"
+```
+
 ## IDE
 
 VScode with Go(v0.37.1) extension
@@ -19,17 +26,20 @@ install with command: go get github.com/gofiber/fiber/v2
 ## tool for reading configurations from config file or environment variables
 
 viper - https://github.com/spf13/viper
-install with command: go get github.com/spf13/viper
+install with command: 
+```
+go get github.com/spf13/viper
+```
 
 ## Makefile
 
 Common command lines should be included in the Makefile file
-e.g. using 'make server' simply starts the application
+e.g. using `make server` simply starts the application
 
 # GO MICRO
 
 https://micro.dev
-After installment, there may occur "command not found" error, $GOPATH setting up may needed, ask Ming.
+After installment, if there occur `command not found` error, add `$GOPATH` to your PATH
 
 ## Database middleware
 
