@@ -14,6 +14,7 @@ func NewServer() *Server {
 	
 	// register api here
 	router.Get("/", example)
+	router.Get("/hidocker", hidocker)
 
 	server.router = router
 
@@ -27,6 +28,6 @@ func fiberConfig() fiber.Config {
 	}
 }
 
-func (server *Server) Start(address string) error {
-	return server.router.Listen(address)
+func (server *Server) Start(port string) error {
+	return server.router.Listen(port)
 }

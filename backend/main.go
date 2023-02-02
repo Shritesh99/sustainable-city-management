@@ -14,7 +14,7 @@ func main() {
 	}
 
 	server := apiservice.NewServer()
-	err = server.Start(config.ServerAddress)
+	err = server.Start(config.Port)
 	if err != nil {
 		log.Fatal("cannot start server:", err)
 	}
