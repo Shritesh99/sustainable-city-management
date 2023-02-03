@@ -7,6 +7,7 @@ Develop on branch: backend
 https://go.dev/doc/install --- Go version: 1.19
 
 Add `$GOPATH` to your `PATH` (for macOS add following to ~/.bashrc or ~/.zshrc):
+
 ```
 # go
 export GOPATH=$(go env GOPATH)
@@ -26,7 +27,8 @@ install with command: go get github.com/gofiber/fiber/v2
 ## tool for reading configurations from config file or environment variables
 
 viper - https://github.com/spf13/viper
-install with command: 
+install with command:
+
 ```
 go get github.com/spf13/viper
 ```
@@ -55,3 +57,11 @@ for installation check - https://github.com/golang-migrate/migrate/tree/master/c
 
 golang testify - https://github.com/stretchr/testify
 install with command: go get github.com/stretchr/testify
+
+## Local running the server
+
+make local
+
+## Stopping the server
+
+make down-local

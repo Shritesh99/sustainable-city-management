@@ -24,4 +24,21 @@ sqlc:
 test:
 	go test -v -cover ./...
 
+local:
+	@echo Clearing prometheus data
+	rm -rf ./prometheus
+	@echo Starting local docker compose
+	docker-compose -f docker-compose.yaml up -d --build
+
+# Docker support
+
+FILES := $(shell docker ps -aq)
+
+down-local:
+	docker-compose down
+clean:
+	docker system prune -f
+
+logs-local:
+	docker logs -f $(FILES)
 .PHONY: server migrateup migratedown sqlc test action_migrateup
