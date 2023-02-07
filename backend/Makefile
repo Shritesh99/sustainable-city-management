@@ -1,44 +1,19 @@
-# start the application
-server:
-	go run main.go
 
-# for database migration
-migrateup:
-	migrate -path db/migration -database "postgresql://group_admin:group007@sustainable-city-management.cdxqy8kbzxjs.eu-west-1.rds.amazonaws.com:5432/masterdb?sslmode=disable" -verbose up
+GOPATH:=$(shell go env GOPATH)
+.PHONY: init
+init:
+	go install google.golang.org/protobuf/cmd/protoc-gen-go@latest
+	go install github.com/micro/micro/v3/cmd/protoc-gen-micro@latest
+	go install github.com/micro/micro/v3/cmd/protoc-gen-openapi@latest
 
-migratedown:
-	migrate -path db/migration -database "postgresql://group_admin:group007@sustainable-city-management.cdxqy8kbzxjs.eu-west-1.rds.amazonaws.com:5432/masterdb?sslmode=disable" -verbose down
+.PHONY: proto
+proto:
+	protoc -I=proto/ --go_out=pb/ --go-grpc_out=pb/ proto/**/*.proto
 
-# database migration only for github actions
-action_migrateup:
-	migrate -path db/migration -database "postgresql://group_admin:group007@localhost:5432/masterdb?sslmode=disable" -verbose up
-
-# action_migratedown:
-# 	migrate -path db/migration -database "postgresql://group_admin:group007@localhost:5432/masterdb?sslmode=disable" -verbose down 
-
-# generate sql code based on sql script stored at db/query
-sqlc:
-	sqlc generate
-
-# run all test
-test:
-	go test -v -cover ./...
-
-local:
-	@echo Clearing prometheus data
-	rm -rf ./prometheus
-	@echo Starting local docker compose
-	docker-compose -f docker-compose.yaml up -d --build
-
-# Docker support
-
-FILES := $(shell docker ps -aq)
-
-down-local:
-	docker-compose down
-clean:
-	docker system prune -f
-
-logs-local:
-	docker logs -f $(FILES)
-.PHONY: server migrateup migratedown sqlc test action_migrateup
+.PHONY: docker
+docker-build:
+	docker build . -t air -f cmd/air/Dockerfile
+	docker build . -t bin -f cmd/bin/Dockerfile
+	docker build . -t bus -f cmd/bus/Dockerfile
+	docker build . -t bike -f cmd/bike/Dockerfile
+	docker build . -t gateway -f cmd/gateway/Dockerfile

@@ -1,3 +1,0 @@
-DROP TABLE IF EXISTS login_details;
-DROP TABLE IF EXISTS users;
-DROP TABLE IF EXISTS roles;
