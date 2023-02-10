@@ -1,0 +1,156 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.bus.Name }}
+  labels:
+    app: {{ .Values.bus.Name }}
+spec:
+  replicas: {{ .Values.bus.Replicas }}
+  template:
+    metadata:
+      name: {{ .Values.bus.Name }}
+      labels:
+        app: {{ .Values.bus.Name }}
+    spec:
+      containers:
+        - name: {{ .Values.bus.Name }}
+          image: {{.Values.bus.Image }}
+          imagePullPolicy: Always
+          resources:
+            requests:
+              memory: {{.Values.resources.requests.memory }}
+              cpu: {{.Values.resources.requests.cpu }}
+            limits:
+              memory: {{.Values.resources.limits.memory }}
+              cpu: {{.Values.resources.limits.cpu }}
+          livenessProbe:
+            httpGet:
+              path: {{.Values.service.LivenessProbePath }}
+              port: {{.Values.bus.HealthcheckPort }}
+            initialDelaySeconds: {{ .Values.bus.InitialDelaySeconds }}
+            periodSeconds: {{ .Values.service.PeriodSeconds }}
+          readinessProbe:
+            httpGet:
+              path: {{.Values.service.ReadinessProbePath }}
+              port: {{.Values.bus.HealthcheckPort }}
+            initialDelaySeconds: {{ .Values.bus.InitialDelaySeconds }}
+            periodSeconds: {{ .Values.service.PeriodSeconds }}
+          ports:
+            - containerPort: {{.Values.bus.GrpcPort }}
+              name: grpc
+            - containerPort: {{.Values.bus.MetricsPort }}
+              name: metrics
+            - containerPort: {{.Values.bus.HealthcheckPort }}
+              name: healthcheck
+          env:
+            - name: CONFIG_PATH
+              value: "/bus-service/bus-config.yaml"
+          volumeMounts:
+            - name: config
+              mountPath: "/bus-service"
+      restartPolicy: Always
+      terminationGracePeriodSeconds: {{ .Values.service.TerminationGracePeriodSeconds }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Values.bus.Name }}-config-map
+            items:
+              - key: bus-config.yaml
+                path: bus-config.yaml
+  selector:
+    matchLabels:
+      app: {{ .Values.bus.Name }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.bus.Name }}-service
+  labels:
+    app: {{ .Values.bushMicroserviceName }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Values.bus.Name }}
+  ports:
+    - name: grpc
+      port: {{.Values.bus.GrpcPort }}
+      protocol: TCP
+    - name: healthcheck
+      port: {{.Values.bus.HealthcheckPort }}
+      protocol: TCP
+      targetPort: healthcheck
+    - name: metrics
+      port: {{.Values.bus.MetricsPort }}
+      protocol: TCP
+      targetPort: metrics
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    release: monitoring
+  name: {{ .Values.bus.Name }}-service-monitor
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.bus.Name }}
+  endpoints:
+    - interval: 10s
+      port: metrics
+      path: {{.Values.prometheusPath }}
+  namespaceSelector:
+    matchNames:
+      - default
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.bus.Name }}-config-map
+data:
+  bus-config.yaml: |
+    serviceName: {{ .Values.bus.Name }}
+    serviceType: {{ .Values.bus.Type }}
+    serviceUrl: {{.Values.bus.Url }}
+    grpc:
+      port: {{ .Values.bus.GrpcPort }}
+      development: {{ .Values.grpc.development }}
+    probes:
+      readinessPath: {{ .Values.service.ReadinessProbePath }}
+      livenessPath: {{ .Values.service.LivenessProbePath }}
+      port: :{{ .Values.bus.HealthcheckPort }}
+      pprof: :6001
+      prometheusPath: {{ .Values.prometheusPath }}
+      prometheusPort: :{{.Values.bus.MetricsPort }}
+      checkIntervalSeconds: 10
+    logger:
+      level: {{ .Values.logging.level }}
+      devMode: {{ .Values.logging.devMode }}
+      encoder: {{ .Values.logging.encoder }}
+    ConnectedServices:
+      - serviceName: {{ .Values.gateway.Name }}
+        serviceType: {{ .Values.gateway.Type }}
+        serviceUrl: {{.Values.gateway.Url }}
+        healthcheckPort: {{.Values.gateway.HealthcheckPort }}
+        httpPort: {{.Values.gateway.HttpPort }}
+      - serviceName: {{ .Values.air.Name }}
+        serviceType: {{ .Values.air.Type }}
+        serviceUrl: {{.Values.air.Url }}
+        healthcheckPort: {{.Values.air.HealthcheckPort }}
+        grpcPort: {{.Values.air.GrpcPort }}
+      - serviceName: {{ .Values.bike.Name }}
+        serviceType: {{ .Values.bike.Type }}
+        serviceUrl: {{.Values.bike.Url }}
+        healthcheckPort: {{.Values.bike.HealthcheckPort }}
+        grpcPort: {{.Values.bike.GrpcPort }}
+      - serviceName: {{ .Values.bin.Name }}
+        serviceType: {{ .Values.bin.Type }}
+        serviceUrl: {{.Values.bin.Url }}
+        healthcheckPort: {{.Values.bin.HealthcheckPort }}
+        grpcPort: {{.Values.bin.GrpcPort }}

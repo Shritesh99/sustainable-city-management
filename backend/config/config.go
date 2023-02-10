@@ -3,21 +3,33 @@ package config
 import (
 	"flag"
 	"os"
-	"sustinable-city-management/pkg/constants"
-	"sustinable-city-management/pkg/logger"
-	"sustinable-city-management/pkg/probes"
+
+	"github.com/Eytins/sustainable-city-management/backend/pkg/constants"
+	"github.com/Eytins/sustainable-city-management/backend/pkg/logger"
+	"github.com/Eytins/sustainable-city-management/backend/pkg/probes"
 
 	"github.com/pkg/errors"
 	"github.com/spf13/viper"
 )
 
 type Config struct {
-	ServiceName string           `mapstructure:"serviceName"`
-	Logger      logger.LogConfig `mapstructure:"logger"`
-	GRPC        GRPC             `mapstructure:"grpc"`
-	Timeouts    Timeouts         `mapstructure:"timeouts" validate:"required"`
-	Http        Http             `mapstructure:"http"`
-	Probes      probes.Config    `mapstructure:"probes"`
+	ServiceName       string           `mapstructure:"serviceName"`
+	ServiceType       string           `mapstructure:"serviceType"`
+	ServiceUrl        string           `mapstructure:"serviceUrl"`
+	Logger            logger.LogConfig `mapstructure:"logger"`
+	GRPC              GRPC             `mapstructure:"grpc"`
+	Timeouts          Timeouts         `mapstructure:"timeouts" validate:"required"`
+	Http              Http             `mapstructure:"http"`
+	Probes            probes.Config    `mapstructure:"probes"`
+	ConnectedServices []Services       `mapstructure:"ConnectedServices"`
+}
+type Services struct {
+	ServiceName     string `mapstructure:"serviceName"`
+	ServiceType     string `mapstructure:"serviceType"`
+	ServiceUrl      string `mapstructure:"serviceUrl"`
+	HealthcheckPort string `mapstructure:"healthcheckPort"`
+	HttpPort        string `mapstructure:"httpPort"`
+	GrpcPort        string `mapstructure:"grpcPort"`
 }
 type GRPC struct {
 	Port        string `mapstructure:"port"`
@@ -26,19 +38,10 @@ type GRPC struct {
 type Http struct {
 	Port                string   `mapstructure:"port" validate:"required"`
 	Development         bool     `mapstructure:"development"`
-	BasePath            string   `mapstructure:"basePath" validate:"required"`
-	ProductsPath        string   `mapstructure:"productsPath" validate:"required"`
 	DebugErrorsResponse bool     `mapstructure:"debugErrorsResponse"`
 	IgnoreLogUrls       []string `mapstructure:"ignoreLogUrls"`
 }
-type HTTP struct {
-	Port                string   `mapstructure:"port" validate:"required"`
-	Development         bool     `mapstructure:"development"`
-	BasePath            string   `mapstructure:"basePath" validate:"required"`
-	ProductsPath        string   `mapstructure:"productsPath" validate:"required"`
-	DebugErrorsResponse bool     `mapstructure:"debugErrorsResponse"`
-	IgnoreLogUrls       []string `mapstructure:"ignoreLogUrls"`
-}
+
 type Timeouts struct {
 	PostgresInitMilliseconds int  `mapstructure:"postgresInitMilliseconds" validate:"required"`
 	PostgresInitRetryCount   uint `mapstructure:"postgresInitRetryCount" validate:"required"`

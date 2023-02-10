@@ -2,8 +2,9 @@ package logger
 
 import (
 	"os"
-	"sustinable-city-management/pkg/constants"
 	"time"
+
+	"github.com/Eytins/sustainable-city-management/backend/pkg/constants"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -117,6 +118,49 @@ func (l *appLogger) InitLogger() {
 
 	l.logger = logger
 	l.sugarLogger = logger.Sugar()
+}
+
+func (l *appLogger) SetLogLevel(logLevel string) {
+	logLvl := l.setLoggerLevel(logLevel)
+
+	logWriter := zapcore.AddSync(os.Stdout)
+
+	var encoderCfg zapcore.EncoderConfig
+	if l.devMode {
+		encoderCfg = zap.NewDevelopmentEncoderConfig()
+	} else {
+		encoderCfg = zap.NewProductionEncoderConfig()
+	}
+
+	var encoder zapcore.Encoder
+	encoderCfg.NameKey = "[SERVICE]"
+	encoderCfg.TimeKey = "[TIME]"
+	encoderCfg.LevelKey = "[LEVEL]"
+	encoderCfg.CallerKey = "[LINE]"
+	encoderCfg.MessageKey = "[MESSAGE]"
+	encoderCfg.EncodeTime = zapcore.ISO8601TimeEncoder
+	encoderCfg.EncodeLevel = zapcore.CapitalLevelEncoder
+	encoderCfg.EncodeCaller = zapcore.ShortCallerEncoder
+	encoderCfg.EncodeDuration = zapcore.StringDurationEncoder
+
+	if l.encoding == "console" {
+		encoderCfg.EncodeLevel = zapcore.CapitalColorLevelEncoder
+		encoderCfg.EncodeCaller = zapcore.FullCallerEncoder
+		encoderCfg.ConsoleSeparator = "  |  "
+		encoder = zapcore.NewConsoleEncoder(encoderCfg)
+	} else {
+		encoderCfg.FunctionKey = "[CALLER]"
+		encoderCfg.EncodeName = zapcore.FullNameEncoder
+		encoder = zapcore.NewJSONEncoder(encoderCfg)
+	}
+
+	core := zapcore.NewCore(encoder, logWriter, zap.NewAtomicLevelAt(logLvl))
+	logger := zap.New(core, zap.AddCaller(), zap.AddCallerSkip(1))
+
+	l.logger = logger
+	l.sugarLogger = logger.Sugar()
+	l.logger.Info("(SET LOG LEVEL)", zap.String("LEVEL", logLvl.CapitalString()))
+	l.Sync() // nolint: errcheck
 }
 
 func (l *appLogger) Named(name string) {

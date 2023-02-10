@@ -18,4 +18,6 @@ const (
 	REQUEST  = "REQUEST"
 	REPLY    = "REPLY"
 	TIME     = "TIME"
+
+	Tcp = "tcp"
 )

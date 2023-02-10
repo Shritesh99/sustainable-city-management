@@ -1,0 +1,79 @@
+gateway:
+     Name: gateway-microservice
+     Type: gateway
+     Replicas: 1
+     Url: http://gateway-microservice-service.default.svc.cluster.local
+     Image: shritesh99/gateway:latest
+     HttpPort: 8000
+     MetricsPort: 8001
+     HealthcheckPort: 8002
+
+air:
+     Name: air-microservice
+     Type: service
+     Replicas: 1
+     Url: http://air-microservice-service.default.svc.cluster.local
+     Image: shritesh99/air:latest
+     GrpcPort: 4000
+     MetricsPort: 4001
+     HealthcheckPort: 4002
+
+bike:
+     Name: bike-microservice
+     Type: service
+     Replicas: 1
+     Url: http://bike-microservice-service.default.svc.cluster.local
+     Image: shritesh99/bike:latest
+     GrpcPort: 5000
+     MetricsPort: 5001
+     HealthcheckPort: 5002
+
+bus:
+     Name: bus-microservice
+     Type: service
+     Replicas: 1
+     Url: http://bus-microservice-service.default.svc.cluster.local
+     Image: shritesh99/bus:latest
+     GrpcPort: 6000
+     MetricsPort: 6001
+     HealthcheckPort: 6002
+
+bin:
+     Name: bin-microservice
+     Type: service
+     Replicas: 1
+     Url: http://bin-microservice-service.default.svc.cluster.local
+     Image: shritesh99/bin:latest
+     GrpcPort: 7000
+     MetricsPort: 7001
+     HealthcheckPort: 7002
+
+service:
+     LivenessProbePath: /live
+     ReadinessProbePath: /ready
+     InitialDelaySeconds: 15
+     PeriodSeconds: 5
+     TerminationGracePeriodSeconds: 30
+
+logging:
+     level: info
+     devMode: false
+     encoder: json
+
+resources:
+     requests:
+          memory: "256Mi"
+          cpu: "300m"
+     limits:
+          memory: "1000Mi"
+          cpu: "1000m"
+
+grpc:
+     development: true
+
+http:
+     development: true
+     basePath: /
+     debugErrorsResponse: true
+
+prometheusPath: /metrics
