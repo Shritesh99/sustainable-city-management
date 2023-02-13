@@ -1,6 +1,6 @@
 import { Head } from "./Head";
 import { Header } from "./Header";
-import { Footer } from "./Footer";
+import Copyright from './Copyright';
 
 export const Layout = ({ children }) => {
 	return (
@@ -8,7 +8,7 @@ export const Layout = ({ children }) => {
 			<Head />
 			<Header />
 			{children}
-			<Footer />
+			<Copyright />
 		</section>
 	);
 };
