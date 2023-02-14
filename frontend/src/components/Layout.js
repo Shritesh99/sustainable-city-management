@@ -1,14 +1,25 @@
 import { Head } from "./Head";
-import { Header } from "./Header";
-import Copyright from './Copyright';
+import Sidebar from "./global/Sidebar";
+import Topbar from "./global/Topbar";
+import { getTheme } from "@/theme";
+import Footer from "./global/Footer";
+import styles from "./layout.module.css";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 
 export const Layout = ({ children }) => {
-	return (
-		<section className="hero is-fullheight">
-			<Head />
-			<Header />
-			{children}
-			<Copyright />
-		</section>
-	);
+  const theme = getTheme();
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <div className="app">
+        <Head />
+        <Sidebar />
+        <main className="content">
+          <Topbar />
+          {children}
+        </main>
+        <Footer />
+      </div>
+    </ThemeProvider>
+  );
 };

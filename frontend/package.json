@@ -17,10 +17,13 @@
     "@next/font": "^13.1.6",
     "eslint": "8.32.0",
     "eslint-config-next": "13.1.5",
+    "google-maps-react": "^2.0.6",
     "jotai": "^1.13.1",
     "next": "^13.1.5",
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-loader-spinner": "^5.3.4"
+    "react": "18.2.0",
+    "react-bootstrap": "^2.7.0",
+    "react-dom": "18.2.0",
+    "react-loader-spinner": "^5.3.4",
+    "react-pro-sidebar": "^0.7.1"
   }
 }
