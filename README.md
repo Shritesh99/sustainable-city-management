@@ -1,2 +1,2 @@
 # sustainable-city-management
-A sustainable city management system using eXtreme programming.
+This branch is just using for thin slice presentation, it will be deleted after that.
