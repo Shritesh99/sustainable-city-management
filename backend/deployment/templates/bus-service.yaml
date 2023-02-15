@@ -16,32 +16,16 @@ spec:
         - name: {{ .Values.bus.Name }}
           image: {{.Values.bus.Image }}
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: {{.Values.resources.requests.memory }}
-              cpu: {{.Values.resources.requests.cpu }}
-            limits:
-              memory: {{.Values.resources.limits.memory }}
-              cpu: {{.Values.resources.limits.cpu }}
-          livenessProbe:
-            httpGet:
-              path: {{.Values.service.LivenessProbePath }}
-              port: {{.Values.bus.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.bus.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
-          readinessProbe:
-            httpGet:
-              path: {{.Values.service.ReadinessProbePath }}
-              port: {{.Values.bus.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.bus.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
           ports:
             - containerPort: {{.Values.bus.GrpcPort }}
               name: grpc
+              hostPort: {{.Values.bus.GrpcPort }}
             - containerPort: {{.Values.bus.MetricsPort }}
               name: metrics
+              hostPort: {{.Values.bus.MetricsPort }}
             - containerPort: {{.Values.bus.HealthcheckPort }}
               name: healthcheck
+              hostPort: {{.Values.bus.HealthcheckPort }}
           env:
             - name: CONFIG_PATH
               value: "/bus-service/bus-config.yaml"
@@ -68,7 +52,7 @@ kind: Service
 metadata:
   name: {{ .Values.bus.Name }}-service
   labels:
-    app: {{ .Values.bushMicroserviceName }}
+    app: {{ .Values.bus.Name }}
 spec:
   type: ClusterIP
   selector:
@@ -77,6 +61,7 @@ spec:
     - name: grpc
       port: {{.Values.bus.GrpcPort }}
       protocol: TCP
+      targetPort: grpc
     - name: healthcheck
       port: {{.Values.bus.HealthcheckPort }}
       protocol: TCP
@@ -118,6 +103,7 @@ data:
     serviceName: {{ .Values.bus.Name }}
     serviceType: {{ .Values.bus.Type }}
     serviceUrl: {{.Values.bus.Url }}
+    Honeybadger_API_KEY: {{ .Values.Honeybadger_API_KEY }}
     grpc:
       port: {{ .Values.bus.GrpcPort }}
       development: {{ .Values.grpc.development }}

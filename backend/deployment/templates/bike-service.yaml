@@ -16,32 +16,16 @@ spec:
         - name: {{ .Values.bike.Name }}
           image: {{.Values.bike.Image }}
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: {{.Values.resources.requests.memory }}
-              cpu: {{.Values.resources.requests.cpu }}
-            limits:
-              memory: {{.Values.resources.limits.memory }}
-              cpu: {{.Values.resources.limits.cpu }}
-          livenessProbe:
-            httpGet:
-              path: {{.Values.service.LivenessProbePath }}
-              port: {{.Values.bike.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.bike.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
-          readinessProbe:
-            httpGet:
-              path: {{.Values.service.ReadinessProbePath }}
-              port: {{.Values.bike.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.bike.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
           ports:
             - containerPort: {{.Values.bike.GrpcPort }}
               name: grpc
+              hostPort: {{.Values.bike.GrpcPort }}
             - containerPort: {{.Values.bike.MetricsPort }}
               name: metrics
+              hostPort: {{.Values.bike.MetricsPort }}
             - containerPort: {{.Values.bike.HealthcheckPort }}
               name: healthcheck
+              hostPort: {{.Values.bike.HealthcheckPort }}
           env:
             - name: CONFIG_PATH
               value: "/bike-service/bike-config.yaml"
@@ -68,7 +52,7 @@ kind: Service
 metadata:
   name: {{ .Values.bike.Name }}-service
   labels:
-    app: {{ .Values.bikehMicroserviceName }}
+    app: {{ .Values.bike.Name }}
 spec:
   type: ClusterIP
   selector:
@@ -77,6 +61,7 @@ spec:
     - name: grpc
       port: {{.Values.bike.GrpcPort }}
       protocol: TCP
+      targetPort: grpc
     - name: healthcheck
       port: {{.Values.bike.HealthcheckPort }}
       protocol: TCP
@@ -118,6 +103,7 @@ data:
     serviceName: {{ .Values.bike.Name }}
     serviceType: {{ .Values.bike.Type }}
     serviceUrl: {{.Values.bike.Url }}
+    Honeybadger_API_KEY: {{ .Values.Honeybadger_API_KEY }}
     grpc:
       port: {{ .Values.bike.GrpcPort }}
       development: {{ .Values.grpc.development }}

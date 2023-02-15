@@ -11,9 +11,12 @@ import (
 	"time"
 
 	"github.com/Eytins/sustainable-city-management/backend/config"
+	"github.com/Eytins/sustainable-city-management/backend/internal/metrics"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/constants"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/logger"
+	"github.com/Eytins/sustainable-city-management/backend/pkg/middlewares"
 	"github.com/gofiber/fiber"
+	"github.com/labstack/echo"
 
 	"github.com/go-playground/validator"
 	"google.golang.org/grpc"
@@ -37,7 +40,9 @@ type service struct {
 	healthCheckServer *http.Server
 	grpcServer        *grpc.Server
 	fiber             *fiber.App
-	// metrics           *metrics.SearchMicroserviceMetrics
+	metrics           *metrics.MicroserviceMetrics
+	metricsServer     *echo.Echo
+	middlewareManager middlewares.MiddlewareManager
 }
 
 func NewService(log logger.Logger, cfg *config.Config) *service {
@@ -48,9 +53,14 @@ func (a *service) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
-	// a.metrics = metrics.NewSearchMicroserviceMetrics(a.cfg)
+	a.middlewareManager = middlewares.NewMiddlewareManager(a.log, a.cfg, a.getHttpMetricsCb())
+	a.metrics = metrics.NewMicroserviceMetrics(a.cfg)
 	if a.cfg.ServiceType == "gateway" {
 		a.fiber = fiber.New()
+
+		a.fiber.Get("/", func(c *fiber.Ctx) {
+			c.SendString("Hellow World")
+		})
 		go func() {
 			if err := a.fiber.Listen(fmt.Sprintf(":%s", a.cfg.Http.Port)); err != nil {
 				a.log.Errorf("(grpc server) err: %v", err)
@@ -71,6 +81,7 @@ func (a *service) Run() error {
 			}
 		}()
 	}
+	a.runMetrics(cancel)
 	a.runHealthCheck(ctx)
 	a.log.Infof("%s is listening on PORT: %v", GetMicroserviceName(a.cfg), a.cfg.Http.Port)
 
@@ -78,7 +89,7 @@ func (a *service) Run() error {
 	a.waitShootDown(waitShotDownDuration)
 
 	if err := a.shutDownHealthCheckServer(ctx); err != nil {
-		a.log.Warnf("(shutDownHealthCheckServer) HealthCheckServer err: %v", err)
+		a.log.Warnf("(shutDownHealthCheckServer) HealthCheckServer err: %v", err.Error())
 	}
 
 	<-a.doneCh

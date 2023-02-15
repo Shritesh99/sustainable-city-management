@@ -2,6 +2,7 @@ package config
 
 import (
 	"flag"
+	"fmt"
 	"os"
 
 	"github.com/Eytins/sustainable-city-management/backend/pkg/constants"
@@ -13,15 +14,17 @@ import (
 )
 
 type Config struct {
-	ServiceName       string           `mapstructure:"serviceName"`
-	ServiceType       string           `mapstructure:"serviceType"`
-	ServiceUrl        string           `mapstructure:"serviceUrl"`
-	Logger            logger.LogConfig `mapstructure:"logger"`
-	GRPC              GRPC             `mapstructure:"grpc"`
-	Timeouts          Timeouts         `mapstructure:"timeouts" validate:"required"`
-	Http              Http             `mapstructure:"http"`
-	Probes            probes.Config    `mapstructure:"probes"`
-	ConnectedServices []Services       `mapstructure:"ConnectedServices"`
+	ServiceName         string           `mapstructure:"serviceName"`
+	ServiceType         string           `mapstructure:"serviceType"`
+	ServiceUrl          string           `mapstructure:"serviceUrl"`
+	Logger              logger.LogConfig `mapstructure:"logger"`
+	GRPC                GRPC             `mapstructure:"grpc"`
+	Timeouts            Timeouts         `mapstructure:"timeouts" validate:"required"`
+	Http                Http             `mapstructure:"http"`
+	Probes              probes.Config    `mapstructure:"probes"`
+	ConnectedServices   []Services       `mapstructure:"ConnectedServices"`
+	Honeybadger_API_KEY string           `mapstructure:"Honeybadger_API_KEY"`
+	Development         bool             `mapstructure:"development"`
 }
 type Services struct {
 	ServiceName     string `mapstructure:"serviceName"`
@@ -57,6 +60,12 @@ func InitConfig() (*Config, error) {
 		configPathFromEnv := os.Getenv(constants.ConfigPath)
 		if configPathFromEnv != "" {
 			configPath = configPathFromEnv
+		} else {
+			getwd, err := os.Getwd()
+			if err != nil {
+				return nil, errors.Wrap(err, "os.Getwd")
+			}
+			configPath = fmt.Sprintf("%s/config/config.yaml", getwd)
 		}
 	}
 	cfg := &Config{}

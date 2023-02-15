@@ -16,32 +16,16 @@ spec:
         - name: {{ .Values.bin.Name }}
           image: {{.Values.bin.Image }}
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: {{.Values.resources.requests.memory }}
-              cpu: {{.Values.resources.requests.cpu }}
-            limits:
-              memory: {{.Values.resources.limits.memory }}
-              cpu: {{.Values.resources.limits.cpu }}
-          livenessProbe:
-            httpGet:
-              path: {{.Values.service.LivenessProbePath }}
-              port: {{.Values.bin.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.bin.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
-          readinessProbe:
-            httpGet:
-              path: {{.Values.service.ReadinessProbePath }}
-              port: {{.Values.bin.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.bin.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
           ports:
             - containerPort: {{.Values.bin.GrpcPort }}
               name: grpc
+              hostPort: {{.Values.bin.GrpcPort }}
             - containerPort: {{.Values.bin.MetricsPort }}
               name: metrics
+              hostPort: {{.Values.bin.MetricsPort }}
             - containerPort: {{.Values.bin.HealthcheckPort }}
               name: healthcheck
+              hostPort: {{.Values.bin.HealthcheckPort }}
           env:
             - name: CONFIG_PATH
               value: "/bin-service/bin-config.yaml"
@@ -68,7 +52,7 @@ kind: Service
 metadata:
   name: {{ .Values.bin.Name }}-service
   labels:
-    app: {{ .Values.binhMicroserviceName }}
+    app: {{ .Values.bin.Name }}
 spec:
   type: ClusterIP
   selector:
@@ -77,6 +61,7 @@ spec:
     - name: grpc
       port: {{.Values.bin.GrpcPort }}
       protocol: TCP
+      targetPort: grpc
     - name: healthcheck
       port: {{.Values.bin.HealthcheckPort }}
       protocol: TCP
@@ -118,6 +103,7 @@ data:
     serviceName: {{ .Values.bin.Name }}
     serviceType: {{ .Values.bin.Type }}
     serviceUrl: {{.Values.bin.Url }}
+    Honeybadger_API_KEY: {{ .Values.Honeybadger_API_KEY }}
     grpc:
       port: {{ .Values.bin.GrpcPort }}
       development: {{ .Values.grpc.development }}

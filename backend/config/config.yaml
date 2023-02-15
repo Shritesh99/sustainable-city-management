@@ -1,0 +1,42 @@
+serviceName: gateway
+serviceType: gateway
+serviceUrl: http://gateway-microservice-service.default.svc.cluster.local
+Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
+http:
+     port: 8000
+     development: true
+     basePath: /
+     debugErrorsResponse: true
+probes:
+     readinessPath: /live
+     livenessPath: /ready
+     port: :8002
+     pprof: :6001
+     prometheusPath: /metrics
+     prometheusPort: :8001
+     checkIntervalSeconds: 10
+logger:
+     level: info
+     devMode: false
+     encoder: json
+# ConnectedServices:
+#      - serviceName: { { .Values.air.Name } }
+#        serviceType: { { .Values.air.Type } }
+#        serviceUrl: { { .Values.air.Url } }
+#        healthcheckPort: { { .Values.air.HealthcheckPort } }
+#        grpcPort: { { .Values.air.GrpcPort } }
+#      - serviceName: { { .Values.bike.Name } }
+#        serviceType: { { .Values.bike.Type } }
+#        serviceUrl: { { .Values.bike.Url } }
+#        healthcheckPort: { { .Values.bike.HealthcheckPort } }
+#        grpcPort: { { .Values.bike.GrpcPort } }
+#      - serviceName: { { .Values.bin.Name } }
+#        serviceType: { { .Values.bin.Type } }
+#        serviceUrl: { { .Values.bin.Url } }
+#        healthcheckPort: { { .Values.bin.HealthcheckPort } }
+#        grpcPort: { { .Values.bin.GrpcPort } }
+#      - serviceName: { { .Values.bus.Name } }
+#        serviceType: { { .Values.bus.Type } }
+#        serviceUrl: { { .Values.bus.Url } }
+#        healthcheckPort: { { .Values.bus.HealthcheckPort } }
+#        grpcPort: { { .Values.bus.GrpcPort } }

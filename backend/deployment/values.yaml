@@ -1,49 +1,49 @@
 gateway:
-     Name: gateway-microservice
+     Name: gateway
      Type: gateway
      Replicas: 1
      Url: http://gateway-microservice-service.default.svc.cluster.local
-     Image: shritesh99/gateway:latest
+     Image: asecr.azurecr.io/shritesh99/gateway:latest
      HttpPort: 8000
      MetricsPort: 8001
      HealthcheckPort: 8002
 
 air:
-     Name: air-microservice
+     Name: air
      Type: service
      Replicas: 1
      Url: http://air-microservice-service.default.svc.cluster.local
-     Image: shritesh99/air:latest
+     Image: asecr.azurecr.io/shritesh99/air:latest
      GrpcPort: 4000
      MetricsPort: 4001
      HealthcheckPort: 4002
 
 bike:
-     Name: bike-microservice
+     Name: bike
      Type: service
      Replicas: 1
      Url: http://bike-microservice-service.default.svc.cluster.local
-     Image: shritesh99/bike:latest
+     Image: asecr.azurecr.io/shritesh99/bike:latest
      GrpcPort: 5000
      MetricsPort: 5001
      HealthcheckPort: 5002
 
 bus:
-     Name: bus-microservice
+     Name: bus
      Type: service
      Replicas: 1
      Url: http://bus-microservice-service.default.svc.cluster.local
-     Image: shritesh99/bus:latest
+     Image: asecr.azurecr.io/shritesh99/bus:latest
      GrpcPort: 6000
      MetricsPort: 6001
      HealthcheckPort: 6002
 
 bin:
-     Name: bin-microservice
+     Name: bin
      Type: service
      Replicas: 1
      Url: http://bin-microservice-service.default.svc.cluster.local
-     Image: shritesh99/bin:latest
+     Image: asecr.azurecr.io/shritesh99/bin:latest
      GrpcPort: 7000
      MetricsPort: 7001
      HealthcheckPort: 7002
@@ -51,9 +51,9 @@ bin:
 service:
      LivenessProbePath: /live
      ReadinessProbePath: /ready
-     InitialDelaySeconds: 15
-     PeriodSeconds: 5
-     TerminationGracePeriodSeconds: 30
+     InitialDelaySeconds: 60
+     PeriodSeconds: 60
+     TerminationGracePeriodSeconds: 600
 
 logging:
      level: info
@@ -77,3 +77,66 @@ http:
      debugErrorsResponse: true
 
 prometheusPath: /metrics
+
+Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
+
+ip: 20.231.93.38
+
+prometheus:
+     serviceMonitorNamespaceSelector:
+          prometheus: default
+     additionalServiceMonitors:
+          - name: gateway-monitor
+            selector:
+            matchLabels:
+                 app: gateway-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s
+          - name: air-monitor
+            selector:
+                 matchLabels:
+                      app: air-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s
+          - name: bin-monitor
+            selector:
+                 matchLabels:
+                      app: bin-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s
+          - name: bike-monitor
+            selector:
+                 matchLabels:
+                      app: bike-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s
+          - name: bus-monitor
+            selector:
+                 matchLabels:
+                      app: bus-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s
+
+controller:
+     service:
+          enabled: true
+          annotations:
+               service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+     config:
+          use-forwarded-headers: "true"
+          server-tokens: "false"

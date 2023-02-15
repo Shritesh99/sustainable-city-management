@@ -16,25 +16,6 @@ spec:
         - name: {{ .Values.gateway.Name }}
           image: {{.Values.gateway.Image }}
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: {{.Values.resources.requests.memory }}
-              cpu: {{.Values.resources.requests.cpu }}
-            limits:
-              memory: {{.Values.resources.limits.memory }}
-              cpu: {{.Values.resources.limits.cpu }}
-          livenessProbe:
-            httpGet:
-              path: {{.Values.service.LivenessProbePath }}
-              port: {{.Values.gateway.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.service.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
-          readinessProbe:
-            httpGet:
-              path: {{.Values.service.ReadinessProbePath }}
-              port: {{.Values.gateway.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.service.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
           ports:
             - containerPort: {{.Values.gateway.HttpPort }}
               name: http
@@ -68,15 +49,18 @@ kind: Service
 metadata:
   name: {{ .Values.gateway.Name }}-service
   labels:
-    app: {{ .Values.gatewayhMicroserviceName }}
+    app: {{ .Values.gateway.Name }}
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-resource-group: ase
 spec:
-  type: ClusterIP
+  type: Service
   selector:
     app: {{ .Values.gateway.Name }}
   ports:
     - name: http
       port: {{.Values.gateway.HttpPort }}
       protocol: TCP
+      targetPort: http
     - name: healthcheck
       port: {{.Values.gateway.HealthcheckPort }}
       protocol: TCP
@@ -118,6 +102,7 @@ data:
     serviceName: {{ .Values.gateway.Name }}
     serviceType: {{ .Values.gateway.Type }}
     serviceUrl: {{.Values.gateway.Url }}
+    Honeybadger_API_KEY: {{ .Values.Honeybadger_API_KEY }}
     http:
       port: {{ .Values.gateway.HttpPort }}
       development: {{ .Values.http.development }}

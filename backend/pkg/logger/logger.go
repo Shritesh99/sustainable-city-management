@@ -1,10 +1,12 @@
 package logger
 
 import (
+	"fmt"
 	"os"
 	"time"
 
 	"github.com/Eytins/sustainable-city-management/backend/pkg/constants"
+	"github.com/honeybadger-io/honeybadger-go"
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
@@ -195,61 +197,73 @@ func (l *appLogger) Printf(template string, args ...interface{}) {
 
 // Warn uses fmt.Sprint to construct and log a message.
 func (l *appLogger) Warn(args ...interface{}) {
+	honeybadger.Notify(args, "Warning")
 	l.sugarLogger.Warn(args...)
 }
 
 // WarnErrMsg log error message with warn level.
 func (l *appLogger) WarnErrMsg(msg string, err error) {
+	honeybadger.Notify(err, msg)
 	l.logger.Warn(msg, zap.String("error", err.Error()))
 }
 
 // Warnf uses fmt.Sprintf to log a templated message.
 func (l *appLogger) Warnf(template string, args ...interface{}) {
+	honeybadger.Notify(fmt.Sprintf(template, args...))
 	l.sugarLogger.Warnf(template, args...)
 }
 
 // Error uses fmt.Sprint to construct and log a message.
 func (l *appLogger) Error(args ...interface{}) {
+	honeybadger.Notify(args, "Error")
 	l.sugarLogger.Error(args...)
 }
 
 // Errorf uses fmt.Sprintf to log a templated message.
 func (l *appLogger) Errorf(template string, args ...interface{}) {
+	honeybadger.Notify(fmt.Sprintf(template, args...))
 	l.sugarLogger.Errorf(template, args...)
 }
 
 // Err uses error to log a message.
 func (l *appLogger) Err(msg string, err error) {
+	honeybadger.Notify(err, msg)
 	l.logger.Error(msg, zap.Error(err))
 }
 
 // DPanic uses fmt.Sprint to construct and log a message. In development, the logger then panics. (See DPanicLevel for details.)
 func (l *appLogger) DPanic(args ...interface{}) {
+	honeybadger.Notify(args, "DPanic")
 	l.sugarLogger.DPanic(args...)
 }
 
 // DPanicf uses fmt.Sprintf to log a templated message. In development, the logger then panics. (See DPanicLevel for details.)
 func (l *appLogger) DPanicf(template string, args ...interface{}) {
+	honeybadger.Notify(fmt.Sprintf(template, args...))
 	l.sugarLogger.DPanicf(template, args...)
 }
 
 // Panic uses fmt.Sprint to construct and log a message, then panics.
 func (l *appLogger) Panic(args ...interface{}) {
+	honeybadger.Notify(args, "Panic")
 	l.sugarLogger.Panic(args...)
 }
 
 // Panicf uses fmt.Sprintf to log a templated message, then panics
 func (l *appLogger) Panicf(template string, args ...interface{}) {
+	honeybadger.Notify(fmt.Sprintf(template, args...))
 	l.sugarLogger.Panicf(template, args...)
 }
 
 // Fatal uses fmt.Sprint to construct and log a message, then calls os.Exit.
 func (l *appLogger) Fatal(args ...interface{}) {
+	honeybadger.Notify(args, "Fatal")
 	l.sugarLogger.Fatal(args...)
 }
 
 // Fatalf uses fmt.Sprintf to log a templated message, then calls os.Exit.
 func (l *appLogger) Fatalf(template string, args ...interface{}) {
+	honeybadger.Notify(fmt.Sprintf(template, args...))
 	l.sugarLogger.Fatalf(template, args...)
 }
 

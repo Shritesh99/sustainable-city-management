@@ -16,32 +16,16 @@ spec:
         - name: {{ .Values.air.Name }}
           image: {{.Values.air.Image }}
           imagePullPolicy: Always
-          resources:
-            requests:
-              memory: {{.Values.resources.requests.memory }}
-              cpu: {{.Values.resources.requests.cpu }}
-            limits:
-              memory: {{.Values.resources.limits.memory }}
-              cpu: {{.Values.resources.limits.cpu }}
-          livenessProbe:
-            httpGet:
-              path: {{.Values.service.LivenessProbePath }}
-              port: {{.Values.air.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.air.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
-          readinessProbe:
-            httpGet:
-              path: {{.Values.service.ReadinessProbePath }}
-              port: {{.Values.air.HealthcheckPort }}
-            initialDelaySeconds: {{ .Values.air.InitialDelaySeconds }}
-            periodSeconds: {{ .Values.service.PeriodSeconds }}
           ports:
             - containerPort: {{.Values.air.GrpcPort }}
               name: grpc
+              hostPort: {{.Values.air.GrpcPort }}
             - containerPort: {{.Values.air.MetricsPort }}
               name: metrics
+              hostPort: {{.Values.air.MetricsPort }}
             - containerPort: {{.Values.air.HealthcheckPort }}
               name: healthcheck
+              hostPort: {{.Values.air.HealthcheckPort }}
           env:
             - name: CONFIG_PATH
               value: "/air-service/air-config.yaml"
@@ -68,7 +52,7 @@ kind: Service
 metadata:
   name: {{ .Values.air.Name }}-service
   labels:
-    app: {{ .Values.airhMicroserviceName }}
+    app: {{ .Values.air.Name }}
 spec:
   type: ClusterIP
   selector:
@@ -77,6 +61,7 @@ spec:
     - name: grpc
       port: {{.Values.air.GrpcPort }}
       protocol: TCP
+      targetPort: grpc
     - name: healthcheck
       port: {{.Values.air.HealthcheckPort }}
       protocol: TCP
@@ -118,6 +103,7 @@ data:
     serviceName: {{ .Values.air.Name }}
     serviceType: {{ .Values.air.Type }}
     serviceUrl: {{.Values.air.Url }}
+    Honeybadger_API_KEY: {{ .Values.Honeybadger_API_KEY }}
     grpc:
       port: {{ .Values.air.GrpcPort }}
       development: {{ .Values.grpc.development }}
@@ -134,11 +120,11 @@ data:
       devMode: {{ .Values.logging.devMode }}
       encoder: {{ .Values.logging.encoder }}
     ConnectedServices:
-      - serviceName: {{ .Values.air.Name }}
-        serviceType: {{ .Values.air.Type }}
-        serviceUrl: {{.Values.air.Url }}
-        healthcheckPort: {{.Values.air.HealthcheckPort }}
-        grpcPort: {{.Values.air.GrpcPort }}
+      - serviceName: {{ .Values.gateway.Name }}
+        serviceType: {{ .Values.gateway.Type }}
+        serviceUrl: {{.Values.gateway.Url }}
+        healthcheckPort: {{.Values.gateway.HealthcheckPort }}
+        httpPort: {{.Values.gateway.HttpPort }}
       - serviceName: {{ .Values.bike.Name }}
         serviceType: {{ .Values.bike.Type }}
         serviceUrl: {{.Values.bike.Url }}

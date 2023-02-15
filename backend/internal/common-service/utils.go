@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/Eytins/sustainable-city-management/backend/config"
+	"github.com/Eytins/sustainable-city-management/backend/pkg/middlewares"
 )
 
 func GetMicroserviceName(cfg *config.Config) string {
@@ -17,4 +18,13 @@ func (a *service) waitShootDown(duration time.Duration) {
 		time.Sleep(duration)
 		a.doneCh <- struct{}{}
 	}()
+}
+func (a *service) getHttpMetricsCb() middlewares.MiddlewareMetricsCb {
+	return func(err error) {
+		if err != nil {
+			a.metrics.ErrorHttpRequests.Inc()
+		} else {
+			a.metrics.SuccessHttpRequests.Inc()
+		}
+	}
 }

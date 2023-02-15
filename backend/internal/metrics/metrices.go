@@ -9,7 +9,7 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-type SearchMicroserviceMetrics struct {
+type MicroserviceMetrics struct {
 	SuccessHttpRequests prometheus.Counter
 	ErrorHttpRequests   prometheus.Counter
 
@@ -17,8 +17,8 @@ type SearchMicroserviceMetrics struct {
 	ErrorGrpcRequests   prometheus.Counter
 }
 
-func NewSearchMicroserviceMetrics(cfg *config.Config) *SearchMicroserviceMetrics {
-	return &SearchMicroserviceMetrics{
+func NewMicroserviceMetrics(cfg *config.Config) *MicroserviceMetrics {
+	return &MicroserviceMetrics{
 
 		SuccessHttpRequests: promauto.NewCounter(prometheus.CounterOpts{
 			Name: fmt.Sprintf("%s_success_http_requests_total", cfg.ServiceName),

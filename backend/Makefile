@@ -11,18 +11,18 @@ proto:
 
 .PHONY: docker
 docker-build:
-	docker build . -t shritesh99/air:latest
-	docker build . -t shritesh99/bin:latest
-	docker build . -t shritesh99/bus:latest
-	docker build . -t shritesh99/bike:latest
-	docker build . -t shritesh99/gateway:latest
+	docker build . -t asecr.azurecr.io/shritesh99/air:latest
+	docker build . -t asecr.azurecr.io/shritesh99/bin:latest
+	docker build . -t asecr.azurecr.io/shritesh99/bus:latest
+	docker build . -t asecr.azurecr.io/shritesh99/bike:latest
+	docker build . -t asecr.azurecr.io/shritesh99/gateway:latest
 
 docker-upload:
-	docker push shritesh99/air:latest
-	docker push shritesh99/bin:latest
-	docker push shritesh99/bus:latest
-	docker push shritesh99/bike:latest
-	docker push shritesh99/gateway:latest
+	docker push asecr.azurecr.io/shritesh99/air:latest
+	docker push asecr.azurecr.io/shritesh99/bin:latest
+	docker push asecr.azurecr.io/shritesh99/bus:latest
+	docker push asecr.azurecr.io/shritesh99/bike:latest
+	docker push asecr.azurecr.io/shritesh99/gateway:latest
 
 FILES := $(shell docker ps -aq)
 
@@ -30,16 +30,18 @@ down-local:
 	docker stop $(FILES)
 	docker rm $(FILES)
 
-develop:
-	docker-compose -f docker-compose.yaml up -d --build
+# develop:
+# 	docker-compose -f docker-compose.yaml up -d --build
 
 install_all:
 	kubens default
 	helm repo update
+	helm install monitoring prometheus-community/kube-prometheus-stack
 	helm install -f deployment/values.yaml sustinable-city-management deployment/
 
 uninstall_all:
 	kubens default
+	helm uninstall monitoring
 	helm uninstall sustinable-city-management
 
 port_forward_microservice:
@@ -48,3 +50,6 @@ port_forward_microservice:
 
 minikube_start:
 	minikube start --memory 16000 --cpus 4
+
+grafana_password:
+	kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo	

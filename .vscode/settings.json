@@ -1,3 +1,7 @@
 {
-	"C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools"
+	"C_Cpp.default.configurationProvider": "ms-vscode.makefile-tools",
+	"yaml.schemas": {
+		"file:///home/rxshri99/.vscode/extensions/atlassian.atlascode-3.0.1/resources/schemas/pipelines-schema.json": "bitbucket-pipelines.yml",
+		"https://json.schemastore.org/yamllint.json": "file:///home/rxshri99/WebProjects/sustainable-city-management/backend/deployment/values.yaml"
+	}
 }

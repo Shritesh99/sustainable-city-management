@@ -1,0 +1,32 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: sustinable-city-management
+    annotations:
+        nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+    ingressClassName: nginx
+    rules:
+        http:
+            paths:
+            - path: /
+                pathType: Prefix
+                backend:
+                    service:
+                        name: gateway-service
+                        port:
+                            number: http
+            - path: /prometheus
+                pathType: Exact
+                backend:
+                    service:
+                        name: prometheus-operated
+                        port: 
+                            name: http-web
+            - path: /grafana
+                pathType: Exact
+                backend:
+                    service:
+                        name: grafana
+                        port:
+                            name: http-web
