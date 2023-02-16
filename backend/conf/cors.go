@@ -10,7 +10,7 @@ func GetCorsConf() cors.Config {
 		AllowOrigins:     "*",
 		AllowMethods:     "GET,POST,HEAD,PUT,DELETE,PATCH",
 		AllowHeaders:     "Origin,Content-Type,Accept,Content-Length,Accept-Language,Accept-Encoding,Connection,Access-Control-Allow-Origin",
-		AllowCredentials: true,
+		AllowCredentials: false,
 		ExposeHeaders:    "",
 		MaxAge:           0,
 	}

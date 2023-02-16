@@ -82,7 +82,7 @@ ENTRYPOINT ["./hidocker"]
 
 ### Build
 ```
-docker build --tag hidocker:multistage -f Dockerfile.multistage .
+docker build --tag hidocker:multistage .
 ```
 
 ![Docker Image Compare](./image/docker_image_ls.png)
