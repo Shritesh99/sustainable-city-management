@@ -1,7 +1,31 @@
 import React, { useContext, useState } from 'react';
 import {TextInput, Button, TouchableOpacity, Text, View, StyleSheet} from 'react-native';
 import {AuthContext} from '../context/AuthContext';
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import axios from 'axios'
 
+
+//Axios Get Data Testing Success.
+//Now let's do Post 
+/*
+const AxiosToGetData = () => {
+    axios.get('https://jsonplaceholder.typicode.com/posts').then(response =>{
+        console.log('data:' , response.data)
+    })
+}
+*/
+
+const AxiosToSendDdata =(email, password) => {
+    axios.post('https://jsonplaceholder.typicode.com/todos',{email, password})
+    .then(response => {
+        let userInfo = response.data
+        console.log(userInfo)
+        AsyncStorage.setItem('Userinfo', JSON.stringify(userInfo))
+    })
+    .catch(e => {console.log(`register error ${e}`)})
+}
+
+ 
 //get the Navigation.js into LoginScreen Function.
 //Through {navigation}
 //onPress => navigation to Register
@@ -17,10 +41,10 @@ const LoginScreen = ({navigation}) => {
                 <Text>{val}</Text>
                 <TextInput style ={styles.input} value = {email} placeholder="Email Address" onChangeText ={text => setEmail(text)}/>
                 <TextInput style ={styles.input} value = {password} placeholder="password" onChangeText ={text => setPassword(text)} secureTextEntry />
-
-                <Button title="Sign In" />
+                <Button  title="Sign In" onPress={() => {AxiosToSendDdata(email, password)}}
+              />
                 <View style={{FlexDirection: 'row' , marginTop:30}}>
-                    <Text>Don't haaasffffffsveffff affffffn account? </Text>
+                    <Text>Don't have an acffcount? </Text>
                     <TouchableOpacity onPress= {() => navigation.navigate('Register')}>
                         <Text style = {styles.link}>Sign Up</Text>
                     </TouchableOpacity>
