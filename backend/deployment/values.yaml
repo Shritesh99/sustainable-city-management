@@ -3,7 +3,7 @@ gateway:
      Type: gateway
      Replicas: 1
      Url: http://gateway-microservice-service.default.svc.cluster.local
-     Image: asecr.azurecr.io/shritesh99/gateway:latest
+     Image: shritesh99/gateway:latest
      HttpPort: 8000
      MetricsPort: 8001
      HealthcheckPort: 8002
@@ -13,7 +13,7 @@ air:
      Type: service
      Replicas: 1
      Url: http://air-microservice-service.default.svc.cluster.local
-     Image: asecr.azurecr.io/shritesh99/air:latest
+     Image: shritesh99/air:latest
      GrpcPort: 4000
      MetricsPort: 4001
      HealthcheckPort: 4002
@@ -23,7 +23,7 @@ bike:
      Type: service
      Replicas: 1
      Url: http://bike-microservice-service.default.svc.cluster.local
-     Image: asecr.azurecr.io/shritesh99/bike:latest
+     Image: shritesh99/bike:latest
      GrpcPort: 5000
      MetricsPort: 5001
      HealthcheckPort: 5002
@@ -33,7 +33,7 @@ bus:
      Type: service
      Replicas: 1
      Url: http://bus-microservice-service.default.svc.cluster.local
-     Image: asecr.azurecr.io/shritesh99/bus:latest
+     Image: shritesh99/bus:latest
      GrpcPort: 6000
      MetricsPort: 6001
      HealthcheckPort: 6002
@@ -42,8 +42,8 @@ bin:
      Name: bin
      Type: service
      Replicas: 1
-     Url: http://bin-microservice-service.default.svc.cluster.local
-     Image: asecr.azurecr.io/shritesh99/bin:latest
+     Url: http://bin-microservice-service.
+     Image: shritesh99/bin:latest
      GrpcPort: 7000
      MetricsPort: 7001
      HealthcheckPort: 7002
@@ -79,8 +79,9 @@ http:
 prometheusPath: /metrics
 
 Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
+email: shritesh.sj99@sj@gmail.com
 
-ip: 20.231.93.38
+host: scm.rxshri99.eu1.k8g8.com
 
 prometheus:
      serviceMonitorNamespaceSelector:
@@ -135,8 +136,6 @@ prometheus:
 controller:
      service:
           enabled: true
-          annotations:
-               service.beta.kubernetes.io/azure-load-balancer-internal: "true"
      config:
           use-forwarded-headers: "true"
           server-tokens: "false"

@@ -11,18 +11,18 @@ proto:
 
 .PHONY: docker
 docker-build:
-	docker build . -t asecr.azurecr.io/shritesh99/air:latest
-	docker build . -t asecr.azurecr.io/shritesh99/bin:latest
-	docker build . -t asecr.azurecr.io/shritesh99/bus:latest
-	docker build . -t asecr.azurecr.io/shritesh99/bike:latest
-	docker build . -t asecr.azurecr.io/shritesh99/gateway:latest
+	docker build . -t shritesh99/air:latest
+	docker build . -t shritesh99/bin:latest
+	docker build . -t shritesh99/bus:latest
+	docker build . -t shritesh99/bike:latest
+	docker build . -t shritesh99/gateway:latest
 
 docker-upload:
-	docker push asecr.azurecr.io/shritesh99/air:latest
-	docker push asecr.azurecr.io/shritesh99/bin:latest
-	docker push asecr.azurecr.io/shritesh99/bus:latest
-	docker push asecr.azurecr.io/shritesh99/bike:latest
-	docker push asecr.azurecr.io/shritesh99/gateway:latest
+	docker push shritesh99/air:latest
+	docker push shritesh99/bin:latest
+	docker push shritesh99/bus:latest
+	docker push shritesh99/bike:latest
+	docker push shritesh99/gateway:latest
 
 FILES := $(shell docker ps -aq)
 
@@ -33,23 +33,41 @@ down-local:
 # develop:
 # 	docker-compose -f docker-compose.yaml up -d --build
 
-install_all:
+install_monitoring:
 	kubens default
 	helm repo update
 	helm install monitoring prometheus-community/kube-prometheus-stack
+
+create_namespace_certi:
+	kubectl create namespace cert-manager
+
+install_certi:
+	kubens cert-manager
+	helm repo update
+	helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.10.1 --set installCRDs=true
+
+install_ingress:
+	kubens default
+	helm repo update
+	helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true
+
+install_app:
+	kubens default
+	helm repo update
 	helm install -f deployment/values.yaml sustinable-city-management deployment/
 
-uninstall_all:
+uninstall_monitoring:
 	kubens default
 	helm uninstall monitoring
-	helm uninstall sustinable-city-management
 
-port_forward_microservice:
+uninstall_certi:
+	kubens cert-manager
+	helm uninstall cert-manager
+
+uninstall_ingress:
 	kubens default
-	kubectl port-forward services/gateway-microservice-service 8000:8000
+	helm uninstall nginx-ingress
 
-minikube_start:
-	minikube start --memory 16000 --cpus 4
-
-grafana_password:
-	kubectl get secret --namespace default grafana -o jsonpath="{.data.admin-password}" | base64 --decode ; echo	
+uninstall_app:
+	kubens default
+	helm uninstall sustinable-city-management

@@ -1,32 +1,45 @@
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-    name: sustinable-city-management
+    name: sustainable-city-management
     annotations:
-        nginx.ingress.kubernetes.io/rewrite-target: /
+        kubernetes.io/ingress.class: nginx
+        cert-manager.io/cluster-issuer: letsencrypt-prod
 spec:
-    ingressClassName: nginx
+    tls:
+    - hosts:
+      - scm.rxshri99.live
+      - prometheus-scm.rxshri99.live
+      - grafana-scm.rxshri99.live
+      secretName: scm-tls
     rules:
-        http:
+        - host: scm.rxshri99.live
+          http:
             paths:
-            - path: /
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: {{ .Values.gateway.Name }}-service
+                        port:
+                            name: http
+        - host: prometheus-scm.rxshri99.live
+          http:
+            paths:
+              - path: /
                 pathType: Prefix
                 backend:
-                    service:
-                        name: gateway-service
-                        port:
-                            number: http
-            - path: /prometheus
-                pathType: Exact
-                backend:
-                    service:
-                        name: prometheus-operated
-                        port: 
-                            name: http-web
-            - path: /grafana
-                pathType: Exact
-                backend:
-                    service:
-                        name: grafana
-                        port:
-                            name: http-web
+                  service:
+                      name: prometheus-operated
+                      port:
+                          name: http-web
+        - host: grafana-scm.rxshri99.live
+          http:
+            paths:                  
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                    name: monitoring-grafana
+                    port:
+                        name: http-web

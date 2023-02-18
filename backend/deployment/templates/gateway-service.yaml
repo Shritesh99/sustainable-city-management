@@ -53,7 +53,7 @@ metadata:
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-resource-group: ase
 spec:
-  type: Service
+  type: ClusterIP
   selector:
     app: {{ .Values.gateway.Name }}
   ports:
