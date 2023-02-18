@@ -1,14 +1,22 @@
 import "@/styles/globals.css";
 import { useEffect, useState } from "react";
-import { Layout, Loading } from "../components";
+import { Layout, Loading, LoginLayout } from "../components";
+import { useRouter } from "next/router";
 
 const MyApp = ({ Component, pageProps }) => {
 	const [loading, setLoading] = useState(true);
+	const router = useRouter();
+
 	useEffect(() => {
 		setLoading(false);
 	});
+
+	const isLoginPage = router.pathname.startsWith(`/user`);
+
+    const LayoutComponent = isLoginPage ? LoginLayout : Layout;
+
 	return (
-		<Layout>
+		<LayoutComponent>
 			{loading ? (
 				<Loading />
 			) : (
@@ -16,7 +24,7 @@ const MyApp = ({ Component, pageProps }) => {
 					<Component {...pageProps} />
 				</div>
 			)}
-		</Layout>
+		</LayoutComponent>
 	);
 };
 
