@@ -1,12 +1,17 @@
 import React from 'react';
 import MapView from 'react-native-maps';
-import { StyleSheet, View } from 'react-native';
-
+import { Button, StyleSheet, View } from 'react-native';
+import Spinner from 'react-native-loading-spinner-overlay'
 const HomeScreen = () => {
+  //Get the userInfo
+  const {userInfo, isLoading } = useContext(AuthContext)
 
     return (
         <View style={styles.container}>
-      <MapView style={styles.map} />
+          <Spinner visible ={isLoading} />
+          <Text style ={styles.welcome}>Welcome ! {userInfo.user.name}</Text>
+          <Button title ='Logout' color= 'red' />
+      
     </View>
     )
 
@@ -20,6 +25,10 @@ const styles = StyleSheet.create({
       width: '100%',
       height: '100%',
     },
+    welcome: {
+      fontSize : 18,
+      marginBottom: 8,
+    }
   });
 
 export default HomeScreen;
