@@ -11,7 +11,7 @@ spec:
           server: https://acme-v02.api.letsencrypt.org/directory
           # Name of a secret used to store the ACME account private key
           privateKeySecretRef:
-               name: letsencrypt-prod-private-key
+               name: scm-tls
           # Enable the HTTP-01 challenge provider
           http01:
                ingress:
