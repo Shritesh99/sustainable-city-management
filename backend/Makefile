@@ -46,6 +46,10 @@ install_certi:
 	helm repo update
 	helm install cert-manager jetstack/cert-manager --namespace cert-manager --version v1.10.1 --set installCRDs=true
 
+install_cretificate:
+	kubens cert-manager
+	kubectl apply -f certificate_issuer.yaml
+
 install_ingress:
 	kubens default
 	helm repo update

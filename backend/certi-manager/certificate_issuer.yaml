@@ -13,6 +13,7 @@ spec:
           privateKeySecretRef:
                name: scm-tls
           # Enable the HTTP-01 challenge provider
-          http01:
-               ingress:
-                    class: nginx
+          solvers:
+               - http01:
+                      ingress:
+                           class: nginx
