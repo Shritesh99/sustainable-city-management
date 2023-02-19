@@ -81,8 +81,6 @@ prometheusPath: /metrics
 Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
 email: shritesh.sj99@sj@gmail.com
 
-host: scm.rxshri99.eu1.k8g8.com
-
 prometheus:
      serviceMonitorNamespaceSelector:
           prometheus: default
@@ -132,10 +130,3 @@ prometheus:
                    port: metrics
                    path: /metrics
                    interval: 15s
-
-controller:
-     service:
-          enabled: true
-     config:
-          use-forwarded-headers: "true"
-          server-tokens: "false"

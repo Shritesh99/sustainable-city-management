@@ -38,7 +38,8 @@ install_monitoring:
 	helm repo update
 	helm install monitoring prometheus-community/kube-prometheus-stack
 
-create_namespace_certi:
+create_namespace:
+	kubectl create namespace ingress-nginx
 	kubectl create namespace cert-manager
 
 install_certi:
@@ -48,17 +49,22 @@ install_certi:
 
 install_cretificate:
 	kubens cert-manager
-	kubectl apply -f certificate_issuer.yaml
+	kubectl apply -f deployment/certificate_issuer.yaml
 
 install_ingress:
-	kubens default
+	kubens ingress-nginx
 	helm repo update
-	helm install nginx-ingress ingress-nginx/ingress-nginx --set controller.publishService.enabled=true
+	helm install nginx-ingress --namespace=ingress-nginx ingress-nginx/ingress-nginx --set controller.publishService.enabled=true 
 
 install_app:
 	kubens default
 	helm repo update
-	helm install -f deployment/values.yaml sustinable-city-management deployment/
+	helm install -f deployment/services/values.yaml scm deployment/services
+
+upgrade_app:
+	kubens default
+	helm repo update
+	helm upgrade -f deployment/services/values.yaml scm deployment/services
 
 uninstall_monitoring:
 	kubens default
@@ -69,9 +75,9 @@ uninstall_certi:
 	helm uninstall cert-manager
 
 uninstall_ingress:
-	kubens default
+	kubens ingress-nginx
 	helm uninstall nginx-ingress
 
 uninstall_app:
 	kubens default
-	helm uninstall sustinable-city-management
+	helm uninstall scm

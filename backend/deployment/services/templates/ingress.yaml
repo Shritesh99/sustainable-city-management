@@ -9,12 +9,12 @@ metadata:
 spec:
     tls:
     - hosts:
-      - scm.rxshri99.live
-      - prometheus-scm.rxshri99.live
-      - grafana-scm.rxshri99.live
+      - scm-backend.rxshri99.live
+      - scm-prometheus.rxshri99.live
+      - scm-grafana.rxshri99.live
       secretName: scm-tls
     rules:
-        - host: scm.rxshri99.live
+        - host: scm-backend.rxshri99.live
           http:
             paths:
                 - path: /
@@ -24,7 +24,7 @@ spec:
                         name: {{ .Values.gateway.Name }}-service
                         port:
                             name: http
-        - host: prometheus-scm.rxshri99.live
+        - host: scm-prometheus.rxshri99.live
           http:
             paths:
               - path: /
@@ -34,7 +34,7 @@ spec:
                       name: prometheus-operated
                       port:
                           name: http-web
-        - host: grafana-scm.rxshri99.live
+        - host: scm-grafana.rxshri99.live
           http:
             paths:                  
             - path: /
