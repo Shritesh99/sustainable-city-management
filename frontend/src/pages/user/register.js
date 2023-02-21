@@ -18,6 +18,9 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+import { userService } from "../../services";
+import { useForm } from 'react-hook-form';
+import { useRouter } from "next/router";
 
 const theme = createTheme();
 
@@ -28,15 +31,33 @@ const options = [
   "Bin Truck Company",
 ];
 
+const roleMap = {
+  "City Manager": 1,
+  "Bike Company": 2,
+  "Bus Company": 3,
+  "Bin Truck Company": 4
+}
+
 export default function SignUp() {
+  const router = useRouter();
   const [anchorEl, setAnchorEl] = React.useState(null);
-  const [selectedIndex, setSelectedIndex] = React.useState(1);
+  const [selectedIndex, setSelectedIndex] = React.useState(0);
+  // default value is city manager
+  const [selectedRole, setSelectedRole] = React.useState("City Manager");
+    // get functions to build form with useForm() hook
+  const { setError, formState } = useForm();
+  const { errors } = formState;
+
   const open = Boolean(anchorEl);
   const handleClickListItem = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
   const handleMenuItemClick = (event, index) => {
+    
+    const selectedText = event.currentTarget.outerText;
+    console.log({"select roleText": selectedText, "mapId": roleMap[selectedText]}); //
+    setSelectedRole(selectedText);
     setSelectedIndex(index);
     setAnchorEl(null);
   };
@@ -48,14 +69,37 @@ export default function SignUp() {
   const handleSubmit = async (event) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+    const firstName = formData.get("firstName");
+    const lastName = formData.get("lastName");
+    const email = formData.get("email");
+    const password = formData.get("password");
+
+    var roleId = roleMap[selectedRole];
+    console.log({"select roleId": roleId});
 
     console.log({
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
       email: formData.get("email"),
       password: formData.get("password"),
-      roleId: formData.get("roleId"),
+      roleId: roleId,
     });
+
+    if (firstName === "" || lastName === "" || email === "" || password === "") {
+      setError("registerError", { message: "Incomplete registration information" });
+    } else {
+      userService
+        .register(firstName, lastName, email, password, roleId)
+        .then(() => {
+          // goto login
+          router.push("/user/login");
+        })
+        .catch((error) => {
+          console.log({"error" : error.message})
+          setError("registerError", { message: error });
+        });
+    }
+    
   };
 
   return (
@@ -171,6 +215,10 @@ export default function SignUp() {
                 </div>
               </Grid>
             </Grid>
+            {errors.registerError &&
+                <div className="alert alert-danger mt-3 mb-0"><h6 style={{ color: 'red' }}>{errors.registerError?.message}</h6>
+                </div>
+            }
             <Button
               type="submit"
               fullWidth

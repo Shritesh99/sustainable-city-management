@@ -12,11 +12,54 @@ const userSubject = new BehaviorSubject(typeof window !== "undefined" && JSON.pa
 
 export const userService = {
     user: userSubject.asObservable(),
-    get userValue () { return userSubject.value },
+    get userValue () {
+        console.log(userSubject.value)
+        if (userSubject.value && (Date.now()/1000 > userSubject.value.expires)) {
+            // token expired
+            console.log("token expired")
+            localStorage.removeItem('user');
+            userSubject.next(null);
+            return null;
+        }
+        return userSubject.value 
+    },
+    register,
     login,
     logout,
     getAll
 };
+
+// FirstName string `json:"first_name"`
+// LastName  string `json:"last_name"`
+// RoleID    int32  `json:"role_id"`
+// Username     string `json:"username"`
+// Password  string `json:"password"`
+
+function register(firstName, lastName, username, password, roleId) {
+    console.log({
+        msg: "register fuction",
+        username: username,
+        password: password,
+    });
+
+    const reqBody = {
+        "first_name": firstName,
+        "last_name": lastName,
+        "role_id": roleId,
+        "username": username,
+        "password": password
+    }
+
+    return fetchWrapper.post(`${baseUrl}/register`, reqBody)
+        .then(resp => {
+            // publish user to subscribers and store in local storage to stay logged in between page refreshes
+            console.log({"register":JSON.stringify(resp)});
+            // userSubject.next(user);
+            // localStorage.setItem('user', JSON.stringify(user));
+
+            return resp;
+        });
+}
 
 function login(username, password) {
     console.log({
@@ -37,11 +80,12 @@ function login(username, password) {
 
 function logout() {
     // remove user from local storage, publish null to user subscribers and redirect to login page
+    fetchWrapper.get(`${baseUrl}/logout`)
     localStorage.removeItem('user');
     userSubject.next(null);
-    Router.push('/login');
+    Router.push('/user/login');
 }
 
 function getAll() {
-    return fetchWrapper.get(baseUrl);
+    return userSubject.value;
 }

@@ -15,7 +15,7 @@ import PersonIcon from "@mui/icons-material/Person";
 import { useEffect } from "react";
 import { useRouter } from "next/router";
 import { userService } from "../../services";
-import { useForm } from 'react-hook-form';
+import { useForm } from "react-hook-form";
 
 const theme = createTheme();
 
@@ -29,29 +29,9 @@ export default function LoginPage() {
     }
   }, []);
 
-  // form validation rules
-  // const validationSchema = Yup.object().shape({
-  //   username: Yup.string().required("Username is required"),
-  //   password: Yup.string().required("Password is required"),
-  // });
-  // const formOptions = { resolver: yupResolver(validationSchema) };
-
   // get functions to build form with useForm() hook
   const { setError, formState } = useForm();
   const { errors } = formState;
-
-//   function onSubmit({ username, password }) {
-//     return userService
-//       .login(username, password)
-//       .then(() => {
-//         // get return url from query parameters or default to '/'
-//         const returnUrl = router.query.returnUrl || "/";
-//         router.push(returnUrl);
-//       })
-//       .catch((error) => {
-//         setError("apiError", { message: error });
-//       });
-//   }
 
   const handleSubmit = async (event) => {
     event.preventDefault();
@@ -60,62 +40,25 @@ export default function LoginPage() {
     const username = formData.get("username");
     const password = formData.get("password");
 
-    // const data = {
-    //   username: formData.get("username"),
-    //   password: formData.get("password"),
-    // };
-
     console.log({
       username: username,
       password: password,
     });
 
-    userService
-      .login(username, password)
-      .then(() => {
-        // get return url from query parameters or default to '/'
-        const returnUrl = router.query.returnUrl || "/";
-        router.push(returnUrl);
-      })
-      .catch((error) => {
-        setError("apiError", { message: error });
-      });
-
-    // Send the data to the server in JSON format.
-    // const JSONdata = JSON.stringify(data);
-
-    // API endpoint where we send form data.
-    // const endpoint = "http://127.0.0.1:8080/login";
-
-    // Form the request for sending data to the server.
-    // const options = {
-    //   // The method is POST because we are sending data.
-    //   method: "POST",
-    //   // Tell the server we're sending JSON.
-    //   headers: {
-    //     "Content-Type": "application/json",
-    //   },
-    //   // Body of the request is the JSON data we created above.
-    //   body: JSONdata,
-    // };
-
-    // // Send the form data to our forms API on Vercel and get a response.
-    // const response = await fetch(endpoint, options);
-
-    // // Get the response data from server as JSON.
-    // // If server returns the name submitted, that means the form works.
-    // const status = response.status();
-
-    // if (status === 200) {
-    //   const result = response.json();
-    //   alert(`Login Success: ${result.data}`);
-
-    //   // get return url from query parameters or default to '/'
-    //   const returnUrl = router.query.returnUrl || "/";
-    //   router.push(returnUrl);
-    // } else {
-    //   alert(`apiError: ${result.data}`);
-    // }
+    if (username === "" || password === "") {
+      setError("loginError", { message: "Email and Password can't be empty" });
+    } else {
+      userService
+        .login(username, password)
+        .then(() => {
+          // get return url from query parameters or default to '/'
+          const returnUrl = router.query.returnUrl || "/";
+          router.push(returnUrl);
+        })
+        .catch((error) => {
+          setError("loginError", { message: error });
+        });
+    }
   };
 
   return (
@@ -166,6 +109,11 @@ export default function LoginPage() {
               control={<Checkbox value="remember" color="primary" />}
               label="Remember me"
             /> */}
+            {errors.loginError && (
+              <div className="alert alert-danger mt-3 mb-0">
+                <h6 style={{ color: "red" }}>{errors.loginError?.message}</h6>
+              </div>
+            )}
             <Button
               type="submit"
               fullWidth
@@ -186,9 +134,6 @@ export default function LoginPage() {
                 </Link>
               </Grid>
             </Grid>
-            {/* {errors.apiError &&
-                <div className="alert alert-danger mt-3 mb-0">{errors.apiError?.message}</div>
-            } */}
           </Box>
         </Box>
       </Container>

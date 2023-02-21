@@ -10,12 +10,9 @@ const MyApp = ({ Component, pageProps }) => {
 	const [authorized, setAuthorized] = useState(false);
 	
 	const router = useRouter();
-
+    console.log(Date.now()/1000)
 	useEffect(() => {
-		setLoading(false);
-	});
-
-	useEffect(() => {
+        setLoading(false);
         // run auth check on initial load
         authCheck(router.asPath);
 
@@ -36,10 +33,11 @@ const MyApp = ({ Component, pageProps }) => {
     function authCheck(url) {
         // redirect to login page if accessing a private page and not logged in 
 		const loginPath = '/user/login';
-		const publicPaths = [loginPath];
+        const registerPath = '/user/register';
+		const publicPaths = [loginPath, registerPath];
 
         const path = url.split('?')[0];
-        if (!userService.userValue && !publicPaths.includes(path)) {
+        if ((!userService.userValue || userService.userValue.expires < Date.now()/1000) && !publicPaths.includes(path)) {
             setAuthorized(false);
             router.push({
                 pathname: '/user/login',
