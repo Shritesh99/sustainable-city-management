@@ -39,6 +39,29 @@ Scan the QR code with Expo Go (Android) or the Camera app (iOS) installed.
 # React-native CIL
 
 ## Windows Environment
+Download NodeJS from https://nodejs.org/en/download/ and then install.
+Open CMD to confirm installation.
+```
+node -v #check if node is installed successfully
+npm -v #check if npm is installed successfully
+```
+Install expo-cli
+```
+npm install -g expo-cli
+```
+Install yarn
+```
+npm install --global yarn
+```
+Add expo to yarn
+```
+yarn add expo
+```
+Navigate to the client code existing directory and run below command to run the project
+```
+yarn start
+```
+
 reference website: [[React Native Environment setup]](https://reactnative.dev/docs/environment-setup); 
 
 Install packages: [[google drive]](https://drive.google.com/drive/folders/1MzehU88ySeDYO34NbUn-yCz0eEMMElct?usp=sharing); 
