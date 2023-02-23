@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { ProSidebar, Menu, MenuItem } from "react-pro-sidebar";
 import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import "react-pro-sidebar/dist/css/styles.css";
@@ -16,6 +16,7 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import Link from "next/link";
+import { userService } from '../../services';
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const colors = tokens();
@@ -39,6 +40,11 @@ const Sidebar = () => {
   const colors = tokens();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [selected, setSelected] = useState("Map");
+  const [user, setUsers] = useState(null);
+  useEffect(() => {
+    setUsers(userService.userValue)
+  }, []);
+
   return (
     <div>
       <Box
@@ -154,13 +160,15 @@ const Sidebar = () => {
                 selected={selected}
                 setSelected={setSelected}
               />
+              {user && user.roleId == 1 && 
               <Item
-                title="Geography Chart"
+                title="Only role==1"
                 to="/geography"
                 icon={<MapOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
+              }
             </Box>
           </Menu>
         </ProSidebar>
