@@ -24,7 +24,7 @@ const Topbar = () => {
   }, []);
 
   function logout() {
-    userService.logout();
+    userService.logout(user.email);
   }
 
   // only show nav when logged in

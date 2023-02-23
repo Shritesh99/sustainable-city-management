@@ -10,7 +10,6 @@ const MyApp = ({ Component, pageProps }) => {
 	const [authorized, setAuthorized] = useState(false);
 	
 	const router = useRouter();
-    console.log(Date.now()/1000)
 	useEffect(() => {
         setLoading(false);
         // run auth check on initial load

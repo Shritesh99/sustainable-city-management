@@ -40,11 +40,6 @@ export default function LoginPage() {
     const username = formData.get("username");
     const password = formData.get("password");
 
-    console.log({
-      username: username,
-      password: password,
-    });
-
     if (username === "" || password === "") {
       setError("loginError", { message: "Email and Password can't be empty" });
     } else {

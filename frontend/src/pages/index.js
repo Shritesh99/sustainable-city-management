@@ -6,7 +6,6 @@ export default function Home() {
 
   useEffect(() => {
     setUsers(userService.userValue)
-    console.log(user)
   }, []);
   
   return (

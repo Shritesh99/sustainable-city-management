@@ -13,7 +13,6 @@ const userSubject = new BehaviorSubject(typeof window !== "undefined" && JSON.pa
 export const userService = {
     user: userSubject.asObservable(),
     get userValue () {
-        console.log(userSubject.value)
         if (userSubject.value && (Date.now()/1000 > userSubject.value.expires)) {
             // token expired
             console.log("token expired")
@@ -36,12 +35,6 @@ export const userService = {
 // Password  string `json:"password"`
 
 function register(firstName, lastName, username, password, roleId) {
-    console.log({
-        msg: "register fuction",
-        username: username,
-        password: password,
-    });
-
     const reqBody = {
         "first_name": firstName,
         "last_name": lastName,
@@ -53,10 +46,6 @@ function register(firstName, lastName, username, password, roleId) {
     return fetchWrapper.post(`${baseUrl}/register`, reqBody)
         .then(resp => {
             // publish user to subscribers and store in local storage to stay logged in between page refreshes
-            console.log({"register":JSON.stringify(resp)});
-            // userSubject.next(user);
-            // localStorage.setItem('user', JSON.stringify(user));
-
             return resp;
         });
 }
@@ -67,10 +56,10 @@ function login(username, password) {
         username: username,
         password: password,
     });
+
     return fetchWrapper.post(`${baseUrl}/login`, { username, password })
         .then(user => {
             // publish user to subscribers and store in local storage to stay logged in between page refreshes
-            console.log(JSON.stringify(user));
             userSubject.next(user);
             localStorage.setItem('user', JSON.stringify(user));
 
@@ -78,12 +67,18 @@ function login(username, password) {
         });
 }
 
-function logout() {
-    // remove user from local storage, publish null to user subscribers and redirect to login page
-    fetchWrapper.get(`${baseUrl}/logout`)
-    localStorage.removeItem('user');
-    userSubject.next(null);
-    Router.push('/user/login');
+function logout(username) {
+    const reqBody = {
+        "username": username
+    }
+
+    return fetchWrapper.post(`${baseUrl}/logout`, reqBody)
+        .then(resp => {
+            //remove user from local storage, publish null to user subscribers and redirect to login page
+            localStorage.removeItem('user');
+            userSubject.next(null);
+            Router.push('/user/login');
+        });
 }
 
 function getAll() {

@@ -75,8 +75,7 @@ export default function SignUp() {
     const password = formData.get("password");
 
     var roleId = roleMap[selectedRole];
-    console.log({"select roleId": roleId});
-
+  
     console.log({
       firstName: formData.get("firstName"),
       lastName: formData.get("lastName"),
@@ -95,7 +94,7 @@ export default function SignUp() {
           router.push("/user/login");
         })
         .catch((error) => {
-          console.log({"error" : error.message})
+          console.log({"registerError" : error.message})
           setError("registerError", { message: error });
         });
     }
