@@ -17,5 +17,4 @@ export default function Home() {
             {!user && <div className="spinner-border spinner-border-sm"></div>}
         </div>
     </div>
-);
-}
+)};

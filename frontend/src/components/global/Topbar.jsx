@@ -9,8 +9,8 @@ import PopupState, { bindTrigger, bindMenu } from "material-ui-popup-state";
 import * as React from "react";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-import { useState, useEffect } from 'react';
-import { userService } from '../../services';
+import { useState, useEffect } from "react";
+import { userService } from "../../services";
 
 const Topbar = () => {
   //   const theme = useTheme();
@@ -29,15 +29,18 @@ const Topbar = () => {
 
   // only show nav when logged in
   if (!user) return null;
-
   return (
-    <Box display="flex" justifyContent="space-between" p={2}>
+    <Box
+      display="flex"
+      justifyContent="space-between"
+      p={2}
+      backgroundColor={colors.primary[400]}
+    >
       <Box
         display="flex"
         backgroundColor={colors.primary[400]}
         borderRadius="3px"
-      >
-      </Box>
+      ></Box>
 
       {/* Icons */}
       <Box display="flex">
@@ -47,7 +50,6 @@ const Topbar = () => {
         <IconButton>
           <SettingsOutlinedIcon />
         </IconButton>
-
         <PopupState variant="popover" popupId="demo-popup-menu">
           {(popupState) => (
             <React.Fragment>

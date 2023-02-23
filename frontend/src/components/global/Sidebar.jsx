@@ -4,11 +4,6 @@ import { Box, IconButton, Typography, useTheme } from "@mui/material";
 import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
-import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import CalendarTodayOutlinedIcon from "@mui/icons-material/CalendarTodayOutlined";
 import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
 import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
 import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
@@ -16,14 +11,16 @@ import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import Link from "next/link";
-import { userService } from '../../services';
+import { userService } from "../../services";
 
 const roleMap = {
-  1 : "City Manager",
-  2 : "Bike Company",
-  3 : "Bus Company",
-  4 : "Bin Truck Company"
-}
+  1: "City Manager",
+  2: "Bike Company",
+  3: "Bus Company",
+  4: "Bin Truck Company",
+};
+import AirIcon from "@mui/icons-material/Air";
+import styles from "./global.module.css";
 
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const colors = tokens();
@@ -49,9 +46,8 @@ const Sidebar = () => {
   const [selected, setSelected] = useState("Map");
   const [user, setUsers] = useState(null);
   useEffect(() => {
-    setUsers(userService.userValue)
+    setUsers(userService.userValue);
   }, []);
-
   return (
     <div>
       <Box
@@ -73,7 +69,7 @@ const Sidebar = () => {
           },
         }}
       >
-        <ProSidebar collapsed={isCollapsed}>
+        <ProSidebar collapsed={isCollapsed} className={styles.sidebar}>
           <Menu iconShape="square">
             <MenuItem
               onClick={() => setIsCollapsed(!isCollapsed)}
@@ -118,7 +114,7 @@ const Sidebar = () => {
                     fontWeight="bold"
                     sx={{ m: "10px 0 0 0" }}
                   >
-                    {user && (user.firstName + " " + user.lastName)}
+                    {user && user.firstName + " " + user.lastName}
                   </Typography>
                   <Typography variant="h5" color={colors.greenAccent[500]}>
                     {user && roleMap[user.roleId]}
@@ -132,6 +128,13 @@ const Sidebar = () => {
                 title="Dashboard"
                 to="/"
                 icon={<HomeOutlinedIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Air Quality"
+                to="/air"
+                icon={<AirIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
@@ -164,15 +167,15 @@ const Sidebar = () => {
                 selected={selected}
                 setSelected={setSelected}
               />
-              {user && user.roleId == 1 && 
-              <Item
-                title="Only role==1"
-                to="/geography"
-                icon={<MapOutlinedIcon />}
-                selected={selected}
-                setSelected={setSelected}
-              />
-              }
+              {user && user.roleId == 1 && (
+                <Item
+                  title="Only role==1"
+                  to="/geography"
+                  icon={<MapOutlinedIcon />}
+                  selected={selected}
+                  setSelected={setSelected}
+                />
+              )}
             </Box>
           </Menu>
         </ProSidebar>
