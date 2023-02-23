@@ -1,0 +1,33 @@
+global:
+     scrape_interval: 10s
+     evaluation_interval: 10s
+
+scrape_configs:
+     - job_name: "prometheus"
+       static_configs:
+            - targets: ["localhost:9090"]
+
+     - job_name: "system"
+       static_configs:
+            - targets: ["host.docker.internal:9101"]
+
+     - job_name: "gateway_service"
+       metrics_path: /metrics
+       static_configs:
+            - targets: ["host.docker.internal:8001"]
+     - job_name: "air_service"
+       metrics_path: /metrics
+       static_configs:
+            - targets: ["host.docker.internal:4001"]
+     - job_name: "bin_service"
+       metrics_path: /metrics
+       static_configs:
+            - targets: ["host.docker.internal:7001"]
+     - job_name: "bike_service"
+       metrics_path: /metrics
+       static_configs:
+            - targets: ["host.docker.internal:5001"]
+     - job_name: "bus_service"
+       metrics_path: /metrics
+       static_configs:
+            - targets: ["host.docker.internal:6001"]

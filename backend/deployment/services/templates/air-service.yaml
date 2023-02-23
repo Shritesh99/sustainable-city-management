@@ -11,6 +11,7 @@ spec:
       name: {{ .Values.air.Name }}
       labels:
         app: {{ .Values.air.Name }}
+        date: "{{ now | unixEpoch }}"
     spec:
       containers:
         - name: {{ .Values.air.Name }}
@@ -119,6 +120,10 @@ data:
       level: {{ .Values.logging.level }}
       devMode: {{ .Values.logging.devMode }}
       encoder: {{ .Values.logging.encoder }}
+    db:
+      DB_SOURCE: {{ .Values.db.DB_SOURCE }}
+      DB_DRIVER: {{ .Values.db.DB_DRIVER }}
+      AIR_TOKEN: {{ .Values.db.AIR_TOKEN }}
     ConnectedServices:
       - serviceName: {{ .Values.gateway.Name }}
         serviceType: {{ .Values.gateway.Type }}

@@ -1,0 +1,41 @@
+serviceName: air
+serviceType: service
+serviceUrl: http://localhost
+Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
+http:
+     port: 4000
+     development: true
+     basePath: /
+     debugErrorsResponse: true
+probes:
+     readinessPath: /live
+     livenessPath: /ready
+     port: 4002
+     prometheusPath: /metrics
+     prometheusPort: 4001
+     checkIntervalSeconds: 10
+logger:
+     level: info
+     devMode: false
+     encoder: json
+ConnectedServices:
+     - serviceName: gateway
+       serviceType: gateway
+       serviceUrl: http://localhost
+       healthcheckPort: 8002
+       httpPort: 8000
+     - serviceName: bike
+       serviceType: service
+       serviceUrl: http://localhost
+       healthcheckPort: 5002
+       grpcPort: 5000
+     - serviceName: bin
+       serviceType: service
+       serviceUrl: http://localhost
+       healthcheckPort: 7002
+       grpcPort: 7002
+     - serviceName: bus
+       serviceType: service
+       serviceUrl: http://localhost
+       healthcheckPort: 6002
+       grpcPort: 6000

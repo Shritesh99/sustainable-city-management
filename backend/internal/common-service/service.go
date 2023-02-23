@@ -2,6 +2,7 @@ package common_service
 
 import (
 	"context"
+	"database/sql"
 	"fmt"
 	"net"
 	"net/http"
@@ -11,14 +12,18 @@ import (
 	"time"
 
 	"github.com/Eytins/sustainable-city-management/backend/config"
+	"github.com/Eytins/sustainable-city-management/backend/internal/conf"
+	db "github.com/Eytins/sustainable-city-management/backend/internal/db/sqlc"
+	gateway_service "github.com/Eytins/sustainable-city-management/backend/internal/gateway-service"
 	"github.com/Eytins/sustainable-city-management/backend/internal/metrics"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/constants"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/logger"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/middlewares"
-	"github.com/gofiber/fiber"
-	"github.com/labstack/echo"
-
 	"github.com/go-playground/validator"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/labstack/echo"
+	_ "github.com/lib/pq"
 	"google.golang.org/grpc"
 )
 
@@ -43,6 +48,7 @@ type service struct {
 	metrics           *metrics.MicroserviceMetrics
 	metricsServer     *echo.Echo
 	middlewareManager middlewares.MiddlewareManager
+	gatewayService    *gateway_service.GatewayService
 }
 
 func NewService(log logger.Logger, cfg *config.Config) *service {
@@ -53,14 +59,20 @@ func (a *service) Run() error {
 	ctx, cancel := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM, syscall.SIGINT)
 	defer cancel()
 
+	conn, err := sql.Open(a.cfg.DB.DB_DRIVER, a.cfg.DB.DB_SOURCE)
+	if err != nil {
+		a.log.Errorf("(DB) err: %v", err)
+	}
+
 	a.middlewareManager = middlewares.NewMiddlewareManager(a.log, a.cfg, a.getHttpMetricsCb())
 	a.metrics = metrics.NewMicroserviceMetrics(a.cfg)
 	if a.cfg.ServiceType == "gateway" {
 		a.fiber = fiber.New()
+		a.fiber.Use(cors.New(conf.GetCorsConf()))
+		gateway := a.fiber.Group("/auth")
 
-		a.fiber.Get("/", func(c *fiber.Ctx) {
-			c.SendString("Hellow World")
-		})
+		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn))
+
 		go func() {
 			if err := a.fiber.Listen(fmt.Sprintf(":%s", a.cfg.Http.Port)); err != nil {
 				a.log.Errorf("(grpc server) err: %v", err)

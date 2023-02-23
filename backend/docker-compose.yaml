@@ -1,0 +1,127 @@
+version: "3.9"
+
+services:
+     gateway-service:
+          build:
+               context: .
+               dockerfile: Dockerfile
+          container_name: gateway-service
+          restart: always
+          ports:
+               - "8000:8000"
+               - "8001:8001"
+               - "8002:8002"
+          environment:
+               CONFIG_PATH: /config/gateway-config.yaml
+          depends_on:
+               - grafana
+               - node_exporter
+               - prometheus
+               - air-service
+               - bike-service
+               - bus-service
+               - bin-service
+          networks: ["scm"]
+
+     air-service:
+          build:
+               context: .
+               dockerfile: Dockerfile
+          container_name: air-service
+          restart: always
+          ports:
+               - "4000:4000"
+               - "4001:4001"
+               - "4002:4002"
+          environment:
+               CONFIG_PATH: /config/air-config.yaml
+          depends_on:
+               - grafana
+               - node_exporter
+               - prometheus
+          networks: ["scm"]
+
+     bin-service:
+          build:
+               context: .
+               dockerfile: Dockerfile
+          container_name: bin-service
+          restart: always
+          ports:
+               - "7000:7000"
+               - "7001:7001"
+               - "7002:7002"
+          environment:
+               CONFIG_PATH: /config/bin-config.yaml
+          depends_on:
+               - grafana
+               - node_exporter
+               - prometheus
+          networks: ["scm"]
+
+     bike-service:
+          build:
+               context: .
+               dockerfile: Dockerfile
+          container_name: bike-service
+          restart: always
+          ports:
+               - "5000:5000"
+               - "5001:5001"
+               - "5002:5002"
+          environment:
+               CONFIG_PATH: /config/bike-config.yaml
+          depends_on:
+               - grafana
+               - node_exporter
+               - prometheus
+          networks: ["scm"]
+
+     bus-service:
+          build:
+               context: .
+               dockerfile: Dockerfile
+          container_name: air-service
+          restart: always
+          ports:
+               - "6000:6000"
+               - "6001:6001"
+               - "6002:6002"
+          environment:
+               CONFIG_PATH: /config/bus-config.yaml
+          depends_on:
+               - grafana
+               - node_exporter
+               - prometheus
+          networks: ["scm"]
+
+     prometheus:
+          image: prom/prometheus:latest
+          container_name: prometheus
+          ports:
+               - "9090:9090"
+          command:
+               - --config.file=/etc/prometheus/prometheus.yml
+          volumes:
+               - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+          networks: ["scm"]
+
+     node_exporter:
+          container_name: node_exporter_container
+          restart: always
+          image: prom/node-exporter
+          ports:
+               - "9101:9100"
+          networks: ["scm"]
+
+     grafana:
+          container_name: grafana_container
+          restart: always
+          image: grafana/grafana
+          ports:
+               - "3005:3000"
+          networks: ["scm"]
+
+networks:
+     scm:
+          name: scm

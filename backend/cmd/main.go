@@ -11,7 +11,6 @@ import (
 )
 
 func main() {
-	defer honeybadger.Monitor()
 	log.Println("Starting...")
 
 	flag.Parse()
@@ -19,6 +18,9 @@ func main() {
 	cfg, err := config.InitConfig()
 	if err != nil {
 		log.Fatal(err)
+	}
+	if !cfg.Development {
+		defer honeybadger.Monitor()
 	}
 	honeybadger.SetContext(honeybadger.Context{"Service_Name": cfg.ServiceName})
 	if cfg.Development {

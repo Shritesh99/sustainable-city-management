@@ -25,6 +25,7 @@ type Config struct {
 	ConnectedServices   []Services       `mapstructure:"ConnectedServices"`
 	Honeybadger_API_KEY string           `mapstructure:"Honeybadger_API_KEY"`
 	Development         bool             `mapstructure:"development"`
+	DB                  DB               `mapstructure:"db"`
 }
 type Services struct {
 	ServiceName     string `mapstructure:"serviceName"`
@@ -48,6 +49,12 @@ type Http struct {
 type Timeouts struct {
 	PostgresInitMilliseconds int  `mapstructure:"postgresInitMilliseconds" validate:"required"`
 	PostgresInitRetryCount   uint `mapstructure:"postgresInitRetryCount" validate:"required"`
+}
+
+type DB struct {
+	DB_SOURCE string `mapstructure:"DB_SOURCE"`
+	DB_DRIVER string `mapstructure:"DB_DRIVER"`
+	DB_TOKEN  string `mapstructure:"AIR_TOKEN"`
 }
 
 var configPath string
