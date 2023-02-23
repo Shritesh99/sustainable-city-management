@@ -13,7 +13,6 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 )
 
-// Create the JWT key used to create the signature
 var jwtKey = []byte("tasty_kimchi")
 
 type RegisterRequest struct {
@@ -27,6 +26,11 @@ type RegisterRequest struct {
 // Create a struct to read the username and password from the request body
 type LoginRequest struct {
 	Password string `json:"password"`
+	Username string `json:"username"`
+}
+
+// Create a struct to read the username
+type LogoutRequest struct {
 	Username string `json:"username"`
 }
 
@@ -51,7 +55,7 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 		util.LogFatal("Failed to parse body:", err)
 	}
 
-	fmt.Printf("[Register] username: %s, password: %s\n", req.Username, req.Password)
+	// fmt.Printf("[Register] username: %s, password: %s\n", req.Username, req.Password)
 
 	argCheck := db.CreateLoginDetailParams{
 		Email:    req.Username,
@@ -74,7 +78,7 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 
 	user, err := server.store.CreateUser(context.Background(), arg)
 	if err != nil {
-		fmt.Printf("[CreateUser] %s\n", err)
+		// fmt.Printf("[CreateUser] %s\n", err)
 		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 
@@ -87,7 +91,7 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 
 	loginDetails, err := server.store.CreateLoginDetail(context.Background(), argLogin)
 	if err != nil {
-		fmt.Printf("[CreateLoginDetail] %s\n", err)
+		// fmt.Printf("[CreateLoginDetail] %s\n", err)
 		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(fiber.Map{
@@ -102,14 +106,14 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 
 // Create the Signin handler
 func (server *GatewayService) Login(c *fiber.Ctx) error {
-	fmt.Printf("[Login]\n")
+	// fmt.Printf("[Login]\n")
 	req := new(LoginRequest)
 	// Get the JSON body and decode into LoginRequest
 	if err := c.BodyParser(req); err != nil {
 		util.LogFatal("Failed to parse body:", err)
 	}
 
-	fmt.Printf("[Login] username: %s, password: %s\n", req.Username, req.Password)
+	// fmt.Printf("[Login] username: %s, password: %s\n", req.Username, req.Password)
 
 	arg := db.CreateLoginDetailParams{
 		Email:    req.Username,
@@ -118,14 +122,14 @@ func (server *GatewayService) Login(c *fiber.Ctx) error {
 
 	loginDetails, err := server.store.GetLoginDetail(context.Background(), arg.Email)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": true,
 			"msg":   "This email is not registered! Please check your email id or Register your email",
 		})
 	}
 
 	if loginDetails.Password != arg.Password {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": true,
 			"msg":   "Incorrect Password",
 		})
@@ -205,7 +209,7 @@ func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 
 	loginDetails, err := server.store.GetLoginDetail(context.Background(), arg.Email)
 	if err != nil {
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
 			"msg":   "This email is not registered! Please check your email id or Register your email",
 		})
@@ -225,11 +229,12 @@ func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 
 func (server *GatewayService) Logout(c *fiber.Ctx) error {
 	var tknStr = c.Get("jwtToken")
-	req := new(LoginRequest)
-	// Get the JSON body and decode into LoginRequest
+	req := new(LogoutRequest)
+	// Get the JSON body and decode into LogoutRequest
 	if err := c.BodyParser(req); err != nil {
 		util.LogFatal("Failed to parse body:", err)
 	}
+	fmt.Printf("[Logout] username: %s\n", req.Username)
 	var authorization = server.Authenticate(tknStr)
 	if !authorization {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
