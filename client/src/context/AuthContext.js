@@ -19,10 +19,10 @@ export const AuthProvider = ({children}) => {
  
     //Registration part
     // http://server/user/register
-    const register = async (name, email, password, category) => {
+    const register = async (first_name,last_name, email, password, category) => {
         setIsLoading(true)
         //const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256,`${password}`)
-        axios.post('http://10.0.2.2:3000/register',{name,email, password,category})
+        axios.post('http://10.0.2.2:3000/register',{first_name,last_name, email, password,category})
         .then(response => {
             let userInfo = response.data //save the user data into userInfo.
             setUserInfo(userInfo) //Change the userinfo by using setUserInfo
@@ -34,19 +34,8 @@ export const AuthProvider = ({children}) => {
         setIsLoading(false)})
         }
 
-   
 
     const hashedlogin =  async (email, password) => {
-        // const salt = bcrypt.genSaltSync(10);
-        // const hash = bcrypt.hashSync(password, salt)
-        //const salt = await BcryptReactNative.getSalt(10);
-        //const hash = await BcryptReactNative.hash(salt, password);
-        //const jwt = require('jsonwebtoken')
-        //const accessToken = jwt.sign(userInfo,process.env.ACCESS_TOKEN_SECRET)
-        //Authentication
-        
-        //const hashedpassword = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256,`${password}`)
-       
         setIsLoading(true) // Yes, Now it is loading
         // http://server/user/login
         await axios.post("http://10.0.2.2:3000/login",{email, password}, {withCredentials:true})
@@ -104,7 +93,6 @@ export const AuthProvider = ({children}) => {
 
     //Check out logged in or not
     const isLoggedIn = async () => {
-
         try {
             let userInfo = await AsyncStorage.getItem('userInfo')
             userInfo = JSON.parse(userInfo)
