@@ -12,7 +12,7 @@ const LoginScreen = ({navigation}) => {
     const [password, setPassword] = useState(null)
     // Just string values are comes from the Context but {register} function can not come over.
     //const valueFromAuthContext = useContext(AuthContext); //this value comes from AuthContext
-    const {isLoading, login} = useContext(AuthContext) //Get from AuthoContext
+    const {isLoading, hashedlogin, login} = useContext(AuthContext) //Get from AuthoContext
     
     return (
         
@@ -24,7 +24,8 @@ const LoginScreen = ({navigation}) => {
                
                 <TextInput style ={styles.input} value = {email} placeholder="Email Address" onChangeText ={text => setEmail(text)}/>
                 <TextInput style ={styles.input} value = {password} placeholder="password" onChangeText ={text => setPassword(text)} secureTextEntry />
-                <Button  title="Sign In" onPress={() => {login(email, password)}}/>
+                <Button  title="Sign In" onPress={() => {hashedlogin(email, password)}}/>
+                <Button  title="TEST" onPress={() => {login(email, password)}}/>
                
                 <View style={{FlexDirection: 'row' , marginTop:30}}>
                     <Text>Don't have an acffcount? </Text>
@@ -38,6 +39,9 @@ const LoginScreen = ({navigation}) => {
     )
 
 }
+/*
+Login request:"serverurl"/user/login Body : {"username": xyz,}
+*/
 // Cover the whole page : container
 // wrapper for width 
 // input for textinput and sign in button
@@ -65,8 +69,4 @@ const styles = StyleSheet.create({
 })
 
 export default LoginScreen;
-
-/*
-  <TouchableOpacity onPress= {() => navigation.navigate('Home')}>
-                        <Text style = {styles.link}>[Test] To the MAP</Text>
-                    </TouchableOpacity>*/
+ 

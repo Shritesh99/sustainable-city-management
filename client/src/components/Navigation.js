@@ -1,5 +1,5 @@
 
-import {Text, View} from 'react-native';
+ 
 import React, { useContext, useState } from 'react';
 //NAvigationContainer is a component which manages our navigation tree and has navigation state.
 import { NavigationContainer } from '@react-navigation/native';
@@ -10,25 +10,27 @@ import HomeScreen from '../screens/HomeScreen';
 import LoginScreen from '../screens/LoginScreen';
 import RegisterScreen from '../screens/RegisterScreen';
 import {AuthContext} from '../context/AuthContext';
- 
+import TestScreen from '../screens/TestScreen';
 const Stack = createNativeStackNavigator();
  
 const Navigation = () => {
     const {userInfo} = useContext(AuthContext)
      
-
+    //Accessing with accessToken
     return (
+   
        <NavigationContainer>
         <Stack.Navigator>
-            {userInfo.access_token ? (
-            <Stack.Screen name="Home" component={HomeScreen} />
+            {userInfo.accessToken ? (
+                
+           <Stack.Screen name="Test" component={TestScreen} />
             ) :( <>
                 <Stack.Screen name="Login" component={LoginScreen} options ={{headerShown: false}} />
                 <Stack.Screen name="Register" component={RegisterScreen} options ={{headerShown: false}}/>
                 </>)}
-      
         </Stack.Navigator>
        </NavigationContainer>
+      
     )
 
 }

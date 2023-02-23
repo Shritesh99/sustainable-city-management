@@ -3,17 +3,17 @@ import React, {useContext} from 'react';
 import {Button, Text, View} from 'react-native';
 import {AuthContext} from '../context/AuthContext';
  
-const HomeScreen = () => {
+const TestScreen = () => {
 
  
   //Get the userInfo
-  const {userInfo,logout } = useContext(AuthContext)
+  const {userInfo } = useContext(AuthContext)
 
     return (
       <View>
-      <Text>Welcome {userInfo.email}</Text>
-      <Button title="Logout" color="red" onPress={logout} />
+      <Text>TEST for map {userInfo.email}</Text>
+       
     </View>
     )
 }
-export default HomeScreen;
+export default TestScreen;

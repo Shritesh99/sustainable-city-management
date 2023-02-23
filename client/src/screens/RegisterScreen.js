@@ -6,11 +6,12 @@ import {SelectList} from 'react-native-dropdown-select-list'
  
 //Beginning of RegisterScreen
 const RegisterScreen = ({navigation}) => {
-  const [name, setName] = useState(null);
+  const [first_name, setFirstname] = useState(null);
+  const [last_name, setLastname] = useState(null);
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
   const [category, setCategory] = useState("");
- 
+  
   const data = [
     {key: '1', value:'Bus'},
     {key: '2', value:'Air'},
@@ -31,9 +32,16 @@ const RegisterScreen = ({navigation}) => {
       
         <TextInput
           style={styles.input}
-          value={name}
-          placeholder="Enter name"
-          onChangeText={text => setName(text)}
+          value={first_name}
+          placeholder="Enter first name"
+          onChangeText={text => setFirstname(text)}
+        />
+
+        <TextInput
+          style={styles.input}
+          value={last_name}
+          placeholder="Enter last name"
+          onChangeText={text => setLastname(text)}
         />
 
         <TextInput
@@ -63,7 +71,7 @@ const RegisterScreen = ({navigation}) => {
       
         <Button
           title="Register"
-          onPress={() => register(name, email, password, category)
+          onPress={() => register(first_name,last_name, category,email, password)
             }
         />
 
@@ -100,4 +108,3 @@ const styles = StyleSheet.create({
 });
 
 export default RegisterScreen;
- 
