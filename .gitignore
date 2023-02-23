@@ -33,3 +33,7 @@ yarn-error.log*
 
 yarn.lock
 .expo
+
+**/.idea
+**/package-lock.json
+**/yarn.lock
