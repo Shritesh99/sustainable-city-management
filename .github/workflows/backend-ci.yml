@@ -3,12 +3,12 @@ name: Backend-CI
 on:
      push:
           branches:
-               - backend
+               - backend-new
           paths:
                - "backend/*"
      pull_request:
           branches:
-               - backend
+               - backend-new
           paths:
                - "backend/*"
      workflow_dispatch:
@@ -21,7 +21,7 @@ jobs:
                - name: Checkout backend
                  uses: actions/checkout@v2
                  with:
-                      ref: backend
+                      ref: backend-new
 
                - name: Log in to Docker Hub
                  uses: docker/login-action@v2
