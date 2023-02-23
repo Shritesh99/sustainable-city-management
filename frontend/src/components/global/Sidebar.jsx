@@ -18,6 +18,13 @@ import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import Link from "next/link";
 import { userService } from '../../services';
 
+const roleMap = {
+  1 : "City Manager",
+  2 : "Bike Company",
+  3 : "Bus Company",
+  4 : "Bin Truck Company"
+}
+
 const Item = ({ title, to, icon, selected, setSelected }) => {
   const colors = tokens();
   return (
@@ -83,9 +90,6 @@ const Sidebar = () => {
                   alignItems="center"
                   ml="15px"
                 >
-                  <Typography variant="h3" color={colors.grey[100]}>
-                    ADMINS
-                  </Typography>
                   <IconButton onClick={() => setIsCollapsed(!isCollapsed)}>
                     <MenuOutlinedIcon />
                   </IconButton>
@@ -114,10 +118,10 @@ const Sidebar = () => {
                     fontWeight="bold"
                     sx={{ m: "10px 0 0 0" }}
                   >
-                    Ed Roh
+                    {user && (user.firstName + " " + user.lastName)}
                   </Typography>
                   <Typography variant="h5" color={colors.greenAccent[500]}>
-                    VP Fancy Admin
+                    {user && roleMap[user.roleId]}
                   </Typography>
                 </Box>
               </Box>
