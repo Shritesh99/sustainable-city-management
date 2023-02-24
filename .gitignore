@@ -1,1 +1,8 @@
 **/.DS_Store
+**/.idea/
+node_modules/
+package-lock.json
+package.json
+.github/
+.vscode/
+.expo/
