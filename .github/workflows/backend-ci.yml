@@ -18,10 +18,8 @@ jobs:
           runs-on: ubuntu-latest
           environment: backend
           steps:
-               - name: Checkout backend
+               - name: Checkout main
                  uses: actions/checkout@v2
-                 with:
-                      ref: backend-new
 
                - name: Log in to Docker Hub
                  uses: docker/login-action@v2
@@ -50,9 +48,9 @@ jobs:
                - name: Stop App
                  run: |
                       cd backend
-                      make uninstall_app
+                      make ci_uninstall_app
 
                - name: Run App
                  run: |
                       cd backend
-                      make install_app
+                      make ci_install_app

@@ -81,3 +81,9 @@ uninstall_ingress:
 uninstall_app:
 	kubens default
 	helm uninstall scm
+
+ci_install_app
+	helm install -f deployment/services/values.yaml scm deployment/services --namespace default
+
+ci_uninstall_app
+	helm uninstall scm
