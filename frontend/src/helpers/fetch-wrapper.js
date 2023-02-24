@@ -60,11 +60,11 @@ function _delete(url) {
 function authHeader(url) {
     // return auth header with jwt if user is logged in and request is to the api url
     const user = userService.userValue;
-    const isLoggedIn = user && user.jwtToken;
+    const isLoggedIn = user && user.Token;
     const isApiUrl = url.startsWith(publicRuntimeConfig.apiUrl);
     if (isLoggedIn && isApiUrl) {
-        // console.log({'authHeader -> user.jwtToken': user.jwtToken});
-        return { jwtToken: `${user.jwtToken}` };
+        // console.log({'authHeader -> user.Token': user.Token});
+        return { Token: `${user.Token}` };
     } else {
         return {};
     }
@@ -76,7 +76,7 @@ function handleResponse(response) {
         const data = text && JSON.parse(text);
         
         const user = userService.userValue;
-        const isLoggedIn = user && user.jwtToken;
+        const isLoggedIn = user && user.Token;
 
         if (!response.ok && isLoggedIn) {
             if ([401, 403].includes(response.status) && userService.userValue) {

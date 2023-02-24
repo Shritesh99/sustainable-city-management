@@ -5,7 +5,7 @@ import Router from 'next/router'
 import { fetchWrapper } from '../helpers';
 
 const { publicRuntimeConfig } = getConfig();
-const baseUrl = `${publicRuntimeConfig.apiUrl}/user`;
+const baseUrl = `${publicRuntimeConfig.apiUrl}/auth`;
 
 // https://stackoverflow.com/questions/49411796/how-do-i-detect-whether-i-am-on-server-on-client-in-next-js
 const userSubject = new BehaviorSubject(typeof window !== "undefined" && JSON.parse(localStorage.getItem('user')));
