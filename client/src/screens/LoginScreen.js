@@ -8,11 +8,11 @@ import Spinner from 'react-native-loading-spinner-overlay'
 const LoginScreen = ({navigation}) => {
     // Input data on the textInput
     // Nothing is in the email as a default
-    const [email, setEmail] = useState(null)
+    const [username, setUsername] = useState(null)
     const [password, setPassword] = useState(null)
     // Just string values are comes from the Context but {register} function can not come over.
     //const valueFromAuthContext = useContext(AuthContext); //this value comes from AuthContext
-    const {isLoading, hashedlogin, login} = useContext(AuthContext) //Get from AuthoContext
+    const {isLoading, hashedlogin} = useContext(AuthContext) //Get from AuthoContext
     
     return (
         
@@ -22,13 +22,13 @@ const LoginScreen = ({navigation}) => {
             <View style={styles.wrapper}>
                 
                
-                <TextInput style ={styles.input} value = {email} placeholder="Email Address" onChangeText ={text => setEmail(text)}/>
+                <TextInput style ={styles.input} value = {username} placeholder="Email Address" onChangeText ={text => setUsername(text)}/>
                 <TextInput style ={styles.input} value = {password} placeholder="password" onChangeText ={text => setPassword(text)} secureTextEntry />
-                <Button  title="Sign In" onPress={() => {hashedlogin(email, password)}}/>
-                <Button  title="TEST" onPress={() => {login(email, password)}}/>
+                <Button  title="Sign In" onPress={() => {hashedlogin(username, password)}}/>
+          
                
                 <View style={{FlexDirection: 'row' , marginTop:30}}>
-                    <Text>Don't have an acffcount? </Text>
+                    <Text>Don't have an account? </Text>
                     <TouchableOpacity onPress= {() => navigation.navigate('Register')}>
                         <Text style = {styles.link}>Sign Up</Text>
                     </TouchableOpacity>

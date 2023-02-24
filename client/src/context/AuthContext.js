@@ -18,11 +18,22 @@ export const AuthProvider = ({children}) => {
     //const bcrypt = require('bcryptjs') // hash + salt
  
     //Registration part
-    // http://server/user/register
-    const register = async (first_name,last_name, email, password, category) => {
+        //(first_name,last_name,username, password, role_id)
+    const register = async (first_name,last_name, username, password, role_id) => {
         setIsLoading(true)
         //const hash = await Crypto.digestStringAsync(Crypto.CryptoDigestAlgorithm.SHA256,`${password}`)
-        axios.post('http://10.0.2.2:3000/register',{first_name,last_name, email, password,category})
+        const reqBody = {
+            "first_name" : first_name,
+            "last_name" : last_name,
+            "username" : username,
+            "password" : password,
+            "role_id" : role_id
+
+        }
+        console.log(reqBody)
+        const registerAPI = "https://scm-backend.rxshri99.live/auth/register"
+        axios.post(registerAPI,
+        reqBody)
         .then(response => {
             let userInfo = response.data //save the user data into userInfo.
             setUserInfo(userInfo) //Change the userinfo by using setUserInfo
@@ -35,10 +46,13 @@ export const AuthProvider = ({children}) => {
         }
 
 
-    const hashedlogin =  async (email, password) => {
+    const hashedlogin =  async (username, password) => {
         setIsLoading(true) // Yes, Now it is loading
-        // http://server/user/login
-        await axios.post("http://10.0.2.2:3000/login",{email, password}, {withCredentials:true})
+        // http://server/auth/login
+        
+
+        await axios.post("https://scm-backend.rxshri99.live/auth/login",
+        {username, password})
         .then(response => {
             let userInfo = response.data
             setUserInfo(userInfo) // ?

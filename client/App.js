@@ -9,6 +9,7 @@ const App = () => {
     useEffect(()=>{
         async function getData(){
             try{
+                // 127.0.0.1/user/login
                 const backendData = await axios.get("http://10.0.2.2:3000/test",{},{
                 })
                 

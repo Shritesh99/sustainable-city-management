@@ -8,15 +8,15 @@ import {SelectList} from 'react-native-dropdown-select-list'
 const RegisterScreen = ({navigation}) => {
   const [first_name, setFirstname] = useState(null);
   const [last_name, setLastname] = useState(null);
-  const [email, setEmail] = useState(null);
+  const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
-  const [category, setCategory] = useState("");
+  const [role_id, setRoleid] = useState("");
   
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const data = [
-    {key: '1', value:'Bus'},
-    {key: '2', value:'Air'},
-    {key: '3', value:'Bike'},
-    {key: '4', value:'Test'},
+    {key: 1, value:'Bus'},
+    {key: 4, value:'Car'},
+     
     
   ]
   // Get this function from the AuthContext.
@@ -46,9 +46,9 @@ const RegisterScreen = ({navigation}) => {
 
         <TextInput
           style={styles.input}
-          value={email}
+          value={username}
           placeholder="Enter email"
-          onChangeText={text => setEmail(text)}
+          onChangeText={text => setUsername(text)}
         />
 
         <TextInput
@@ -63,15 +63,18 @@ const RegisterScreen = ({navigation}) => {
           value={data}
           style={{flexDirection: 'row', marginTop: 20}}
           search ={false}
-          setSelected = {(val) => setCategory(val)}
+          setSelected = {(val) => setRoleid(val)}
           data = {data}
           placeholder ={"Select Category"}
-          defaultOption = {{key: '1', value:'Bus'}}
+          defaultOption = {{key: 1, value:'Bus'}}
         />
       
         <Button
           title="Register"
-          onPress={() => register(first_name,last_name, category,email, password)
+          onPress={() => {
+            register(first_name,last_name,username, password, role_id),
+            navigation.navigate('Login')
+          }
             }
         />
 
@@ -84,7 +87,7 @@ const RegisterScreen = ({navigation}) => {
       </View>
     </View>
   );
-};
+}; 
 
 const styles = StyleSheet.create({
   container: {

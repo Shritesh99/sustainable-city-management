@@ -21,7 +21,7 @@ const Navigation = () => {
    
        <NavigationContainer>
         <Stack.Navigator>
-            {userInfo.accessToken ? (
+            {userInfo.jwtToken ? (
            <Stack.Screen name="Test" component={TestScreen} />
             ) :( <>
                 <Stack.Screen name="Login" component={LoginScreen} options ={{headerShown: false}} />
