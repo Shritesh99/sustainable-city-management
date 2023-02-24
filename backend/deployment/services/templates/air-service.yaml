@@ -1,0 +1,147 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.air.Name }}
+  labels:
+    app: {{ .Values.air.Name }}
+spec:
+  replicas: {{ .Values.air.Replicas }}
+  template:
+    metadata:
+      name: {{ .Values.air.Name }}
+      labels:
+        app: {{ .Values.air.Name }}
+        date: "{{ now | unixEpoch }}"
+    spec:
+      containers:
+        - name: {{ .Values.air.Name }}
+          image: {{.Values.air.Image }}
+          imagePullPolicy: Always
+          ports:
+            - containerPort: {{.Values.air.GrpcPort }}
+              name: grpc
+              hostPort: {{.Values.air.GrpcPort }}
+            - containerPort: {{.Values.air.MetricsPort }}
+              name: metrics
+              hostPort: {{.Values.air.MetricsPort }}
+            - containerPort: {{.Values.air.HealthcheckPort }}
+              name: healthcheck
+              hostPort: {{.Values.air.HealthcheckPort }}
+          env:
+            - name: CONFIG_PATH
+              value: "/air-service/air-config.yaml"
+          volumeMounts:
+            - name: config
+              mountPath: "/air-service"
+      restartPolicy: Always
+      terminationGracePeriodSeconds: {{ .Values.service.TerminationGracePeriodSeconds }}
+      volumes:
+        - name: config
+          configMap:
+            name: {{ .Values.air.Name }}-config-map
+            items:
+              - key: air-config.yaml
+                path: air-config.yaml
+  selector:
+    matchLabels:
+      app: {{ .Values.air.Name }}
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.air.Name }}-service
+  labels:
+    app: {{ .Values.air.Name }}
+spec:
+  type: ClusterIP
+  selector:
+    app: {{ .Values.air.Name }}
+  ports:
+    - name: grpc
+      port: {{.Values.air.GrpcPort }}
+      protocol: TCP
+      targetPort: grpc
+    - name: healthcheck
+      port: {{.Values.air.HealthcheckPort }}
+      protocol: TCP
+      targetPort: healthcheck
+    - name: metrics
+      port: {{.Values.air.MetricsPort }}
+      protocol: TCP
+      targetPort: metrics
+
+---
+
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  labels:
+    release: monitoring
+  name: {{ .Values.air.Name }}-service-monitor
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Values.air.Name }}
+  endpoints:
+    - interval: 10s
+      port: metrics
+      path: {{.Values.prometheusPath }}
+  namespaceSelector:
+    matchNames:
+      - default
+
+---
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.air.Name }}-config-map
+data:
+  air-config.yaml: |
+    serviceName: {{ .Values.air.Name }}
+    serviceType: {{ .Values.air.Type }}
+    serviceUrl: {{.Values.air.Url }}
+    Honeybadger_API_KEY: {{ .Values.Honeybadger_API_KEY }}
+    grpc:
+      port: {{ .Values.air.GrpcPort }}
+      development: {{ .Values.grpc.development }}
+    probes:
+      readinessPath: {{ .Values.service.ReadinessProbePath }}
+      livenessPath: {{ .Values.service.LivenessProbePath }}
+      port: :{{ .Values.air.HealthcheckPort }}
+      pprof: :6001
+      prometheusPath: {{ .Values.prometheusPath }}
+      prometheusPort: :{{.Values.air.MetricsPort }}
+      checkIntervalSeconds: 10
+    logger:
+      level: {{ .Values.logging.level }}
+      devMode: {{ .Values.logging.devMode }}
+      encoder: {{ .Values.logging.encoder }}
+    db:
+      DB_SOURCE: {{ .Values.db.DB_SOURCE }}
+      DB_DRIVER: {{ .Values.db.DB_DRIVER }}
+      AIR_TOKEN: {{ .Values.db.AIR_TOKEN }}
+    ConnectedServices:
+      - serviceName: {{ .Values.gateway.Name }}
+        serviceType: {{ .Values.gateway.Type }}
+        serviceUrl: {{.Values.gateway.Url }}
+        healthcheckPort: {{.Values.gateway.HealthcheckPort }}
+        httpPort: {{.Values.gateway.HttpPort }}
+      - serviceName: {{ .Values.bike.Name }}
+        serviceType: {{ .Values.bike.Type }}
+        serviceUrl: {{.Values.bike.Url }}
+        healthcheckPort: {{.Values.bike.HealthcheckPort }}
+        grpcPort: {{.Values.bike.GrpcPort }}
+      - serviceName: {{ .Values.bin.Name }}
+        serviceType: {{ .Values.bin.Type }}
+        serviceUrl: {{.Values.bin.Url }}
+        healthcheckPort: {{.Values.bin.HealthcheckPort }}
+        grpcPort: {{.Values.bin.GrpcPort }}
+      - serviceName: {{ .Values.bus.Name }}
+        serviceType: {{ .Values.bus.Type }}
+        serviceUrl: {{.Values.bus.Url }}
+        healthcheckPort: {{.Values.bus.HealthcheckPort }}
+        grpcPort: {{.Values.bus.GrpcPort }}

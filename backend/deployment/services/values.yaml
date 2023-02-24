@@ -1,0 +1,136 @@
+gateway:
+     Name: gateway
+     Type: gateway
+     Replicas: 1
+     Url: http://gateway-microservice-service.default.svc.cluster.local
+     Image: shritesh99/gateway:latest
+     HttpPort: 8000
+     MetricsPort: 8001
+     HealthcheckPort: 8002
+
+air:
+     Name: air
+     Type: service
+     Replicas: 1
+     Url: http://air-microservice-service.default.svc.cluster.local
+     Image: shritesh99/air:latest
+     GrpcPort: 4000
+     MetricsPort: 4001
+     HealthcheckPort: 4002
+
+bike:
+     Name: bike
+     Type: service
+     Replicas: 1
+     Url: http://bike-microservice-service.default.svc.cluster.local
+     Image: shritesh99/bike:latest
+     GrpcPort: 5000
+     MetricsPort: 5001
+     HealthcheckPort: 5002
+
+bus:
+     Name: bus
+     Type: service
+     Replicas: 1
+     Url: http://bus-microservice-service.default.svc.cluster.local
+     Image: shritesh99/bus:latest
+     GrpcPort: 6000
+     MetricsPort: 6001
+     HealthcheckPort: 6002
+
+bin:
+     Name: bin
+     Type: service
+     Replicas: 1
+     Url: http://bin-microservice-service.
+     Image: shritesh99/bin:latest
+     GrpcPort: 7000
+     MetricsPort: 7001
+     HealthcheckPort: 7002
+
+service:
+     LivenessProbePath: /live
+     ReadinessProbePath: /ready
+     InitialDelaySeconds: 60
+     PeriodSeconds: 60
+     TerminationGracePeriodSeconds: 600
+
+logging:
+     level: info
+     devMode: false
+     encoder: json
+
+resources:
+     requests:
+          memory: "256Mi"
+          cpu: "300m"
+     limits:
+          memory: "1000Mi"
+          cpu: "1000m"
+
+grpc:
+     development: true
+
+http:
+     development: true
+     basePath: /
+     debugErrorsResponse: true
+
+prometheusPath: /metrics
+
+Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
+email: shritesh.sj99@sj@gmail.com
+db:
+     DB_SOURCE: postgresql://group_admin:group007@sustainable-city-management.cdxqy8kbzxjs.eu-west-1.rds.amazonaws.com:5432/masterdb?sslmode=disable
+     DB_DRIVER: postgres
+     AIR_TOKEN: d3f5d975618dc64e01ed3df11688671d3e61dd7f
+
+prometheus:
+     serviceMonitorNamespaceSelector:
+          prometheus: default
+     additionalServiceMonitors:
+          - name: gateway-monitor
+            selector:
+            matchLabels:
+                 app: gateway-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s
+          - name: air-monitor
+            selector:
+                 matchLabels:
+                      app: air-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s
+          - name: bin-monitor
+            selector:
+                 matchLabels:
+                      app: bin-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s
+          - name: bike-monitor
+            selector:
+                 matchLabels:
+                      app: bike-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s
+          - name: bus-monitor
+            selector:
+                 matchLabels:
+                      app: bus-service
+            endpoints:
+                 - name: metrics
+                   port: metrics
+                   path: /metrics
+                   interval: 15s

@@ -1,0 +1,46 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+    name: sustainable-city-management
+    annotations:
+        kubernetes.io/ingress.class: nginx
+        cert-manager.io/cluster-issuer: letsencrypt-prod
+        nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+    tls:
+    - hosts:
+      - scm-backend.rxshri99.live
+      - scm-prometheus.rxshri99.live
+      - scm-grafana.rxshri99.live
+      secretName: scm-tls
+    rules:
+        - host: scm-backend.rxshri99.live
+          http:
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: {{ .Values.gateway.Name }}-service
+                        port:
+                            name: http
+        - host: scm-prometheus.rxshri99.live
+          http:
+            paths:
+              - path: /
+                pathType: Prefix
+                backend:
+                  service:
+                      name: prometheus-operated
+                      port:
+                          name: http-web
+        - host: scm-grafana.rxshri99.live
+          http:
+            paths:                  
+            - path: /
+              pathType: Prefix
+              backend:
+                service:
+                    name: monitoring-grafana
+                    port:
+                        name: http-web
