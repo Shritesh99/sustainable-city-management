@@ -37,3 +37,4 @@ yarn.lock
 **/.idea
 **/package-lock.json
 **/yarn.lock
+frontend/next.config.js

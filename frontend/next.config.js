@@ -19,7 +19,7 @@ const nextConfig = {
 
   env: {
     MAP_BOX_ACCESS_TOKEN:
-      "pk.eyJ1IjoidmVlcXUiLCJhIjoiY2xlOGVzY2V4MGU0azNvcnp5ZzYwYTg2cSJ9.LlUjPBs8cJOMcGhZxWqEIg",
+      "pk.eyJ1IjoiZmVuZzc1MzEiLCJhIjoiY2xlaGNldmgxMHU5cTN3dHRlcHp5MTl1OSJ9.qen2aFoSYVbrfdhHpXA-jA",
     AQI_ACCESS_TOKEN: "d3f5d975618dc64e01ed3df11688671d3e61dd7f",
   },
 };
