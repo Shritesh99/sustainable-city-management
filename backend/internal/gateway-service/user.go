@@ -187,7 +187,7 @@ func (server *GatewayService) Login(c *fiber.Ctx) error {
 func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 
 	// check auth
-	tknStr := c.Get("jwtToken")
+	tknStr := c.Get("Token")
 	var authorization = server.Authenticate(tknStr)
 	if !authorization {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -228,7 +228,7 @@ func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) Logout(c *fiber.Ctx) error {
-	var tknStr = c.Get("jwtToken")
+	var tknStr = c.Get("Token")
 	req := new(LogoutRequest)
 	// Get the JSON body and decode into LogoutRequest
 	if err := c.BodyParser(req); err != nil {

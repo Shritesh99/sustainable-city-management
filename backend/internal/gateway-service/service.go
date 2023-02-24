@@ -12,10 +12,9 @@ type GatewayService struct {
 
 func NewGatewayService(router fiber.Router, store *db.SQLStore) *GatewayService {
 	server := &GatewayService{router: router, store: store}
-
 	router.Post("/register", server.Register)
 	router.Post("/login", server.Login)
-	router.Get("/logout", server.Logout)
-	router.Get("/profile", server.GetProfile)
+	router.Post("/logout", server.Logout)
+	router.Post("/profile", server.GetProfile)
 	return server
 }
