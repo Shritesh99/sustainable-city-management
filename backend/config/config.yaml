@@ -21,7 +21,7 @@ logger:
      devMode: false
      encoder: json
 db:
-     DB_SOURCE: postgresql://group_admin:group007@sustainable-city-management.cdxqy8kbzxjs.eu-west-1.rds.amazonaws.com:5432/masterdb?sslmode=disable
+     DB_SOURCE: postgresql://postgres:password@ec2-54-75-62-18.eu-west-1.compute.amazonaws.com:5432/city_management?sslmode=disable
      DB_DRIVER: postgres
      AIR_TOKEN: d3f5d975618dc64e01ed3df11688671d3e61dd7f
 # ConnectedServices:
