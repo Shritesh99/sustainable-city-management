@@ -1,19 +1,24 @@
- 
-import React, {useContext} from 'react';
-import {Button, Text, View} from 'react-native';
-import {AuthContext} from '../context/AuthContext';
- 
-const HomeScreen = () => {
-
- 
-  //Get the userInfo
-  const {userInfo,logout } = useContext(AuthContext)
-
-    return (
-      <View>
-      <Text>Welcome {userInfo.first_name}</Text>
-      <Button title="Logout" color="red" onPress={logout} />
+import React, { useContext } from "react";
+import { Button, Text, View } from "react-native";
+import { AuthContext } from "../context/AuthContext";
+import { createDrawerNavigator } from "@react-navigation/drawer";
+import { NavigationContainer } from "@react-navigation/native";
+import {
+  NativeBaseProvider,
+  Box,
+  StatusBar,
+  HStack,
+  IconButton,
+  Icon,
+  Parse,
+  MaterialIcons,
+} from "native-base";
+//Bearer home screen.
+export default function HomeScreen({ navigation }) {
+  return (
+    <View>
+      <Text>Welcome </Text>
+      <Text>Home Screen</Text>
     </View>
-    )
+  );
 }
-export default HomeScreen;

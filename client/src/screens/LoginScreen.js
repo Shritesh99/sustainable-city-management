@@ -1,72 +1,118 @@
-import React, { useContext, useState } from 'react';
-import {TextInput, Button, TouchableOpacity, Text, View, StyleSheet} from 'react-native';
-import {AuthContext} from '../context/AuthContext';
-import Spinner from 'react-native-loading-spinner-overlay'
- 
-//Through {navigation}
-//onPress => navigation to Register
-const LoginScreen = ({navigation}) => {
-    // Input data on the textInput
-    // Nothing is in the email as a default
-    const [username, setUsername] = useState(null)
-    const [password, setPassword] = useState(null)
-    // Just string values are comes from the Context but {register} function can not come over.
-    //const valueFromAuthContext = useContext(AuthContext); //this value comes from AuthContext
-    const {isLoading, hashedlogin} = useContext(AuthContext) //Get from AuthoContext
-    
-    return (
-        
-        <View style={styles.container}>
-            <Spinner visible ={isLoading} />
-            <Text>Sign In</Text>
-            <View style={styles.wrapper}>
-                
-               
-                <TextInput style ={styles.input} value = {username} placeholder="Email Address" onChangeText ={text => setUsername(text)}/>
-                <TextInput style ={styles.input} value = {password} placeholder="password" onChangeText ={text => setPassword(text)} secureTextEntry />
-                <Button  title="Sign In" onPress={() => {hashedlogin(username, password)}}/>
-          
-               
-                <View style={{FlexDirection: 'row' , marginTop:30}}>
-                    <Text>Don't have an account? </Text>
-                    <TouchableOpacity onPress= {() => navigation.navigate('Register')}>
-                        <Text style = {styles.link}>Sign Up</Text>
-                    </TouchableOpacity>
-                  
-                </View>
-            </View>
-        </View>
-    )
+//import { AuthContext } from "../context/AuthContext";
 
+import * as React from "react";
+import { useContext, useState } from "react";
+import { AuthContext } from "../context/AuthContext";
+
+import {
+  MaterialIcons,
+  Text,
+  Stack,
+  Pressable,
+  Input,
+  Box,
+  Link,
+  Button,
+  NativeBaseProvider,
+  VStack,
+  Center,
+  Heading,
+  FormControl,
+  HStack,
+} from "native-base";
+
+export default function LoginScreen({ navigation }) {
+  const [username, setUsername] = useState(null);
+  const usernameChange = (text) => setUsername(text);
+  const [password, setPassword] = useState(null);
+  const passwordChange = (text) => setPassword(text);
+
+  //Get hashedlogin from AuthContext.js
+  const { hashedlogin } = useContext(AuthContext);
+
+  return (
+    <Center w="100%">
+      <Box safeArea p="2" py="8" w="90%" maxW="290">
+        <Heading
+          size="lg"
+          fontWeight="600"
+          color="coolGray.800"
+          _dark={{
+            color: "warmGray.50",
+          }}
+        >
+          Welcome
+        </Heading>
+        <Heading
+          mt="1"
+          _dark={{
+            color: "warmGray.200",
+          }}
+          color="coolGray.600"
+          fontWeight="medium"
+          size="xs"
+        >
+          Sign in to continue!
+        </Heading>
+
+        <VStack space={3} mt="5">
+          <FormControl>
+            <FormControl.Label>Email ID</FormControl.Label>
+            <Input
+              type="username"
+              value={username}
+              onChangeText={usernameChange}
+            />
+          </FormControl>
+          <FormControl>
+            <FormControl.Label>Password</FormControl.Label>
+            <Input
+              type="password"
+              value={password}
+              onChangeText={passwordChange}
+            />
+            <Link
+              _text={{
+                fontSize: "xs",
+                fontWeight: "500",
+                color: "indigo.500",
+              }}
+              alignSelf="flex-end"
+              mt="1"
+            >
+              Forget Password?
+            </Link>
+          </FormControl>
+          <Button
+            mt="2"
+            colorScheme="indigo"
+            onPress={() => hashedlogin(username, password)}
+          >
+            Sign in
+          </Button>
+          <HStack mt="6" justifyContent="center">
+            <Text
+              fontSize="sm"
+              color="coolGray.600"
+              _dark={{
+                color: "warmGray.200",
+              }}
+            >
+              I'm a new user.{" "}
+            </Text>
+            <Link
+              _text={{
+                color: "indigo.500",
+                fontWeight: "medium",
+                fontSize: "sm",
+              }}
+              href="#"
+            >
+              Sign Up
+            </Link>
+          </HStack>
+        </VStack>
+      </Box>
+    </Center>
+  );
 }
-/*
-Login request:"serverurl"/user/login Body : {"username": xyz,}
-*/
-// Cover the whole page : container
-// wrapper for width 
-// input for textinput and sign in button
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'center',
-        justifyContent: 'center',
-
-    },
-    wrapper: {
-        width: '80%',
-    },
-    input : {
-        marginBottom : 15,
-        borderWidth: 2,
-        borderColor: '#bbb',
-        borderRadius: 5,
-        paddinHorizontal: 14,
-    },
-    link: {
-        color : 'blue',
-
-    }
-})
-
-export default LoginScreen;
- 
