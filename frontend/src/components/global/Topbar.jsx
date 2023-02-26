@@ -28,14 +28,9 @@ const Topbar = () => {
   }
 
   // only show nav when logged in
-  if (!user) return null;
+  // if (!user) return null;
   return (
-    <Box
-      display="flex"
-      justifyContent="space-between"
-      p={2}
-      backgroundColor={colors.primary[400]}
-    >
+    <Box display="flex" justifyContent="space-between" p={2}>
       <Box
         display="flex"
         backgroundColor={colors.primary[400]}

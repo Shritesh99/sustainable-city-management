@@ -110,66 +110,83 @@ function MapPopup(props) {
       focusAfterOpen={false}
     >
       <Container
+        // maxWidth="sm"
         sx={{
-          alignContent: "center",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          // alignContent: "center",
           padding: "6px",
-          background: `${markerProps.background}`,
+          backgroundColor: `${markerProps.background}`,
           borderRadius: "8px",
         }}
       >
         {!isNaN(aqiData.aqi) ? (
-          <Stack direction="row">
-            <Tooltip title={`${markerProps.tooltipLabel}`} arrow>
-              <Typography variant="h3">{aqiData.aqi}</Typography>
-            </Tooltip>
-            <Info
-              // define the anchor of this popup info
-              aria-owns={openAnchor ? "mouse-over-popover" : undefined}
-              aria-haspopup="true"
-              onMouseEnter={handlePopoverOpen}
-              onMouseLeave={handlePopoverClose}
-            />
-            <Popover
-              id="mouse-over-popover"
-              sx={{ pointerEvents: "none" }}
-              open={openAnchor}
-              anchorEl={anchorEl}
-              anchorOrigin={{ vertical: "top", horizontal: "right" }}
-              transformOrigin={{ vertical: "bottom", horizontal: "left" }}
-              onClose={handlePopoverClose}
-              disableRestoreFocus
+          <>
+            <Stack
+              direction="row"
+              spacing={0.5}
+              // justifyContent="center"
+              alignItems="center"
             >
+              <Typography variant="h2" sx={{ mb: "0em !important" }}>
+                {aqiData.aqi}
+              </Typography>
+              <Tooltip title={`${markerProps.tooltipLabel}`} arrow>
+                <Info
+                  // define the anchor of this popup info
+                  aria-owns={openAnchor ? "mouse-over-popover" : undefined}
+                  aria-haspopup="true"
+                  onMouseEnter={handlePopoverOpen}
+                  onMouseLeave={handlePopoverClose}
+                />
+              </Tooltip>
               <Portal>
-                <List>
-                  <ListItem>
-                    <ListItemText primary={`Station: ${aqiData.city.name}`} />
-                  </ListItem>
-                  <Divider light />
-                  <ListItem>
-                    <Grid columns={3} container spacing="2px">
-                      {Object.entries(aqiData.iaqi).map(([key, value]) => {
-                        return (
-                          <Stack key={key} direction="row" spacing="2px">
-                            <Typography variant={"h6"}>{key}:</Typography>
-                            <Typography>
-                              {parseFloat(value.v).toFixed(2)}
-                            </Typography>
-                          </Stack>
-                        );
-                      })}
-                    </Grid>
-                  </ListItem>
-                  <Divider light />
-                  <ListItem>
-                    <MuiLink href={aqiData.attributions[0].url}>
-                      {aqiData.attributions[0].name}
-                    </MuiLink>
-                  </ListItem>
-                  <Divider light />
-                </List>
+                <Popover
+                  id="mouse-over-popover"
+                  sx={{ pointerEvents: "none" }}
+                  open={openAnchor}
+                  anchorEl={anchorEl}
+                  anchorOrigin={{ vertical: "top", horizontal: "right" }}
+                  transformOrigin={{ vertical: "bottom", horizontal: "left" }}
+                  onClose={handlePopoverClose}
+                  disableRestoreFocus
+                  style={{ pointerEvents: "none" }}
+                >
+                  {/* <Portal> */}
+                  <List>
+                    <ListItem>
+                      <ListItemText primary={`Station: ${aqiData.city.name}`} />
+                    </ListItem>
+                    <Divider light />
+                    <ListItem>
+                      <Grid container spacing={1}>
+                        {Object.entries(aqiData.iaqi).map(([key, value]) => {
+                          return (
+                            <Grid item xs={4} key={key}>
+                              <Stack key={key} direction="row" spacing="2px">
+                                <Typography variant={"h5"}>{key}:</Typography>
+                                <Typography>
+                                  {parseFloat(value.v).toFixed(2)}
+                                </Typography>
+                              </Stack>
+                            </Grid>
+                          );
+                        })}
+                      </Grid>
+                    </ListItem>
+                    <Divider light />
+                    <ListItem>
+                      <ListItemText
+                        primary={`Station: ${aqiData.attributions[0].name}`}
+                      />
+                    </ListItem>
+                  </List>
+                  {/* </Portal> */}
+                </Popover>
               </Portal>
-            </Popover>
-          </Stack>
+            </Stack>
+          </>
         ) : (
           <Tooltip title={"Data not found"} arrow>
             <span>

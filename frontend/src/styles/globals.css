@@ -36,3 +36,25 @@ body,
 ::-webkit-scrollbar-track:hover {
   background: #555;
 }
+
+.mapboxgl-popup-content {
+  padding: 3px 3px 3px !important;
+  border-radius: 9px !important;
+  background-color: #666666 !important;
+}
+
+.mapboxgl-popup-anchor-bottom .mapboxgl-popup-tip {
+  border-top-color: #666666 !important;
+}
+
+.mapboxgl-popup-anchor-top .mapboxgl-popup-tip {
+  border-bottom-color: #666666 !important;
+}
+
+.mapboxgl-popup-anchor-left .mapboxgl-popup-tip {
+  border-right-color: #666666 !important;
+}
+
+.mapboxgl-popup-anchor-right .mapboxgl-popup-tip {
+  border-left-color: #666666 !important;
+}

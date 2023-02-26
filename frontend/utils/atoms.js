@@ -5,7 +5,7 @@ export const ViewState = atom({
   default: {
     latitude: 53.35014,
     longitude: -6.266155,
-    zoom: 5.5,
+    zoom: 10,
   },
 });
 

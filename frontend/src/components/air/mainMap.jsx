@@ -98,10 +98,11 @@ export default function MainMap() {
         mapboxAccessToken={MAPBOX_TOKEN}
         {...viewState}
         style={{
-          width: `calc(100vw - 100px)`,
-          height: `calc(100vh - 100px)`,
+          // width: "100%",
+          // height: "100%",
           zIndex: 0,
           position: "absolute",
+          // marginRight: "500px",
         }}
         mapStyle={globalTheme.mapStyle}
         onMove={(evt) => setViewState(evt.viewState)}
@@ -135,7 +136,7 @@ export default function MainMap() {
 
         <GeocoderControl
           mapboxAccessToken={MAPBOX_TOKEN}
-          position="top-left"
+          position="bottom-right"
           addMarker={addMarker}
           viewState={setViewState}
         />

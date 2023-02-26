@@ -42,5 +42,13 @@
     "react-map-gl": "^7.0.21",
     "react-pro-sidebar": "^0.7.1",
     "recoil": "^0.7.6"
+  },
+  "devDependencies": {
+    "cz-conventional-changelog": "^3.3.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
