@@ -13,7 +13,7 @@ const MyApp = ({ Component, pageProps }) => {
   useEffect(() => {
     setLoading(false);
     // run auth check on initial load
-    authCheck(router.asPath);
+    /*authCheck(router.asPath);
 
     // set authorized to false to hide page content while changing routes
     const hideContent = () => setAuthorized(false);
@@ -26,7 +26,7 @@ const MyApp = ({ Component, pageProps }) => {
     return () => {
       router.events.off("routeChangeStart", hideContent);
       router.events.off("routeChangeComplete", authCheck);
-    };
+    };**/
   }, []);
 
   function authCheck(url) {
@@ -61,11 +61,9 @@ const MyApp = ({ Component, pageProps }) => {
         <Loading />
       ) : (
         <RecoilRoot>
-          <div className="app-container bg-light">
-            {/* <Nav /> */}
-            <div className="hero-body is-align-items-flex-start">
-              {authorized && <Component {...pageProps} />}
-            </div>
+          <div>
+            {/* {authorized && <Component {...pageProps} />} */}
+            {<Component {...pageProps} />}
           </div>
         </RecoilRoot>
       )}

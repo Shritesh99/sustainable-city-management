@@ -10,8 +10,8 @@ const nextConfig = {
   publicRuntimeConfig: {
     apiUrl:
       process.env.NODE_ENV === "development"
-        ? "http://127.0.0.1:8080" // development api
-        : "https://scm-backend.rxshri99.live", // production api
+        ? "https://scm-backend.rxshri99.live" // development api
+        : "http://127.0.0.1:8080", // production api
   },
 
   env: {
