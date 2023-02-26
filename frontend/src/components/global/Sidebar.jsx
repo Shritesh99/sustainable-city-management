@@ -10,6 +10,7 @@ import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutl
 import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
+import DirectionsBusOutlinedIcon from '@mui/icons-material/DirectionsBusOutlined';
 import Link from "next/link";
 import { userService } from "../../services";
 
@@ -135,6 +136,13 @@ const Sidebar = () => {
                 title="Air Quality"
                 to="/air"
                 icon={<AirIcon />}
+                selected={selected}
+                setSelected={setSelected}
+              />
+              <Item
+                title="Bus Route"
+                to="/bus"
+                icon={<DirectionsBusOutlinedIcon />}
                 selected={selected}
                 setSelected={setSelected}
               />
