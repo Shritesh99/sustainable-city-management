@@ -24,6 +24,12 @@ docker-upload:
 	docker push shritesh99/bike:latest
 	docker push shritesh99/gateway:latest
 
+run-app:
+	go run cmd/main.go
+
+kill-app:
+	kill -9 $(lsof -ti :8000)
+
 FILES := $(shell docker ps -aq)
 
 down-local:

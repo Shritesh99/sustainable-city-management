@@ -6,12 +6,9 @@ package db
 
 import ()
 
-type AirDatum struct {
-	ID        int32   `json:"id"`
-	Long      float64 `json:"long"`
-	Lati      float64 `json:"lati"`
-	Timestamp int32   `json:"timestamp"`
-	Detail    string  `json:"detail"`
+type AqiDatum struct {
+	Stationid string `json:"stationid"`
+	AirData   []byte `json:"air_data"`
 }
 
 type LoginDetail struct {

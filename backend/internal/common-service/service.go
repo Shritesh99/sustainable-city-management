@@ -71,7 +71,7 @@ func (a *service) Run() error {
 		a.fiber.Use(cors.New(conf.GetCorsConf()))
 		gateway := a.fiber.Group("/auth")
 
-		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn))
+		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg)
 
 		go func() {
 			if err := a.fiber.Listen(fmt.Sprintf(":%s", a.cfg.Http.Port)); err != nil {

@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS air_data;
+DROP TABLE IF EXISTS aqi_data;

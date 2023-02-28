@@ -1,8 +1,5 @@
-CREATE TABLE "air_data"
+CREATE TABLE "aqi_data"
 (
-    "id"        serial PRIMARY KEY,
-    "long"      float NOT NULL,
-    "lati"      float NOT NULL,
-    "timestamp" int   NOT NULL,
-    "detail"    text  NOT NULL
+    "stationid"   text PRIMARY KEY,
+    "air_data"  bytea
 );

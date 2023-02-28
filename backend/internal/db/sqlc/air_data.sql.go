@@ -10,78 +10,42 @@ import (
 )
 
 const createAirData = `-- name: CreateAirData :one
-INSERT INTO air_data (long,
-                      lati,
-                      timestamp,
-                      detail)
-VALUES ($1, $2, $3, $4) RETURNING id, long, lati, timestamp, detail
+INSERT INTO aqi_data (stationid, air_data)
+VALUES ($1, $2) RETURNING stationid, air_data
 `
 
 type CreateAirDataParams struct {
-	Long      float64 `json:"long"`
-	Lati      float64 `json:"lati"`
-	Timestamp int32   `json:"timestamp"`
-	Detail    string  `json:"detail"`
+	Stationid string `json:"stationid"`
+	AirData   []byte `json:"air_data"`
 }
 
-func (q *Queries) CreateAirData(ctx context.Context, arg CreateAirDataParams) (AirDatum, error) {
-	row := q.db.QueryRowContext(ctx, createAirData,
-		arg.Long,
-		arg.Lati,
-		arg.Timestamp,
-		arg.Detail,
-	)
-	var i AirDatum
-	err := row.Scan(
-		&i.ID,
-		&i.Long,
-		&i.Lati,
-		&i.Timestamp,
-		&i.Detail,
-	)
+func (q *Queries) CreateAirData(ctx context.Context, arg CreateAirDataParams) (AqiDatum, error) {
+	row := q.db.QueryRowContext(ctx, createAirData, arg.Stationid, arg.AirData)
+	var i AqiDatum
+	err := row.Scan(&i.Stationid, &i.AirData)
 	return i, err
 }
 
 const deleteAirData = `-- name: DeleteAirData :exec
 DELETE
-FROM air_data
-WHERE long = $1
-  and lati = $2
-  and timestamp = $3
+FROM aqi_data
+WHERE stationid = $1
 `
 
-type DeleteAirDataParams struct {
-	Long      float64 `json:"long"`
-	Lati      float64 `json:"lati"`
-	Timestamp int32   `json:"timestamp"`
-}
-
-func (q *Queries) DeleteAirData(ctx context.Context, arg DeleteAirDataParams) error {
-	_, err := q.db.ExecContext(ctx, deleteAirData, arg.Long, arg.Lati, arg.Timestamp)
+func (q *Queries) DeleteAirData(ctx context.Context, stationid string) error {
+	_, err := q.db.ExecContext(ctx, deleteAirData, stationid)
 	return err
 }
 
 const getAirData = `-- name: GetAirData :one
-SELECT id, long, lati, timestamp, detail
-FROM air_data
-WHERE long = $1
-  and lati = $2
+SELECT stationid, air_data
+FROM aqi_data
+WHERE stationid = $1
 `
 
-type GetAirDataParams struct {
-	Long float64 `json:"long"`
-	Lati float64 `json:"lati"`
-}
-
-func (q *Queries) GetAirData(ctx context.Context, arg GetAirDataParams) (AirDatum, error) {
-	row := q.db.QueryRowContext(ctx, getAirData, arg.Long, arg.Lati)
-	var i AirDatum
-	err := row.Scan(
-		&i.ID,
-		&i.Long,
-		&i.Lati,
-		&i.Timestamp,
-		&i.Detail,
-	)
+func (q *Queries) GetAirData(ctx context.Context, stationid string) (AqiDatum, error) {
+	row := q.db.QueryRowContext(ctx, getAirData, stationid)
+	var i AqiDatum
+	err := row.Scan(&i.Stationid, &i.AirData)
 	return i, err
 }

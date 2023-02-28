@@ -54,7 +54,7 @@ type Timeouts struct {
 type DB struct {
 	DB_SOURCE string `mapstructure:"DB_SOURCE"`
 	DB_DRIVER string `mapstructure:"DB_DRIVER"`
-	DB_TOKEN  string `mapstructure:"AIR_TOKEN"`
+	AIR_TOKEN string `mapstructure:"AIR_TOKEN"`
 }
 
 var configPath string
