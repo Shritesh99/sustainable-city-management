@@ -8,6 +8,9 @@ http:
      development: true
      basePath: /
      debugErrorsResponse: true
+grpc:
+     port: 4000
+     development: true
 probes:
      readinessPath: /live
      livenessPath: /ready

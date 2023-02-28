@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
+	airquality_service "github.com/Eytins/sustainable-city-management/backend/internal/airquality-service"
 	"net"
 	"net/http"
 	"os"
@@ -49,6 +50,7 @@ type service struct {
 	metricsServer     *echo.Echo
 	middlewareManager middlewares.MiddlewareManager
 	gatewayService    *gateway_service.GatewayService
+	airService        *airquality_service.AirService
 }
 
 func NewService(log logger.Logger, cfg *config.Config) *service {
@@ -81,6 +83,7 @@ func (a *service) Run() error {
 		}()
 	} else {
 		a.grpcServer = grpc.NewServer()
+		a.airService = airquality_service.NewAirService(a.grpcServer, db.NewStore(conn), a.cfg)
 		go func() {
 			listener, err := net.Listen(constants.Tcp, fmt.Sprintf(":%s", a.cfg.GRPC.Port))
 			if err != nil {
