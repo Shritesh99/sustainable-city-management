@@ -321,12 +321,6 @@ func (server *GatewayService) Authenticate(tknStr string) bool {
 
 func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 	stationId := c.Get("station_id")
-
-	req := new(AirDataRequest)
-	if err := c.BodyParser(req); err != nil {
-		util.LogFatal("Failed to parse body:", err)
-	}
-
 	aqi, err := server.store.GetAirDataByStationId(context.Background(), stationId)
 	if err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
