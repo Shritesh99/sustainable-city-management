@@ -5,23 +5,23 @@
 package db
 
 import (
-	"database/sql"
+	"time"
 )
 
 type AqiDatum struct {
-	ID          int32        `json:"id"`
-	StationID   string       `json:"station_id"`
-	StationName string       `json:"station_name"`
-	Aqi         float64      `json:"aqi"`
-	MeasureTime string       `json:"measure_time"`
-	Pm25        float64      `json:"pm25"`
-	Pm10        float64      `json:"pm10"`
-	Ozone       float64      `json:"ozone"`
-	No2         float64      `json:"no2"`
-	So2         float64      `json:"so2"`
-	Co          float64      `json:"co"`
-	InsertTime  sql.NullTime `json:"insert_time"`
-	UpdatedTime sql.NullTime `json:"updated_time"`
+	ID          int32     `json:"id"`
+	StationID   string    `json:"station_id"`
+	StationName string    `json:"station_name"`
+	Aqi         float64   `json:"aqi"`
+	MeasureTime string    `json:"measure_time"`
+	Pm25        float64   `json:"pm25"`
+	Pm10        float64   `json:"pm10"`
+	Ozone       float64   `json:"ozone"`
+	No2         float64   `json:"no2"`
+	So2         float64   `json:"so2"`
+	Co          float64   `json:"co"`
+	InsertTime  time.Time `json:"insert_time"`
+	UpdatedTime time.Time `json:"updated_time"`
 }
 
 type LoginDetail struct {

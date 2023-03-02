@@ -7,7 +7,7 @@ package db
 
 import (
 	"context"
-	"database/sql"
+	"time"
 )
 
 const createAirData = `-- name: CreateAirData :one
@@ -16,18 +16,18 @@ VALUES ($1, $2,$3, $4,$5, $6,$7, $8,$9, $10,$11, $12) RETURNING id, station_id, 
 `
 
 type CreateAirDataParams struct {
-	StationID   string       `json:"station_id"`
-	StationName string       `json:"station_name"`
-	Aqi         float64      `json:"aqi"`
-	MeasureTime string       `json:"measure_time"`
-	Pm25        float64      `json:"pm25"`
-	Pm10        float64      `json:"pm10"`
-	Ozone       float64      `json:"ozone"`
-	No2         float64      `json:"no2"`
-	So2         float64      `json:"so2"`
-	Co          float64      `json:"co"`
-	InsertTime  sql.NullTime `json:"insert_time"`
-	UpdatedTime sql.NullTime `json:"updated_time"`
+	StationID   string    `json:"station_id"`
+	StationName string    `json:"station_name"`
+	Aqi         float64   `json:"aqi"`
+	MeasureTime string    `json:"measure_time"`
+	Pm25        float64   `json:"pm25"`
+	Pm10        float64   `json:"pm10"`
+	Ozone       float64   `json:"ozone"`
+	No2         float64   `json:"no2"`
+	So2         float64   `json:"so2"`
+	Co          float64   `json:"co"`
+	InsertTime  time.Time `json:"insert_time"`
+	UpdatedTime time.Time `json:"updated_time"`
 }
 
 func (q *Queries) CreateAirData(ctx context.Context, arg CreateAirDataParams) (AqiDatum, error) {

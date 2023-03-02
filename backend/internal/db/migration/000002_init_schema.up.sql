@@ -11,6 +11,6 @@ CREATE TABLE "aqi_data"
     "no2"  float not null,
     "so2"  float not null,
     "co"  float not null,
-    "insert_time"  timestamp,
-    "updated_time"  timestamp
+    "insert_time"  timestamp not null ,
+    "updated_time"  timestamp not null
 );
