@@ -320,6 +320,16 @@ func (server *GatewayService) Authenticate(tknStr string) bool {
 }
 
 func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
+	// check auth
+	tknStr := c.Get("Token")
+	var authorization = server.Authenticate(tknStr)
+	if !authorization {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Invalid Token",
+			"user":  nil,
+		})
+	}
 	stationId := c.Get("station_id")
 	aqi, err := server.store.GetAirDataByStationId(context.Background(), stationId)
 	if err != nil {
