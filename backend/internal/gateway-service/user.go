@@ -314,3 +314,7 @@ func (server *GatewayService) Authenticate(tknStr string) bool {
 	}
 	return true
 }
+
+func (server *GatewayService) GetAirData(ctx *fiber.Ctx) error {
+	return nil
+}

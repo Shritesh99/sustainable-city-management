@@ -29,7 +29,6 @@ run-app:
 
 kill-app:
 	kill -9 $(lsof -ti :8000)
-
 FILES := $(shell docker ps -aq)
 
 down-local:

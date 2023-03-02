@@ -14,7 +14,7 @@ type AirService struct {
 
 func NewAirService(server *grpc.Server, store *db.SQLStore, cfg *config.Config) *AirService {
 	service := &AirService{server: server, store: store, cfg: cfg}
-	//router.Get("/getstationsdata/{}", server.Register)
+
 	//server.CollectStationData()
 	return service
 }
