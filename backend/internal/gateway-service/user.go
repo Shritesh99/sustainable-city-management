@@ -15,6 +15,10 @@ import (
 
 var jwtKey = []byte("tasty_kimchi")
 
+type AirDataRequest struct {
+	StationID string `json:"station_id"`
+}
+
 type RegisterRequest struct {
 	FirstName string `json:"first_name"`
 	LastName  string `json:"last_name"`
@@ -315,6 +319,25 @@ func (server *GatewayService) Authenticate(tknStr string) bool {
 	return true
 }
 
-func (server *GatewayService) GetAirData(ctx *fiber.Ctx) error {
-	return nil
+func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
+	stationId := c.Get("station_id")
+
+	req := new(AirDataRequest)
+	if err := c.BodyParser(req); err != nil {
+		util.LogFatal("Failed to parse body:", err)
+	}
+
+	aqi, err := server.store.GetAirDataByStationId(context.Background(), stationId)
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Data not found",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"aqi_data": aqi,
+		"error":    false,
+		"msg":      "success",
+	})
 }

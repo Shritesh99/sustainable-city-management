@@ -75,14 +75,12 @@ func (q *Queries) DeleteAirData(ctx context.Context, id int32) error {
 	return err
 }
 
-const getAirData = `-- name: GetAirData :one
-SELECT id, station_id, station_name, aqi, measure_time, pm25, pm10, ozone, no2, so2, co, insert_time, updated_time
-FROM aqi_data
-WHERE id = $1
+const getAirDataByStationId = `-- name: GetAirDataByStationId :one
+SELECT id, station_id, station_name, aqi, measure_time, pm25, pm10, ozone, no2, so2, co, insert_time, updated_time FROM aqi_data WHERE station_id = $1 ORDER BY updated_time DESC LIMIT 1
 `
 
-func (q *Queries) GetAirData(ctx context.Context, id int32) (AqiDatum, error) {
-	row := q.db.QueryRowContext(ctx, getAirData, id)
+func (q *Queries) GetAirDataByStationId(ctx context.Context, stationID string) (AqiDatum, error) {
+	row := q.db.QueryRowContext(ctx, getAirDataByStationId, stationID)
 	var i AqiDatum
 	err := row.Scan(
 		&i.ID,
