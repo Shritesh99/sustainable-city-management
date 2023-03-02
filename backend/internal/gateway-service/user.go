@@ -306,7 +306,6 @@ func (server *GatewayService) validateUser(c *fiber.Ctx) error {
 func (server *GatewayService) Authenticate(tknStr string) bool {
 	// Initialize a new instance of `Claims`
 	claims := &Claims{}
-
 	tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
 		return jwtKey, nil
 	})
