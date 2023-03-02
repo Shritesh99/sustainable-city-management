@@ -5,6 +5,7 @@ import (
 	_ "encoding/json"
 	"fmt"
 	_ "net/http"
+	"strings"
 	"time"
 
 	db "github.com/Eytins/sustainable-city-management/backend/internal/db/sqlc"
@@ -44,6 +45,12 @@ type UserInfoRequest struct {
 
 type TokenStruct struct {
 	TokenString string `json:"token"`
+}
+
+type RoleStruct struct {
+	RoleID   int32    `json:"role_id"`
+	RoleName string   `json:"role_name"`
+	Auths    []string `json:"auths"`
 }
 
 // Create a struct that will be encoded to a JWT.
@@ -343,5 +350,32 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 		"aqi_data": aqi,
 		"error":    false,
 		"msg":      "success",
+	})
+}
+
+func (server *GatewayService) GetRoles(c *fiber.Ctx) error {
+	roles, err := server.store.GetRoles(context.Background())
+	if err != nil {
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Data not found",
+		})
+	}
+
+	var res []RoleStruct
+
+	for _, role := range roles {
+		auths := strings.Split(role.Auths, ";")
+		res = append(res, RoleStruct{
+			RoleID:   role.RoleID,
+			RoleName: role.RoleName,
+			Auths:    auths,
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"roles_data": res,
+		"error":      false,
+		"msg":        "success",
 	})
 }
