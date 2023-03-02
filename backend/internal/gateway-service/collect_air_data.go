@@ -17,6 +17,7 @@ func (server *GatewayService) CollectStationData() error {
 			StationName: string(resp.Data.City.Name),
 			Aqi:         float64(resp.Data.Aqi),
 			MeasureTime: resp.Data.Time.S,
+			Epa:         resp.Data.Attributions[0].Name,
 			Pm25:        float64(resp.Data.Iaqi.Pm25.V),
 			Pm10:        float64(resp.Data.Iaqi.Pm10.V),
 			Ozone:       resp.Data.Iaqi.O3.V,
@@ -25,6 +26,8 @@ func (server *GatewayService) CollectStationData() error {
 			Co:          float64(resp.Data.Iaqi.Co.V),
 			InsertTime:  time.Now(),
 			UpdatedTime: time.Now(),
+			Latitude:    resp.Data.City.Geo[0],
+			Longitude:   resp.Data.City.Geo[1],
 		}
 		_, err := server.store.CreateAirData(context.Background(), arg)
 		if err != nil {

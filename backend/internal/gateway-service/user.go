@@ -63,7 +63,7 @@ type Claims struct {
 func (server *GatewayService) Register(c *fiber.Ctx) error {
 	req := new(RegisterRequest)
 	if err := c.BodyParser(req); err != nil {
-		util.LogFatal("Failed to parse body:", err)
+		server.log.Infof("Failed to parse body: %v", err)
 	}
 
 	// fmt.Printf("[Register] username: %s, password: %s\n", req.Username, req.Password)
@@ -102,7 +102,7 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 
 	loginDetails, err := server.store.CreateLoginDetail(context.Background(), argLogin)
 	if err != nil {
-		// fmt.Printf("[CreateLoginDetail] %s\n", err)
+		server.log.Infof("Internal Server Error :  %v", err)
 		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(fiber.Map{
@@ -117,15 +117,11 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 
 // Create the Signin handler
 func (server *GatewayService) Login(c *fiber.Ctx) error {
-	// fmt.Printf("[Login]\n")
 	req := new(LoginRequest)
 	// Get the JSON body and decode into LoginRequest
 	if err := c.BodyParser(req); err != nil {
-		util.LogFatal("Failed to parse body:", err)
+		server.log.Infof("Failed to parse body: %v", err)
 	}
-
-	// fmt.Printf("[Login] username: %s, password: %s\n", req.Username, req.Password)
-
 	arg := db.CreateLoginDetailParams{
 		Email:    req.Username,
 		Password: req.Password,
@@ -133,6 +129,7 @@ func (server *GatewayService) Login(c *fiber.Ctx) error {
 
 	loginDetails, err := server.store.GetLoginDetail(context.Background(), arg.Email)
 	if err != nil {
+		server.log.Infof("Email not registered %v", err)
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": true,
 			"msg":   "This email is not registered! Please check your email id or Register your email",
@@ -146,42 +143,24 @@ func (server *GatewayService) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	// Declare the expiration time of the token
-	// here, we have kept it as 5 hours
 	expirationTime := time.Now().Add(5 * time.Hour)
-	// expirationTime := time.Now().Add(1 * time.Minute)
-	// Create the JWT claims, which includes the username and expiry time
 	claims := &Claims{
 		Username: req.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
-			// In JWT, the expiry time is expressed as unix milliseconds
 			ExpiresAt: jwt.NewNumericDate(expirationTime),
 		},
 	}
 
-	// Declare the token with the algorithm used for signing, and the claims
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
-	// Create the JWT string
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
+		server.log.Infof("Error while creating token : %v", err)
 		return c.Status(fiber.StatusFailedDependency).JSON(fiber.Map{
 			"error": true,
 			"msg":   "Error while creating token",
 		})
 	}
-	// Finally, we set the client cookie for "token" as the JWT we just generated
-	// we also set an expiry time which is the same as the token itself
 	userInfo, err := server.store.GetUser(context.Background(), loginDetails.UserID)
-
-	//cookie := fiber.Cookie{
-	//	Name:     "jwt",
-	//	Value:    tokenString,
-	//	Expires:  expirationTime,
-	//	HTTPOnly: true,
-	//}
-
-	//c.Cookie(&cookie)
-
 	return c.JSON(fiber.Map{
 		"error":     false,
 		"msg":       "success",
@@ -197,7 +176,6 @@ func (server *GatewayService) Login(c *fiber.Ctx) error {
 
 func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 
-	// check auth
 	tknStr := c.Get("Token")
 	var authorization = server.Authenticate(tknStr)
 	if !authorization {
@@ -211,7 +189,7 @@ func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 	req := new(UserInfoRequest)
 
 	if err := c.BodyParser(req); err != nil {
-		util.LogFatal("Failed to parse body:", err)
+		server.log.Infof("Failed to parse body: %v", err)
 	}
 
 	arg := db.CreateLoginDetailParams{
@@ -220,6 +198,7 @@ func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 
 	loginDetails, err := server.store.GetLoginDetail(context.Background(), arg.Email)
 	if err != nil {
+		server.log.Infof("Email not found: %v", err)
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": true,
 			"msg":   "This email is not registered! Please check your email id or Register your email",
@@ -243,7 +222,7 @@ func (server *GatewayService) Logout(c *fiber.Ctx) error {
 	req := new(LogoutRequest)
 	// Get the JSON body and decode into LogoutRequest
 	if err := c.BodyParser(req); err != nil {
-		util.LogFatal("Failed to parse body:", err)
+		server.log.Infof("Failed to parse body: %v", err)
 	}
 	fmt.Printf("[Logout] username: %s\n", req.Username)
 	var authorization = server.Authenticate(tknStr)
@@ -281,7 +260,7 @@ type createLoginRequest struct {
 func (server *GatewayService) validateUser(c *fiber.Ctx) error {
 	req := new(createLoginRequest)
 	if err := c.BodyParser(req); err != nil {
-		util.LogFatal("Failed to parse body:", err)
+		server.log.Infof("Failed to parse body: %v", err)
 	}
 
 	arg := db.CreateLoginDetailParams{
@@ -291,6 +270,7 @@ func (server *GatewayService) validateUser(c *fiber.Ctx) error {
 
 	loginDetails, err := server.store.GetLoginDetail(context.Background(), arg.Email)
 	if err != nil {
+		server.log.Infof("Email not registered: %v", err)
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": true,
 			"msg":   "This email is not registered! Please check your email id or Register your email",
@@ -326,7 +306,6 @@ func (server *GatewayService) Authenticate(tknStr string) bool {
 }
 
 func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
-	// check auth
 	tknStr := c.Get("Token")
 	var authorization = server.Authenticate(tknStr)
 	if !authorization {
@@ -339,8 +318,9 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 	stationId := c.Get("station_id")
 	aqi, err := server.store.GetAirDataByStationId(context.Background(), stationId)
 	if err != nil {
+		server.log.Infof("Error fetching air data: %v", err)
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": true,
+			"error": err,
 			"msg":   "Data not found",
 		})
 	}
@@ -355,8 +335,9 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 func (server *GatewayService) GetRoles(c *fiber.Ctx) error {
 	roles, err := server.store.GetRoles(context.Background())
 	if err != nil {
+		server.log.Infof("Error fetching roles: %v", err)
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": true,
+			"error": err,
 			"msg":   "Data not found",
 		})
 	}
