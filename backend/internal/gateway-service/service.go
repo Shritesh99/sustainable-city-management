@@ -19,6 +19,7 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Post("/logout", server.Logout)
 	router.Post("/profile", server.GetProfile)
 	router.Get("/airservicedata", server.GetAirData)
+	router.Get("/roles", server.GetRoles)
 
 	err := server.CollectStationData()
 	if err != nil {

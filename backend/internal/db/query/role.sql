@@ -9,6 +9,9 @@ INSERT INTO roles (
 SELECT * FROM roles
 WHERE role_id = $1 LIMIT 1;
 
+-- name: GetRoles :many
+SELECT * FROM roles;
+
 -- name: UpdateRole :one
 UPDATE roles
 SET role_name = $2
