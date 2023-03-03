@@ -85,7 +85,7 @@ func (q *Queries) DeleteAirData(ctx context.Context, stationID string) error {
 }
 
 const getAQI = `-- name: GetAQI :many
-SELECT station_id,station_name,latitude,longitude FROM aqi_data ORDER BY updated_time DESC LIMIT 20
+SELECT station_id,station_name,latitude,longitude,aqi FROM aqi_data ORDER BY updated_time DESC LIMIT 20
 `
 
 type GetAQIRow struct {
@@ -93,6 +93,7 @@ type GetAQIRow struct {
 	StationName string  `json:"station_name"`
 	Latitude    float64 `json:"latitude"`
 	Longitude   float64 `json:"longitude"`
+	Aqi         float64 `json:"aqi"`
 }
 
 func (q *Queries) GetAQI(ctx context.Context) ([]GetAQIRow, error) {
@@ -109,6 +110,7 @@ func (q *Queries) GetAQI(ctx context.Context) ([]GetAQIRow, error) {
 			&i.StationName,
 			&i.Latitude,
 			&i.Longitude,
+			&i.Aqi,
 		); err != nil {
 			return nil, err
 		}
