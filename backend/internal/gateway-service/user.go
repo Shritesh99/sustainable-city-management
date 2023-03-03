@@ -313,8 +313,8 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 			"user":  nil,
 		})
 	}
-	stationId := c.Params("station_id")
-	server.log.Infof("STATION IDDDDDD : %s", stationId)
+	stationId := c.Query("id")
+	server.log.Infof("station id : %s", stationId)
 	aqi, err := server.store.GetAirDataByStationId(context.Background(), stationId)
 	if err != nil {
 		server.log.Infof("Error fetching air data: %v", err)
