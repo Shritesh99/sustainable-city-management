@@ -9,3 +9,6 @@ SELECT * FROM aqi_data WHERE station_id = $1 ORDER BY updated_time DESC LIMIT 1;
 DELETE
 FROM aqi_data
 WHERE station_id = $1;
+
+-- name: GetAQI :many
+SELECT station_id,station_name,latitude,longitude FROM aqi_data ORDER BY updated_time DESC LIMIT 20;

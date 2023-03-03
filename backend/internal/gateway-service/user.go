@@ -53,8 +53,6 @@ type RoleStruct struct {
 	Auths    []string `json:"auths"`
 }
 
-// Create a struct that will be encoded to a JWT.
-// We add jwt.RegisteredClaims as an embedded type, to provide fields like expiry time
 type Claims struct {
 	Username string `json:"username"`
 	jwt.RegisteredClaims
@@ -330,6 +328,23 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 		"aqi_data": aqi,
 		"error":    false,
 		"msg":      "success",
+	})
+}
+
+func (server *GatewayService) GetAQI(c *fiber.Ctx) error {
+	aqis, err := server.store.GetAQI(context.Background())
+	if err != nil {
+		server.log.Infof("Error fetching roles: %v", err)
+		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+			"error": err,
+			"msg":   "Data not found",
+		})
+	}
+
+	return c.JSON(fiber.Map{
+		"aqis_data": aqis,
+		"error":     false,
+		"msg":       "success",
 	})
 }
 

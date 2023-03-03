@@ -84,6 +84,45 @@ func (q *Queries) DeleteAirData(ctx context.Context, stationID string) error {
 	return err
 }
 
+const getAQI = `-- name: GetAQI :many
+SELECT station_id,station_name,latitude,longitude FROM aqi_data ORDER BY updated_time DESC LIMIT 20
+`
+
+type GetAQIRow struct {
+	StationID   string  `json:"station_id"`
+	StationName string  `json:"station_name"`
+	Latitude    float64 `json:"latitude"`
+	Longitude   float64 `json:"longitude"`
+}
+
+func (q *Queries) GetAQI(ctx context.Context) ([]GetAQIRow, error) {
+	rows, err := q.db.QueryContext(ctx, getAQI)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []GetAQIRow
+	for rows.Next() {
+		var i GetAQIRow
+		if err := rows.Scan(
+			&i.StationID,
+			&i.StationName,
+			&i.Latitude,
+			&i.Longitude,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const getAirDataByStationId = `-- name: GetAirDataByStationId :one
 SELECT id, station_id, station_name, aqi, measure_time, epa, pm25, pm10, ozone, no2, so2, co, insert_time, updated_time, latitude, longitude FROM aqi_data WHERE station_id = $1 ORDER BY updated_time DESC LIMIT 1
 `
