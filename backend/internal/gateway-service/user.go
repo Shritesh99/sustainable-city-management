@@ -313,7 +313,7 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 			"user":  nil,
 		})
 	}
-	stationId := c.Get("station_id")
+	stationId := c.Params("station_id")
 	server.log.Infof("STATION IDDDDDD : %s", stationId)
 	aqi, err := server.store.GetAirDataByStationId(context.Background(), stationId)
 	if err != nil {
@@ -332,7 +332,7 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetAQI(c *fiber.Ctx) error {
-	aqis, err := server.store.GetAQI(context.Background())
+	airdata, err := server.store.GetAQI(context.Background())
 	if err != nil {
 		server.log.Infof("Error fetching roles: %v", err)
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
@@ -342,9 +342,9 @@ func (server *GatewayService) GetAQI(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"aqis_data": aqis,
-		"error":     false,
-		"msg":       "success",
+		"data":  airdata,
+		"error": false,
+		"msg":   "success",
 	})
 }
 
