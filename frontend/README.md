@@ -1,49 +1,21 @@
-# Responsive Admin Panel or Dashboard - Flutter UI
-<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-3-orange.svg?style=flat-square)](#contributors-)
-<!-- ALL-CONTRIBUTORS-BADGE:END -->
+# Project Management
 
-## [Live Preview](https://abuanwar072.github.io/Flutter-Responsive-Admin-Panel-or-Dashboard/#/)
+## [Watch it on YouTube](https://youtu.be/YgLRFITrqT8)
 
-**Packages we are using:**
+### Dashboard Screen
 
-- flutter_svg: [link](https://pub.dev/packages/flutter_svg)
-- google_fonts: [link](https://pub.dev/packages/google_fonts)
-- provider: [link](https://pub.dev/packages/provider)
+This dashboard page is designed for the project management. This design contains task managers, recent messages, progress reports, profile member, premium card, etc.
 
-**Fonts**
+![thumbnail_wall](https://user-images.githubusercontent.com/89120990/139877331-ca4fe70d-0b61-4755-9039-1f5435cd9365.png)
+![bg_mob2](https://user-images.githubusercontent.com/89120990/139874972-6828722c-92e2-47d3-bf35-1588f41f4637.gif)
+![bg_tab](https://user-images.githubusercontent.com/89120990/139875104-347e5955-a555-452a-adab-25e159df221e.gif)
+![bg_desk(2)](https://user-images.githubusercontent.com/89120990/139876701-d746483a-a494-48a3-9a79-6d58536209b3.gif)
 
-- Poppins [link](https://fonts.google.com/specimen/Poppins)
 
-## [Watch it on YouTube](https://youtu.be/_uOgXpEHNbc)
+**Dependencies:**
 
-On Flutter V2.* web officially supported on a stable branch. Today I share an Admin panel or you can call it dashboard UI build with flutter.  Now you can build your app dashboard using flutter. This dashboard contains almost everything that you need like a chart, table, nice small card for showing info. 
-It works perfectly on the Web, macOS app, Tablet also on both Android and iOS phones. It's time to code once run everywhere. Yeah, Flutter web is not SEO friendly but we don't need SEO for the admin panel.
-
-### Responsive Admin Panel or Dashboard Final UI
-
-![Preview](/gif.gif)
-
-![App UI](/ui.png)
-
-## Contributors ✨
-
-Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/docs/en/emoji-key)):
-
-<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
-<!-- prettier-ignore-start -->
-<!-- markdownlint-disable -->
-<table>
-  <tr>
-    <td align="center"><a href="https://github.com/simon1tan"><img src="https://avatars.githubusercontent.com/u/1250858?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Simon Tan</b></sub></a><br /><a href="https://github.com/abuanwar072/Flutter-Responsive-Admin-Panel-or-Dashboard/issues?q=author%3Asimon1tan" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/gillescoolen"><img src="https://avatars.githubusercontent.com/u/31668393?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Gilles</b></sub></a><br /><a href="https://github.com/abuanwar072/Flutter-Responsive-Admin-Panel-or-Dashboard/issues?q=author%3Agillescoolen" title="Bug reports">🐛</a></td>
-    <td align="center"><a href="https://github.com/RounakTadvi"><img src="https://avatars.githubusercontent.com/u/38634459?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Rounak Tadvi</b></sub></a><br /><a href="#maintenance-RounakTadvi" title="Maintenance">🚧</a> <a href="https://github.com/abuanwar072/Flutter-Responsive-Admin-Panel-or-Dashboard/commits?author=RounakTadvi" title="Code">💻</a></td>    
-  </tr>
-</table>
-
-<!-- markdownlint-restore -->
-<!-- prettier-ignore-end -->
-
-<!-- ALL-CONTRIBUTORS-LIST:END -->
-
-This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+- [eva_icons_flutter](https://pub.dev/packages/eva_icons_flutter)
+- [percent_indicator](https://pub.dev/packages/percent_indicator)
+- [get](https://pub.dev/packages/get)
+- [flutter_svg](https://pub.dev/packages/flutter_svg)
+- [flutter_staggered_grid_view](https://pub.dev/packages/flutter_staggered_grid_view)
