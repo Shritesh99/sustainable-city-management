@@ -108,6 +108,83 @@ func (s *GatewayService) CollectAirStationData(station string) AQIDATA {
 		util.LogFatal("Cannot read response body", err)
 	}
 	var aqi AQIDATA
-	json.Unmarshal(body, &aqi)
+	err = json.Unmarshal(body, &aqi)
+	if err != nil {
+		return AQIDATA{}
+	}
 	return aqi
+}
+
+type NOISEDATA []struct {
+	MonitorId       int    `json:"monitor_id"`
+	Label           string `json:"label"`
+	Location        string `json:"location"`
+	Latitude        string `json:"latitude"`
+	Longitude       string `json:"longitude"`
+	Code            string `json:"code"`
+	SerialNumber    string `json:"serial_number"`
+	LastCalibrated  string `json:"last_calibrated"`
+	MonitorTypeId   int    `json:"monitor_type_id"`
+	LatestReadingId int    `json:"latest_reading_id"`
+	MonitorType     struct {
+		MonitorTypeId      int    `json:"monitor_type_id"`
+		Name               string `json:"name"`
+		Manufacturer       string `json:"manufacturer"`
+		Category           string `json:"category"`
+		SampleCode         string `json:"sample_code"`
+		SampleSerialNumber string `json:"sample_serial_number"`
+		Protocol           string `json:"protocol"`
+	} `json:"monitor_type"`
+	LatestReading struct {
+		ReadingId  int     `json:"reading_id"`
+		MonitorId  int     `json:"monitor_id"`
+		ProjectId  int     `json:"project_id"`
+		RecordedAt string  `json:"recorded_at"`
+		Laeq       float64 `json:"laeq"`
+		Date       string  `json:"date"`
+		Time       string  `json:"time"`
+		SecsSince  int     `json:"secs_since"`
+		TimeSince  string  `json:"time_since"`
+		Status     string  `json:"status"`
+	} `json:"latest_reading"`
+	LatestAverage struct {
+		AverageId int     `json:"average_id"`
+		LimitId   int     `json:"limit_id"`
+		MonitorId int     `json:"monitor_id"`
+		Date      string  `json:"date"`
+		Value     float64 `json:"value"`
+		Breach    int     `json:"breach"`
+		Final     int     `json:"final"`
+		CreatedAt string  `json:"created_at"`
+		UpdatedAt string  `json:"updated_at"`
+		StartTime string  `json:"start_time"`
+		EndTime   string  `json:"end_time"`
+		Day       string  `json:"day"`
+	} `json:"latest_average"`
+	LatestHourlyAverage struct {
+		HourlyAverageId int     `json:"hourly_average_id"`
+		MonitorId       int     `json:"monitor_id"`
+		Datetime        string  `json:"datetime"`
+		Value           float64 `json:"value"`
+		Day             string  `json:"day"`
+	} `json:"latest_hourly_average"`
+	NumReadings   string `json:"num_readings"`
+	CurrentRating int    `json:"current_rating"`
+}
+
+func (s *GatewayService) CollectNoiseData() NOISEDATA {
+	resp, err := http.Get("https://dublincityairandnoise.ie/assets/php/get-monitors.php")
+	if err != nil {
+		util.LogFatal("Cannot read response body", err)
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		util.LogFatal("Cannot read response body", err)
+	}
+	var noise NOISEDATA
+	err = json.Unmarshal(body, &noise)
+	if err != nil {
+		return nil
+	}
+	return noise
 }

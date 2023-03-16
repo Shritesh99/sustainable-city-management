@@ -28,5 +28,9 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	if err != nil {
 		return nil
 	}
+	err = server.SaveNoiseData()
+	if err != nil {
+		return nil
+	}
 	return server
 }
