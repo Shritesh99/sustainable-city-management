@@ -29,6 +29,14 @@ func (server *GatewayService) CollectStationData() error {
 			Latitude:    resp.Data.City.Geo[0],
 			Longitude:   resp.Data.City.Geo[1],
 		}
+
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("Recovered from panic: %v\n", r)
+				log.Println("Panic occurred while creating air data param of db:", r)
+			}
+		}()
+
 		_, err := server.store.CreateAirData(context.Background(), arg)
 		if err != nil {
 			log.Fatal(err)

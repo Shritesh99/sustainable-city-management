@@ -20,6 +20,14 @@ func (server *GatewayService) SaveNoiseData() error {
 			DailyAvg:      data.LatestAverage.Value,
 			HourlyAvg:     data.LatestHourlyAverage.Value,
 		}
+
+		defer func() {
+			if r := recover(); r != nil {
+				log.Printf("Recovered from panic: %v\n", r)
+				log.Println("Panic occurred while creating noise data param of db:", r)
+			}
+		}()
+
 		_, err := server.store.CreateNoiseData(context.Background(), arg)
 		if err != nil {
 			log.Fatal(err)
