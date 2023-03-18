@@ -76,11 +76,19 @@ class _Sidebar extends StatelessWidget {
                   activeIcon:
                       const IconData(0xe57f, fontFamily: 'MaterialIcons'),
                   icon: const IconData(0xf36e, fontFamily: 'MaterialIcons'),
-                  label: "Setting",
+                  label: "Setting(Logout)",
                 ),
               ],
               onSelected: (index, value) {
                 log("index : $index | label : ${value.label}");
+                if (index == 7) {
+                  //Might be do pop?
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => LoginScreen()));
+                } else if (index == 3) {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => BusScreen()));
+                }
               },
             ),
             // const Divider(thickness: 1),

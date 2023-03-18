@@ -4,6 +4,7 @@ import 'dart:developer';
 
 import 'package:eva_icons_flutter/eva_icons_flutter.dart';
 import 'package:sustainable_city_management/app/constans/app_constants.dart';
+import 'package:sustainable_city_management/app/features/dashboard/views/screens/login_screen.dart';
 import 'package:sustainable_city_management/app/shared_components/chatting_card.dart';
 
 import 'package:sustainable_city_management/app/shared_components/responsive_builder.dart';
@@ -16,6 +17,11 @@ import 'package:sustainable_city_management/app/utils/helpers/app_helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
+
+//screens
+
+import 'package:sustainable_city_management/app/features/dashboard/views/screens/login_screen.dart';
+import 'package:sustainable_city_management/app/features/dashboard/views/screens/bus_screen.dart';
 
 // binding
 part '../../bindings/dashboard_binding.dart';

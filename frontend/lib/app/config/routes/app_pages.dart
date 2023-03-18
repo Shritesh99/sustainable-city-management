@@ -1,5 +1,9 @@
+import 'package:sustainable_city_management/app/features/dashboard/views/screens/bus_screen.dart';
+
 import '../../features/dashboard/views/screens/dashboard_screen.dart';
 import 'package:get/get.dart';
+import '../../features/dashboard/views/screens/login_screen.dart';
+import '../../features/dashboard/views/screens/bus_screen.dart';
 
 part 'app_routes.dart';
 
@@ -12,6 +16,8 @@ class AppPages {
     GetPage(
       name: _Paths.dashboard,
       page: () => const DashboardScreen(),
+      //page: () => const LoginScreen(),
+      //page: () => const BusScreen(),
       binding: DashboardBinding(),
     ),
   ];
