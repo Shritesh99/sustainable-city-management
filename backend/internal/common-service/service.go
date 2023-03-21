@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	airquality_service "github.com/Eytins/sustainable-city-management/backend/internal/airquality-service"
+	bus_service "github.com/Eytins/sustainable-city-management/backend/internal/bus-service"
 	"net"
 	"net/http"
 	"os"
@@ -52,6 +53,8 @@ type service struct {
 	gatewayService    *gateway_service.GatewayService
 	airService        *airquality_service.AirService
 	airConn           *grpc.ClientConn
+	busService        *bus_service.BusService
+	busConn           *grpc.ClientConn
 }
 
 func NewService(log logger.Logger, cfg *config.Config) *service {
@@ -75,7 +78,8 @@ func (a *service) Run() error {
 		gateway := a.fiber.Group("/auth")
 
 		a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl + a.cfg.ConnectedServices[0].GrpcPort)
-		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log, a.airConn)
+		a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[3].ServiceUrl + a.cfg.ConnectedServices[3].GrpcPort)
+		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log, a.airConn, a.busConn)
 
 		go func() {
 			if err := a.fiber.Listen(fmt.Sprintf(":%s", a.cfg.Http.Port)); err != nil {
@@ -86,6 +90,7 @@ func (a *service) Run() error {
 	} else {
 		a.grpcServer = grpc.NewServer()
 		a.airService = airquality_service.NewAirService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
+		a.busService = bus_service.NewBusService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
 		go func() {
 			listener, err := net.Listen(constants.Tcp, fmt.Sprintf(":%s", a.cfg.GRPC.Port))
 			if err != nil {

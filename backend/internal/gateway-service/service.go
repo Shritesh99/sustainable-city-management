@@ -14,10 +14,11 @@ type GatewayService struct {
 	store         *db.SQLStore
 	cfg           *config.Config
 	airClientConn *grpc.ClientConn
+	busClientConn *grpc.ClientConn
 }
 
-func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Config, logger2 logger.Logger, airClientConn *grpc.ClientConn) *GatewayService {
-	server := &GatewayService{router: router, store: store, cfg: cfg, log: logger2, airClientConn: airClientConn}
+func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Config, logger2 logger.Logger, airClientConn *grpc.ClientConn, busClientConn *grpc.ClientConn) *GatewayService {
+	server := &GatewayService{router: router, store: store, cfg: cfg, log: logger2, airClientConn: airClientConn, busClientConn: busClientConn}
 	router.Post("/register", server.Register)
 	router.Post("/login", server.Login)
 	router.Post("/logout", server.Logout)
