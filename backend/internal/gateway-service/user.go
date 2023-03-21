@@ -4,6 +4,7 @@ import (
 	"context"
 	_ "encoding/json"
 	"fmt"
+	pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
 	_ "net/http"
 	"strings"
 	"time"
@@ -314,18 +315,17 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 		})
 	}
 	stationId := c.Query("id")
-	server.log.Infof("station id : %s", stationId)
-	aqi, err := server.store.GetAirDataByStationId(context.Background(), stationId)
+	client := pb.NewAirClient(server.airClientConn)
+	resp, err := client.GetAirData(context.Background(), &pb.AirIdRequest{StationId: stationId})
 	if err != nil {
-		server.log.Infof("Error fetching air data: %v", err)
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
 		})
 	}
 
 	return c.JSON(fiber.Map{
-		"aqi_data": aqi,
+		"aqi_data": resp.GetMessage(),
 		"error":    false,
 		"msg":      "success",
 	})

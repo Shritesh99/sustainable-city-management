@@ -51,6 +51,7 @@ type service struct {
 	middlewareManager middlewares.MiddlewareManager
 	gatewayService    *gateway_service.GatewayService
 	airService        *airquality_service.AirService
+	airConn           *grpc.ClientConn
 }
 
 func NewService(log logger.Logger, cfg *config.Config) *service {
@@ -73,7 +74,8 @@ func (a *service) Run() error {
 		a.fiber.Use(cors.New(conf.GetCorsConf()))
 		gateway := a.fiber.Group("/auth")
 
-		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log)
+		a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl + a.cfg.ConnectedServices[0].GrpcPort)
+		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log, a.airConn)
 
 		go func() {
 			if err := a.fiber.Listen(fmt.Sprintf(":%s", a.cfg.Http.Port)); err != nil {
@@ -83,7 +85,7 @@ func (a *service) Run() error {
 		}()
 	} else {
 		a.grpcServer = grpc.NewServer()
-		a.airService = airquality_service.NewAirService(a.grpcServer, db.NewStore(conn), a.cfg)
+		a.airService = airquality_service.NewAirService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
 		go func() {
 			listener, err := net.Listen(constants.Tcp, fmt.Sprintf(":%s", a.cfg.GRPC.Port))
 			if err != nil {

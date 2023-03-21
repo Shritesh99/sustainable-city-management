@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+option go_package = "air-quality/air-pd";
+
+//import fiber "github.com/gofiber/fiber/v2";
+
+service Air {
+  rpc GetAirData (AirIdRequest) returns (GetAirDataResponse) {}
+  rpc GetAQI (AirIdRequest) returns (GetAirDataResponse) {}
+}
+
+message AirIdRequest {
+  string stationId = 1;
+}
+
+message GetAirDataResponse {
+  string message = 1;
+}
+
+message GetAQIResponse {
+  string message = 1;
+}
