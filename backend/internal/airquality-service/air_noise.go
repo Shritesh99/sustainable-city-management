@@ -6,6 +6,19 @@ import (
 	pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
 )
 
+func convertToJsonString(err error, data any, server *AirService) (*pb.JsonStringResponse, error) {
+	body, err := json.Marshal(&data)
+	if err != nil {
+		server.log.Infof("Error converting air data: %v", err)
+		return &pb.JsonStringResponse{
+			Message: "Data converting failed",
+		}, err
+	}
+	return &pb.JsonStringResponse{
+		Message: string(body),
+	}, nil
+}
+
 func (server *AirService) GetAirData(ctx context.Context, in *pb.AirIdRequest) (*pb.JsonStringResponse, error) {
 	stationId := in.GetStationId()
 
@@ -34,17 +47,15 @@ func (server *AirService) GetAQIData(ctx context.Context, in *pb.NilRequest) (*p
 	return convertToJsonString(err, aqi, server)
 }
 
-func convertToJsonString(err error, data any, server *AirService) (*pb.JsonStringResponse, error) {
-	body, err := json.Marshal(&data)
+func (server *AirService) GetNoiseData(ctx context.Context, in *pb.NilRequest) (*pb.JsonStringResponse, error) {
+	data, err := server.store.GetAllNoiseData(ctx)
 	if err != nil {
-		server.log.Infof("Error converting air data: %v", err)
+		server.log.Infof("Error fetching Noise data: %v", err)
 		return &pb.JsonStringResponse{
-			Message: "Data converting failed",
+			Message: "Data not found",
 		}, err
 	}
-	return &pb.JsonStringResponse{
-		Message: string(body),
-	}, nil
+	return convertToJsonString(err, data, server)
 }
 
 // lauda lasson functions

@@ -98,8 +98,8 @@ type AQIDATA struct {
 	} `json:"data"`
 }
 
-func (s *GatewayService) CollectAirStationData(station string) AQIDATA {
-	resp, err := http.Get(fmt.Sprintf("%s/%s/?token=%s", "https://api.waqi.info/feed", station, s.cfg.DB.AIR_TOKEN))
+func (server *GatewayService) CollectAirStationData(station string) AQIDATA {
+	resp, err := http.Get(fmt.Sprintf("%s/%s/?token=%s", "https://api.waqi.info/feed", station, server.cfg.DB.AIR_TOKEN))
 	if err != nil {
 		util.LogFatal("Cannot read response body", err)
 	}
@@ -172,18 +172,21 @@ type NOISEDATA []struct {
 	CurrentRating int    `json:"current_rating"`
 }
 
-func (s *GatewayService) CollectNoiseData() NOISEDATA {
+func (server *GatewayService) CollectNoiseData() NOISEDATA {
 	resp, err := http.Get("https://dublincityairandnoise.ie/assets/php/get-monitors.php")
 	if err != nil {
-		util.LogFatal("Cannot read response body", err)
+		util.LogFatal("Cannot get data from noise api", err)
+		return nil
 	}
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		util.LogFatal("Cannot read response body", err)
+		util.LogFatal("Cannot read response noise body", err)
+		return nil
 	}
 	var noise NOISEDATA
 	err = json.Unmarshal(body, &noise)
 	if err != nil {
+		util.LogFatal("Cannot convert noise response body to json", err)
 		return nil
 	}
 	return noise

@@ -29,13 +29,13 @@ type RegisterRequest struct {
 	Password  string `json:"password"`
 }
 
-// Create a struct to read the username and password from the request body
+// LoginRequest Create a struct to read the username and password from the request body
 type LoginRequest struct {
 	Password string `json:"password"`
 	Username string `json:"username"`
 }
 
-// Create a struct to read the username
+// LogoutRequest Create a struct to read the username
 type LogoutRequest struct {
 	Username string `json:"username"`
 }
@@ -114,7 +114,7 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 	})
 }
 
-// Create the Signin handler
+// Login Create the Sign in handler
 func (server *GatewayService) Login(c *fiber.Ctx) error {
 	req := new(LoginRequest)
 	// Get the JSON body and decode into LoginRequest
@@ -333,7 +333,7 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 
 func (server *GatewayService) GetAQI(c *fiber.Ctx) error {
 	client := pb.NewAirClient(server.airClientConn)
-	resp, err := client.GetAQI(context.Background(), &pb.NilRequest{})
+	resp, err := client.GetAQI(context.Background(), nil)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
@@ -370,6 +370,22 @@ func (server *GatewayService) GetRoles(c *fiber.Ctx) error {
 
 	return c.JSON(fiber.Map{
 		"roles_data": res,
+		"error":      false,
+		"msg":        "success",
+	})
+}
+
+func (server *GatewayService) GetNoiseData(c *fiber.Ctx) error {
+	client := pb.NewAirClient(server.airClientConn)
+	resp, err := client.GetNoiseData(context.Background(), nil)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err,
+			"msg":   "Data not found",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"noise_data": resp.GetMessage(),
 		"error":      false,
 		"msg":        "success",
 	})
