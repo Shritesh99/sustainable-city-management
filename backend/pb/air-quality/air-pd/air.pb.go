@@ -20,6 +20,44 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type NilRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *NilRequest) Reset() {
+	*x = NilRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_airquality_service_air_proto_msgTypes[0]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *NilRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*NilRequest) ProtoMessage() {}
+
+func (x *NilRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_airquality_service_air_proto_msgTypes[0]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use NilRequest.ProtoReflect.Descriptor instead.
+func (*NilRequest) Descriptor() ([]byte, []int) {
+	return file_airquality_service_air_proto_rawDescGZIP(), []int{0}
+}
+
 type AirIdRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -31,7 +69,7 @@ type AirIdRequest struct {
 func (x *AirIdRequest) Reset() {
 	*x = AirIdRequest{}
 	if protoimpl.UnsafeEnabled {
-		mi := &file_airquality_service_air_proto_msgTypes[0]
+		mi := &file_airquality_service_air_proto_msgTypes[1]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		ms.StoreMessageInfo(mi)
 	}
@@ -44,7 +82,7 @@ func (x *AirIdRequest) String() string {
 func (*AirIdRequest) ProtoMessage() {}
 
 func (x *AirIdRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_airquality_service_air_proto_msgTypes[0]
+	mi := &file_airquality_service_air_proto_msgTypes[1]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -57,7 +95,7 @@ func (x *AirIdRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use AirIdRequest.ProtoReflect.Descriptor instead.
 func (*AirIdRequest) Descriptor() ([]byte, []int) {
-	return file_airquality_service_air_proto_rawDescGZIP(), []int{0}
+	return file_airquality_service_air_proto_rawDescGZIP(), []int{1}
 }
 
 func (x *AirIdRequest) GetStationId() string {
@@ -67,7 +105,7 @@ func (x *AirIdRequest) GetStationId() string {
 	return ""
 }
 
-type GetAirDataResponse struct {
+type JsonStringResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
@@ -75,55 +113,8 @@ type GetAirDataResponse struct {
 	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 }
 
-func (x *GetAirDataResponse) Reset() {
-	*x = GetAirDataResponse{}
-	if protoimpl.UnsafeEnabled {
-		mi := &file_airquality_service_air_proto_msgTypes[1]
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		ms.StoreMessageInfo(mi)
-	}
-}
-
-func (x *GetAirDataResponse) String() string {
-	return protoimpl.X.MessageStringOf(x)
-}
-
-func (*GetAirDataResponse) ProtoMessage() {}
-
-func (x *GetAirDataResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_airquality_service_air_proto_msgTypes[1]
-	if protoimpl.UnsafeEnabled && x != nil {
-		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-		if ms.LoadMessageInfo() == nil {
-			ms.StoreMessageInfo(mi)
-		}
-		return ms
-	}
-	return mi.MessageOf(x)
-}
-
-// Deprecated: Use GetAirDataResponse.ProtoReflect.Descriptor instead.
-func (*GetAirDataResponse) Descriptor() ([]byte, []int) {
-	return file_airquality_service_air_proto_rawDescGZIP(), []int{1}
-}
-
-func (x *GetAirDataResponse) GetMessage() string {
-	if x != nil {
-		return x.Message
-	}
-	return ""
-}
-
-type GetAQIResponse struct {
-	state         protoimpl.MessageState
-	sizeCache     protoimpl.SizeCache
-	unknownFields protoimpl.UnknownFields
-
-	Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
-}
-
-func (x *GetAQIResponse) Reset() {
-	*x = GetAQIResponse{}
+func (x *JsonStringResponse) Reset() {
+	*x = JsonStringResponse{}
 	if protoimpl.UnsafeEnabled {
 		mi := &file_airquality_service_air_proto_msgTypes[2]
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -131,13 +122,13 @@ func (x *GetAQIResponse) Reset() {
 	}
 }
 
-func (x *GetAQIResponse) String() string {
+func (x *JsonStringResponse) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*GetAQIResponse) ProtoMessage() {}
+func (*JsonStringResponse) ProtoMessage() {}
 
-func (x *GetAQIResponse) ProtoReflect() protoreflect.Message {
+func (x *JsonStringResponse) ProtoReflect() protoreflect.Message {
 	mi := &file_airquality_service_air_proto_msgTypes[2]
 	if protoimpl.UnsafeEnabled && x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -149,12 +140,12 @@ func (x *GetAQIResponse) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use GetAQIResponse.ProtoReflect.Descriptor instead.
-func (*GetAQIResponse) Descriptor() ([]byte, []int) {
+// Deprecated: Use JsonStringResponse.ProtoReflect.Descriptor instead.
+func (*JsonStringResponse) Descriptor() ([]byte, []int) {
 	return file_airquality_service_air_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *GetAQIResponse) GetMessage() string {
+func (x *JsonStringResponse) GetMessage() string {
 	if x != nil {
 		return x.Message
 	}
@@ -165,22 +156,20 @@ var File_airquality_service_air_proto protoreflect.FileDescriptor
 
 var file_airquality_service_air_proto_rawDesc = []byte{
 	0x0a, 0x1c, 0x61, 0x69, 0x72, 0x71, 0x75, 0x61, 0x6c, 0x69, 0x74, 0x79, 0x5f, 0x73, 0x65, 0x72,
-	0x76, 0x69, 0x63, 0x65, 0x2f, 0x61, 0x69, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x2c,
-	0x0a, 0x0c, 0x41, 0x69, 0x72, 0x49, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c,
-	0x0a, 0x09, 0x73, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
-	0x09, 0x52, 0x09, 0x73, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x2e, 0x0a, 0x12,
-	0x47, 0x65, 0x74, 0x41, 0x69, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
-	0x73, 0x65, 0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20,
-	0x01, 0x28, 0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x22, 0x2a, 0x0a, 0x0e,
-	0x47, 0x65, 0x74, 0x41, 0x51, 0x49, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x18,
-	0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0x69, 0x0a, 0x03, 0x41, 0x69, 0x72, 0x12,
-	0x32, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x41, 0x69, 0x72, 0x44, 0x61, 0x74, 0x61, 0x12, 0x0d, 0x2e,
-	0x41, 0x69, 0x72, 0x49, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x47,
-	0x65, 0x74, 0x41, 0x69, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
-	0x65, 0x22, 0x00, 0x12, 0x2e, 0x0a, 0x06, 0x47, 0x65, 0x74, 0x41, 0x51, 0x49, 0x12, 0x0d, 0x2e,
-	0x41, 0x69, 0x72, 0x49, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x47,
-	0x65, 0x74, 0x41, 0x69, 0x72, 0x44, 0x61, 0x74, 0x61, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x76, 0x69, 0x63, 0x65, 0x2f, 0x61, 0x69, 0x72, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x0c,
+	0x0a, 0x0a, 0x4e, 0x69, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x2c, 0x0a, 0x0c,
+	0x41, 0x69, 0x72, 0x49, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x1c, 0x0a, 0x09,
+	0x73, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x09, 0x73, 0x74, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x49, 0x64, 0x22, 0x2e, 0x0a, 0x12, 0x4a, 0x73,
+	0x6f, 0x6e, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
+	0x12, 0x18, 0x0a, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x09, 0x52, 0x07, 0x6d, 0x65, 0x73, 0x73, 0x61, 0x67, 0x65, 0x32, 0x67, 0x0a, 0x03, 0x41, 0x69,
+	0x72, 0x12, 0x32, 0x0a, 0x0a, 0x47, 0x65, 0x74, 0x41, 0x69, 0x72, 0x44, 0x61, 0x74, 0x61, 0x12,
+	0x0d, 0x2e, 0x41, 0x69, 0x72, 0x49, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13,
+	0x2e, 0x4a, 0x73, 0x6f, 0x6e, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f,
+	0x6e, 0x73, 0x65, 0x22, 0x00, 0x12, 0x2c, 0x0a, 0x06, 0x47, 0x65, 0x74, 0x41, 0x51, 0x49, 0x12,
+	0x0b, 0x2e, 0x4e, 0x69, 0x6c, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x13, 0x2e, 0x4a,
+	0x73, 0x6f, 0x6e, 0x53, 0x74, 0x72, 0x69, 0x6e, 0x67, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
 	0x65, 0x22, 0x00, 0x42, 0x14, 0x5a, 0x12, 0x61, 0x69, 0x72, 0x2d, 0x71, 0x75, 0x61, 0x6c, 0x69,
 	0x74, 0x79, 0x2f, 0x61, 0x69, 0x72, 0x2d, 0x70, 0x64, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
 	0x33,
@@ -200,15 +189,15 @@ func file_airquality_service_air_proto_rawDescGZIP() []byte {
 
 var file_airquality_service_air_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_airquality_service_air_proto_goTypes = []interface{}{
-	(*AirIdRequest)(nil),       // 0: AirIdRequest
-	(*GetAirDataResponse)(nil), // 1: GetAirDataResponse
-	(*GetAQIResponse)(nil),     // 2: GetAQIResponse
+	(*NilRequest)(nil),         // 0: NilRequest
+	(*AirIdRequest)(nil),       // 1: AirIdRequest
+	(*JsonStringResponse)(nil), // 2: JsonStringResponse
 }
 var file_airquality_service_air_proto_depIdxs = []int32{
-	0, // 0: Air.GetAirData:input_type -> AirIdRequest
-	0, // 1: Air.GetAQI:input_type -> AirIdRequest
-	1, // 2: Air.GetAirData:output_type -> GetAirDataResponse
-	1, // 3: Air.GetAQI:output_type -> GetAirDataResponse
+	1, // 0: Air.GetAirData:input_type -> AirIdRequest
+	0, // 1: Air.GetAQI:input_type -> NilRequest
+	2, // 2: Air.GetAirData:output_type -> JsonStringResponse
+	2, // 3: Air.GetAQI:output_type -> JsonStringResponse
 	2, // [2:4] is the sub-list for method output_type
 	0, // [0:2] is the sub-list for method input_type
 	0, // [0:0] is the sub-list for extension type_name
@@ -223,7 +212,7 @@ func file_airquality_service_air_proto_init() {
 	}
 	if !protoimpl.UnsafeEnabled {
 		file_airquality_service_air_proto_msgTypes[0].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*AirIdRequest); i {
+			switch v := v.(*NilRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -235,7 +224,7 @@ func file_airquality_service_air_proto_init() {
 			}
 		}
 		file_airquality_service_air_proto_msgTypes[1].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAirDataResponse); i {
+			switch v := v.(*AirIdRequest); i {
 			case 0:
 				return &v.state
 			case 1:
@@ -247,7 +236,7 @@ func file_airquality_service_air_proto_init() {
 			}
 		}
 		file_airquality_service_air_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
-			switch v := v.(*GetAQIResponse); i {
+			switch v := v.(*JsonStringResponse); i {
 			case 0:
 				return &v.state
 			case 1:

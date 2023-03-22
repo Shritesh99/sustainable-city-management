@@ -5,18 +5,18 @@ option go_package = "air-quality/air-pd";
 //import fiber "github.com/gofiber/fiber/v2";
 
 service Air {
-  rpc GetAirData (AirIdRequest) returns (GetAirDataResponse) {}
-  rpc GetAQI (AirIdRequest) returns (GetAirDataResponse) {}
+  rpc GetAirData (AirIdRequest) returns (JsonStringResponse) {}
+  rpc GetAQI (NilRequest) returns (JsonStringResponse) {}
+}
+
+message NilRequest {
+
 }
 
 message AirIdRequest {
   string stationId = 1;
 }
 
-message GetAirDataResponse {
-  string message = 1;
-}
-
-message GetAQIResponse {
+message JsonStringResponse {
   string message = 1;
 }

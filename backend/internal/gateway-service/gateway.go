@@ -332,19 +332,18 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetAQI(c *fiber.Ctx) error {
-	airdata, err := server.store.GetAQI(context.Background())
+	client := pb.NewAirClient(server.airClientConn)
+	resp, err := client.GetAQI(context.Background(), &pb.NilRequest{})
 	if err != nil {
-		server.log.Infof("Error fetching roles: %v", err)
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
 		})
 	}
-
 	return c.JSON(fiber.Map{
-		"data":  airdata,
-		"error": false,
-		"msg":   "success",
+		"aqi_data": resp.GetMessage(),
+		"error":    false,
+		"msg":      "success",
 	})
 }
 
