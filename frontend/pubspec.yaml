@@ -17,8 +17,21 @@ dependencies:
   get: ^4.6.5
   intl: ^0.18.0
   percent_indicator: ^4.2.3
+  http: ^0.13.5
+  dio: ^5.0.1
+  json_annotation: ^4.8.0
+  uuid: ^3.0.7
+  shared_preferences: ^2.0.15
+  toast: ^0.2.9
+  google_maps_flutter: ^2.2.5
+  #google_maps_flutter_web: ^0.4.0+3
+  flutter_map_geojson: ^1.0.0
+
+  geojson_vi: ^2.0.7
 
 dev_dependencies:
+  json_serializable: ^6.6.0
+  build_runner: ^2.3.3
   flutter_test:
     sdk: flutter
 
@@ -27,6 +40,7 @@ flutter:
   assets:
     - assets/images/raster/.
     - assets/images/vector/.
+    - assets/DublinBus1.geojson
   fonts:
     - family: Poppins
       fonts:
