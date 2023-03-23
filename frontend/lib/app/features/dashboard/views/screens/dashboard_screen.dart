@@ -30,7 +30,7 @@ part '../../bindings/dashboard_binding.dart';
 part '../../controllers/dashboard_controller.dart';
 
 // models
-part '../../models/profile.dart';
+part '../../models/profile_model.dart';
 
 // component
 
