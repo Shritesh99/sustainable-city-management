@@ -18,6 +18,7 @@ import (
 	db "github.com/Eytins/sustainable-city-management/backend/internal/db/sqlc"
 	gateway_service "github.com/Eytins/sustainable-city-management/backend/internal/gateway-service"
 	"github.com/Eytins/sustainable-city-management/backend/internal/metrics"
+	pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/constants"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/logger"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/middlewares"
@@ -89,14 +90,15 @@ func (a *service) Run() error {
 		}()
 	} else {
 		a.grpcServer = grpc.NewServer()
-		a.airService = airquality_service.NewAirService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
-		//a.busService = bus_service.NewBusService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
+		// a.airService = airquality_service.NewAirService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
+		// //a.busService = bus_service.NewBusService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
 		go func() {
 			listener, err := net.Listen(constants.Tcp, fmt.Sprintf("127.0.0.1:%s", a.cfg.GRPC.Port))
 			if err != nil {
 				a.log.Errorf("(Net Listener) err: %v", err)
 				cancel()
 			}
+			pb.RegisterAirServiceServer(a.grpcServer, airquality_service.NewAirService(db.NewStore(conn), a.cfg, a.log))
 			err = a.grpcServer.Serve(listener)
 			if err != nil {
 				a.log.Errorf("(Grpc server) err: %v", err)

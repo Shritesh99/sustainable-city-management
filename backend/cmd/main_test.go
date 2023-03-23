@@ -2,10 +2,12 @@ package main
 
 import (
 	"context"
+	"fmt"
+	"testing"
+
 	pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials/insecure"
-	"testing"
 )
 
 func TestName(t *testing.T) {
@@ -17,7 +19,7 @@ func TestName(t *testing.T) {
 	var req = new(pb.NilRequest)
 	resp, err := client.GetAQI(context.Background(), req)
 	if err != nil {
-		print("Error")
+		fmt.Printf("%v", err)
 	}
 	print(resp.GetMessage())
 }
