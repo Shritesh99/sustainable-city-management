@@ -161,7 +161,7 @@ class _MapScreenState extends State<MapScreen> {
     _markers.add(
       Marker(
         markerId: MarkerId(bikeStation2.number.toString()),
-        position: LatLng(bikeStation.lat, bikeStation.lng),
+        position: LatLng(bikeStation2.lat, bikeStation2.lng),
         onTap: () {
           _customInfoWindowController.addInfoWindow!(
             Container(
@@ -188,11 +188,11 @@ class _MapScreenState extends State<MapScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 Text(
-                                  bikeStation.stationName,
+                                  bikeStation2.stationName,
                                   style: const TextStyle(color: Colors.black87),
                                 ),
                                 Text(
-                                  bikeStation.stationAddr,
+                                  bikeStation2.stationAddr,
                                   style: const TextStyle(
                                       color: Colors.grey, fontSize: 8),
                                 ),
@@ -203,7 +203,7 @@ class _MapScreenState extends State<MapScreen> {
                                     children: <Widget>[
                                       Text.rich(TextSpan(children: [
                                         TextSpan(
-                                            text: bikeStation
+                                            text: bikeStation2
                                                 .numOfMechanicalBike
                                                 .toString(),
                                             style: const TextStyle(
@@ -222,7 +222,7 @@ class _MapScreenState extends State<MapScreen> {
                                           padding: EdgeInsets.only(left: 4.0),
                                         )),
                                         TextSpan(
-                                            text: bikeStation.numOfElectricBike
+                                            text: bikeStation2.numOfElectricBike
                                                 .toString(),
                                             style: const TextStyle(
                                                 color: Colors.black87,
@@ -239,7 +239,7 @@ class _MapScreenState extends State<MapScreen> {
                                           padding: EdgeInsets.only(left: 4.0),
                                         )),
                                         TextSpan(
-                                            text: bikeStation.numOfBikeStands
+                                            text: bikeStation2.numOfBikeStands
                                                 .toString(),
                                             style: const TextStyle(
                                                 color: Colors.black87,
@@ -260,8 +260,8 @@ class _MapScreenState extends State<MapScreen> {
     );
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dublinbikes'),
-        backgroundColor: Color.fromRGBO(29, 22, 70, 1),
+        title: const Text('Dublinbikes'),
+        backgroundColor: const Color.fromRGBO(29, 22, 70, 1),
       ),
       body: Stack(
         children: <Widget>[

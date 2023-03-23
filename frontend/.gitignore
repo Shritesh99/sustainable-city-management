@@ -119,3 +119,11 @@ app.*.map.json
 
 package-lock.json
 node_modules
+
+ios
+linux
+macos
+windows
+android
+.metadata
+pubspec.lock

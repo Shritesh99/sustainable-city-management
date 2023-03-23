@@ -105,12 +105,12 @@ class _CustomInfoWindowState extends State<CustomInfoWindow> {
 
   /// Assign the [Widget] and [Marker]'s [LatLng].
   void _addInfoWindow(Widget child, LatLng latLng) {
-    if (_showNow) {
-      setState(() {
-        _showNow = false;
-      });
-      return;
-    }
+    // if (_showNow) {
+    //   setState(() {
+    //     _showNow = false;
+    //   });
+    //   return;
+    // }
     assert(child != null);
     assert(latLng != null);
     _child = child;
@@ -126,7 +126,7 @@ class _CustomInfoWindowState extends State<CustomInfoWindow> {
 
   /// Disables [CustomInfoWindow] visibility.
   void _hideInfoWindow() {
-    setState(() {
+    setState(() {``
       _showNow = false;
     });
   }
