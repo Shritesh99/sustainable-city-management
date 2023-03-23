@@ -41,7 +41,7 @@ type LogoutRequest struct {
 }
 
 type UserInfoRequest struct {
-	Username string `json:"email"`
+	Username string `json:"username"`
 }
 
 type TokenStruct struct {
@@ -324,7 +324,7 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 			"user":  nil,
 		})
 	}
-	stationId := c.Query("id")
+	stationId := c.Get("id")
 	client := pb.NewAirServiceClient(server.airClientConn)
 	resp, err := client.GetAirData(context.Background(), &pb.AirIdRequest{StationId: stationId})
 	if err != nil {

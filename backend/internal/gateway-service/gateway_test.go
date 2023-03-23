@@ -110,10 +110,9 @@ func TestGetProfileWithoutToken(t *testing.T) {
 }
 
 func TestGetProfileWithToken(t *testing.T) {
-
 	var token = GenerateToken()
 	registerBody := `{
-        "email": "abcd@gmail.com"
+        "username": "abcd@gmail.com"
     }`
 
 	// Iterate through test single test cases
@@ -122,12 +121,51 @@ func TestGetProfileWithToken(t *testing.T) {
 		return
 	}
 	req.Header.Set("Token", token)
+	req.Header.Set("Content-Type", "application/json")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
 	}
 	assert.Nil(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestGatewayService_GetRoles(t *testing.T) {
+	resp, err := http.Get("http://127.0.0.1:8000/auth/roles")
+	if err != nil {
+		print(err)
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestGatewayService_GetAirData(t *testing.T) {
+	var token = GenerateToken()
+
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/auth/airstationdata", nil)
+	if err != nil {
+		return
+	}
+	req.Header.Set("Token", token)
+	req.Header.Set("id", "@13372")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestGatewayService_GetAQI(t *testing.T) {
+	resp, err := http.Get("http://127.0.0.1:8000/auth/airdata")
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestGatewayService_GetNoiseData(t *testing.T) {
 }
 
 func GenerateToken() string {
