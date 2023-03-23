@@ -17,6 +17,5 @@ type AirService struct {
 func NewAirService(store *db.SQLStore, cfg *config.Config, logger2 logger.Logger) *AirService {
 	service := &AirService{store: store, cfg: cfg, log: logger2}
 
-	//server.CollectStationData()
 	return service
 }

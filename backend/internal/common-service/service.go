@@ -6,6 +6,7 @@ import (
 	"fmt"
 	airquality_service "github.com/Eytins/sustainable-city-management/backend/internal/airquality-service"
 	bus_service "github.com/Eytins/sustainable-city-management/backend/internal/bus-service"
+	"google.golang.org/grpc/credentials/insecure"
 	"net"
 	"net/http"
 	"os"
@@ -78,8 +79,8 @@ func (a *service) Run() error {
 		a.fiber.Use(cors.New(conf.GetCorsConf()))
 		gateway := a.fiber.Group("/auth")
 
-		a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl + a.cfg.ConnectedServices[0].GrpcPort)
-		//a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[3].ServiceUrl + a.cfg.ConnectedServices[3].GrpcPort)
+		a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl+a.cfg.ConnectedServices[0].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		//a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[3].ServiceUrl + a.cfg.ConnectedServices[3].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log, a.airConn, a.busConn)
 
 		go func() {
@@ -93,7 +94,7 @@ func (a *service) Run() error {
 		// a.airService = airquality_service.NewAirService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
 		// //a.busService = bus_service.NewBusService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
 		go func() {
-			listener, err := net.Listen(constants.Tcp, fmt.Sprintf("127.0.0.1:%s", a.cfg.GRPC.Port))
+			listener, err := net.Listen(constants.Tcp, fmt.Sprintf(":%s", a.cfg.GRPC.Port))
 			if err != nil {
 				a.log.Errorf("(Net Listener) err: %v", err)
 				cancel()

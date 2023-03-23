@@ -72,7 +72,7 @@ func InitConfig() (*Config, error) {
 			if err != nil {
 				return nil, errors.Wrap(err, "os.Getwd")
 			}
-			configPath = fmt.Sprintf("%s/config/config1.yaml", getwd)
+			configPath = fmt.Sprintf("%s/config/config.yaml", getwd)
 		}
 	}
 	cfg := &Config{}
