@@ -116,36 +116,43 @@ func (server *GatewayService) CollectAirStationData(station string) AQIDATA {
 }
 
 type NOISEDATA []struct {
-	MonitorId       int    `json:"monitor_id"`
-	Label           string `json:"label"`
-	Location        string `json:"location"`
-	Latitude        string `json:"latitude"`
-	Longitude       string `json:"longitude"`
-	Code            string `json:"code"`
-	SerialNumber    string `json:"serial_number"`
-	LastCalibrated  string `json:"last_calibrated"`
-	MonitorTypeId   int    `json:"monitor_type_id"`
-	LatestReadingId int    `json:"latest_reading_id"`
+	MonitorId       int     `json:"monitor_id"`
+	Label           string  `json:"label"`
+	Location        string  `json:"location"`
+	Latitude        string  `json:"latitude"`
+	Longitude       string  `json:"longitude"`
+	Code            string  `json:"code"`
+	SerialNumber    string  `json:"serial_number"`
+	LastCalibrated  *string `json:"last_calibrated"`
+	MonitorTypeId   int     `json:"monitor_type_id"`
+	LatestReadingId int     `json:"latest_reading_id"`
 	MonitorType     struct {
-		MonitorTypeId      int    `json:"monitor_type_id"`
-		Name               string `json:"name"`
-		Manufacturer       string `json:"manufacturer"`
-		Category           string `json:"category"`
-		SampleCode         string `json:"sample_code"`
-		SampleSerialNumber string `json:"sample_serial_number"`
-		Protocol           string `json:"protocol"`
+		MonitorTypeId      int     `json:"monitor_type_id"`
+		Name               string  `json:"name"`
+		Manufacturer       string  `json:"manufacturer"`
+		Category           string  `json:"category"`
+		SampleCode         string  `json:"sample_code"`
+		SampleSerialNumber string  `json:"sample_serial_number"`
+		Protocol           *string `json:"protocol"`
 	} `json:"monitor_type"`
 	LatestReading struct {
-		ReadingId  int     `json:"reading_id"`
-		MonitorId  int     `json:"monitor_id"`
-		ProjectId  int     `json:"project_id"`
-		RecordedAt string  `json:"recorded_at"`
-		Laeq       float64 `json:"laeq"`
-		Date       string  `json:"date"`
-		Time       string  `json:"time"`
-		SecsSince  int     `json:"secs_since"`
-		TimeSince  string  `json:"time_since"`
-		Status     string  `json:"status"`
+		ReadingId    int      `json:"reading_id,omitempty"`
+		MonitorId    int      `json:"monitor_id"`
+		ProjectId    int      `json:"project_id"`
+		RecordedAt   string   `json:"recorded_at"`
+		Laeq         float64  `json:"laeq,omitempty"`
+		Date         string   `json:"date"`
+		Time         string   `json:"time"`
+		SecsSince    int      `json:"secs_since"`
+		TimeSince    string   `json:"time_since"`
+		Status       string   `json:"status"`
+		AirReadingId int      `json:"air_reading_id,omitempty"`
+		Pm10         *float64 `json:"pm10,omitempty"`
+		Pm25         *float64 `json:"pm2_5,omitempty"`
+		No2          *float64 `json:"no2,omitempty"`
+		O3           *float64 `json:"o3,omitempty"`
+		So2          *float64 `json:"so2,omitempty"`
+		Co           *float64 `json:"co,omitempty"`
 	} `json:"latest_reading"`
 	LatestAverage struct {
 		AverageId int     `json:"average_id"`
@@ -160,16 +167,66 @@ type NOISEDATA []struct {
 		StartTime string  `json:"start_time"`
 		EndTime   string  `json:"end_time"`
 		Day       string  `json:"day"`
-	} `json:"latest_average"`
+	} `json:"latest_average,omitempty"`
 	LatestHourlyAverage struct {
 		HourlyAverageId int     `json:"hourly_average_id"`
 		MonitorId       int     `json:"monitor_id"`
 		Datetime        string  `json:"datetime"`
 		Value           float64 `json:"value"`
 		Day             string  `json:"day"`
-	} `json:"latest_hourly_average"`
-	NumReadings   string `json:"num_readings"`
-	CurrentRating int    `json:"current_rating"`
+	} `json:"latest_hourly_average,omitempty"`
+	NumReadings    string `json:"num_readings"`
+	CurrentRating  int    `json:"current_rating"`
+	LatestAverages struct {
+		So2 struct {
+			Start             string  `json:"start"`
+			End               string  `json:"end"`
+			Value             float64 `json:"value"`
+			NumReadings       int     `json:"num_readings"`
+			PercentageCapture int     `json:"percentage_capture"`
+			Rating            int     `json:"rating"`
+		} `json:"so2,omitempty"`
+		Co struct {
+			Start             string      `json:"start"`
+			End               string      `json:"end"`
+			Value             float64     `json:"value"`
+			NumReadings       int         `json:"num_readings"`
+			PercentageCapture int         `json:"percentage_capture"`
+			Rating            interface{} `json:"rating"`
+		} `json:"co,omitempty"`
+		Pm10 struct {
+			Start             string  `json:"start"`
+			End               string  `json:"end"`
+			Value             float64 `json:"value"`
+			NumReadings       int     `json:"num_readings"`
+			PercentageCapture int     `json:"percentage_capture"`
+			Rating            int     `json:"rating,omitempty"`
+		} `json:"pm10,omitempty"`
+		Pm25 struct {
+			Start             string  `json:"start"`
+			End               string  `json:"end"`
+			Value             float64 `json:"value"`
+			NumReadings       int     `json:"num_readings"`
+			PercentageCapture int     `json:"percentage_capture"`
+			Rating            int     `json:"rating,omitempty"`
+		} `json:"pm2_5,omitempty"`
+		No2 struct {
+			Start             string  `json:"start"`
+			End               string  `json:"end"`
+			Value             float64 `json:"value"`
+			NumReadings       int     `json:"num_readings"`
+			PercentageCapture int     `json:"percentage_capture"`
+			Rating            int     `json:"rating"`
+		} `json:"no2,omitempty"`
+		O3 struct {
+			Start             string  `json:"start"`
+			End               string  `json:"end"`
+			Value             float64 `json:"value"`
+			NumReadings       int     `json:"num_readings"`
+			PercentageCapture int     `json:"percentage_capture"`
+			Rating            int     `json:"rating"`
+		} `json:"o3,omitempty"`
+	} `json:"latest_averages,omitempty"`
 }
 
 func (server *GatewayService) CollectNoiseData() NOISEDATA {
