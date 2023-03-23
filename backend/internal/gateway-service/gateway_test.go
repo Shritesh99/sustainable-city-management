@@ -13,11 +13,11 @@ import (
 
 func TestRegisterValidRequest(t *testing.T) {
 	registerBody := `{
-        "firstName": "aJohn",
-        "lastName": "aDoe",
-        "username": "johasan2doe@example.com",
-        "password": "passsord1233",
-        "roleID": 1
+        "first_name": "test1",
+        "last_name": "user",
+        "username": "abcdef@gmail.com",
+        "password": "pwd123",
+        "roleID": 0
     }`
 	resp, err := http.Post("http://127.0.0.1:8000/auth/register", "application/json", strings.NewReader(registerBody))
 	if err != nil {
@@ -29,8 +29,8 @@ func TestRegisterValidRequest(t *testing.T) {
 
 func TestRegisterForExistingEmail(t *testing.T) {
 	registerBody := `{
-        "firstName": "aJohn",
-        "lastName": "aDoe",
+        "first_name": "aJohn",
+        "last_name": "aDoe",
         "username": "johasan2doe@example.com",
         "password": "passsord1233",
         "roleID": 1
@@ -109,11 +109,32 @@ func TestGetProfileWithoutToken(t *testing.T) {
 	assert.Equal(t, http.StatusUnauthorized, resp.StatusCode)
 }
 
+func TestGetProfileWithToken(t *testing.T) {
+
+	var token = GenerateToken()
+	registerBody := `{
+        "email": "abcd@gmail.com"
+    }`
+
+	// Iterate through test single test cases
+	req, err := http.NewRequest("POST", "http://127.0.0.1:8000/auth/profile", strings.NewReader(registerBody))
+	if err != nil {
+		return
+	}
+	req.Header.Set("Token", token)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
 func GenerateToken() string {
 	expirationTime := time.Now().Add(5 * time.Hour)
 	// Create the JWT claims, which includes the username and expiry time
 	claims := &Claims{
-		Username: "abcde@gmail.com",
+		Username: "abcd@gmail.com",
 		RegisteredClaims: jwt.RegisteredClaims{
 			// In JWT, the expiry time is expressed as unix milliseconds
 			ExpiresAt: jwt.NewNumericDate(expirationTime),

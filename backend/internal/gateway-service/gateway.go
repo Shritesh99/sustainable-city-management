@@ -41,7 +41,7 @@ type LogoutRequest struct {
 }
 
 type UserInfoRequest struct {
-	Username string `json:"username"`
+	Username string `json:"email"`
 }
 
 type TokenStruct struct {
@@ -88,8 +88,11 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 
 	user, err := server.store.CreateUser(context.Background(), arg)
 	if err != nil {
-		// fmt.Printf("[CreateUser] %s\n", err)
-		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
+		fmt.Printf("[CreateUser] %s\n", err)
+		return c.Status(fiber.StatusFailedDependency).JSON(fiber.Map{
+			"error": true,
+			"msg":   "User could not be created",
+		})
 	}
 
 	argLogin := db.CreateLoginDetailParams{
@@ -205,6 +208,13 @@ func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 	}
 
 	userInfo, err := server.store.GetUser(context.Background(), loginDetails.UserID)
+	if err != nil {
+		server.log.Infof("User not found: %v", err)
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+			"error": true,
+			"msg":   "User not found",
+		})
+	}
 	return c.JSON(fiber.Map{
 		"error":     false,
 		"msg":       "success",

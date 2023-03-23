@@ -77,8 +77,8 @@ func (a *service) Run() error {
 		a.fiber.Use(cors.New(conf.GetCorsConf()))
 		gateway := a.fiber.Group("/auth")
 
-		a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl + a.cfg.ConnectedServices[0].GrpcPort)
-		a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[3].ServiceUrl + a.cfg.ConnectedServices[3].GrpcPort)
+		// a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl + a.cfg.ConnectedServices[0].GrpcPort)
+		// a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[3].ServiceUrl + a.cfg.ConnectedServices[3].GrpcPort)
 		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log, a.airConn, a.busConn)
 
 		go func() {
