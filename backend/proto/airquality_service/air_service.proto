@@ -4,7 +4,7 @@ option go_package = "air-quality/air-pd";
 
 //import fiber "github.com/gofiber/fiber/v2";
 
-service Air {
+service AirService {
   rpc GetAirData (AirIdRequest) returns (JsonStringResponse) {}
   rpc GetAQI (NilRequest) returns (JsonStringResponse) {}
   rpc GetNoiseData (NilRequest) returns (JsonStringResponse) {}

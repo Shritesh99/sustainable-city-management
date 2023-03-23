@@ -35,7 +35,7 @@ func (server *AirService) GetAirData(ctx context.Context, in *pb.AirIdRequest) (
 	return convertToJsonString(err, airData, server)
 }
 
-func (server *AirService) GetAQIData(ctx context.Context, in *pb.NilRequest) (*pb.JsonStringResponse, error) {
+func (server *AirService) GetAQI(ctx context.Context, in *pb.NilRequest) (*pb.JsonStringResponse, error) {
 	aqi, err := server.store.GetAQI(ctx)
 	if err != nil {
 		server.log.Infof("Error fetching AQI data: %v", err)

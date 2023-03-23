@@ -325,7 +325,7 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 		})
 	}
 	stationId := c.Query("id")
-	client := pb.NewAirClient(server.airClientConn)
+	client := pb.NewAirServiceClient(server.airClientConn)
 	resp, err := client.GetAirData(context.Background(), &pb.AirIdRequest{StationId: stationId})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -342,8 +342,9 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetAQI(c *fiber.Ctx) error {
-	client := pb.NewAirClient(server.airClientConn)
-	resp, err := client.GetAQI(context.Background(), nil)
+	client := pb.NewAirServiceClient(server.airClientConn)
+	req := pb.NilRequest{}
+	resp, err := client.GetAQI(context.Background(), &req)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
@@ -386,8 +387,8 @@ func (server *GatewayService) GetRoles(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetNoiseData(c *fiber.Ctx) error {
-	client := pb.NewAirClient(server.airClientConn)
-	resp, err := client.GetNoiseData(context.Background(), nil)
+	client := pb.NewAirServiceClient(server.airClientConn)
+	resp, err := client.GetNoiseData(context.Background(), &pb.NilRequest{})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
