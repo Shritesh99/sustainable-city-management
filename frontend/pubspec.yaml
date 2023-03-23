@@ -29,6 +29,7 @@ dependencies:
 
   geojson_vi: ^2.0.7
 
+
 dev_dependencies:
   json_serializable: ^6.6.0
   build_runner: ^2.3.3

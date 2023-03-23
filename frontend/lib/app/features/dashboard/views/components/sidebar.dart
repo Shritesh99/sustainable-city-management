@@ -81,14 +81,17 @@ class _Sidebar extends StatelessWidget {
               ],
               onSelected: (index, value) {
                 log("index : $index | label : ${value.label}");
-                if (index == 7) {
-                  //Might be do pop?
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()));
-                } else if (index == 3) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BusScreen()));
-                }
+
+                // if (index == 7) {
+                //   //Might be do pop?
+                //   Navigator.push(context,
+                //       MaterialPageRoute(builder: (context) => LoginScreen()));
+                // } else if (index == 3) {
+                //   Navigator.push(context,
+                //       MaterialPageRoute(builder: (context) => BusScreen()));
+                // }
+
+                Get.toNamed("/${value.label.toLowerCase()}");
               },
             ),
             // const Divider(thickness: 1),
