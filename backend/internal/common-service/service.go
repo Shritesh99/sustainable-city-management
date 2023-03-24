@@ -19,7 +19,8 @@ import (
 	db "github.com/Eytins/sustainable-city-management/backend/internal/db/sqlc"
 	gateway_service "github.com/Eytins/sustainable-city-management/backend/internal/gateway-service"
 	"github.com/Eytins/sustainable-city-management/backend/internal/metrics"
-	pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
+	air_pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
+	bus_pb "github.com/Eytins/sustainable-city-management/backend/pb/bus/bus-pd"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/constants"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/logger"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/middlewares"
@@ -80,7 +81,7 @@ func (a *service) Run() error {
 		gateway := a.fiber.Group("/gateway")
 
 		a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl+a.cfg.ConnectedServices[0].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
-		//a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[3].ServiceUrl + a.cfg.ConnectedServices[3].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[1].ServiceUrl+a.cfg.ConnectedServices[1].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log, a.airConn, a.busConn)
 
 		go func() {
@@ -91,15 +92,14 @@ func (a *service) Run() error {
 		}()
 	} else {
 		a.grpcServer = grpc.NewServer()
-		// a.airService = airquality_service.NewAirService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
-		// //a.busService = bus_service.NewBusService(a.grpcServer, db.NewStore(conn), a.cfg, a.log)
 		go func() {
 			listener, err := net.Listen(constants.Tcp, fmt.Sprintf(":%s", a.cfg.GRPC.Port))
 			if err != nil {
 				a.log.Errorf("(Net Listener) err: %v", err)
 				cancel()
 			}
-			pb.RegisterAirServiceServer(a.grpcServer, airquality_service.NewAirService(db.NewStore(conn), a.cfg, a.log))
+			air_pb.RegisterAirServiceServer(a.grpcServer, airquality_service.NewAirService(db.NewStore(conn), a.cfg, a.log))
+			bus_pb.RegisterBusServiceServer(a.grpcServer, bus_service.NewBusService(db.NewStore(conn), a.cfg, a.log))
 			err = a.grpcServer.Serve(listener)
 			if err != nil {
 				a.log.Errorf("(Grpc server) err: %v", err)

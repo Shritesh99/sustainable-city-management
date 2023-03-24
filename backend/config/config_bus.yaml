@@ -1,5 +1,5 @@
-serviceName: gateway
-serviceType: gateway
+serviceName: BusService
+serviceType: service
 serviceUrl: http://gateway-microservice-service.default.svc.cluster.local
 Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
 development: true
@@ -9,15 +9,15 @@ http:
      basePath: /
      debugErrorsResponse: true
 grpc:
-     port: 4000
+     port: 4001
      development: true
 probes:
      readinessPath: /live
      livenessPath: /ready
-     port: :8002
-     pprof: :6001
+     port: :7012
+     pprof: :5011
      prometheusPath: /metrics
-     prometheusPort: :8001
+     prometheusPort: :7011
      checkIntervalSeconds: 10
 logger:
      level: info
@@ -28,16 +28,11 @@ db:
      DB_DRIVER: postgres
      AIR_TOKEN: d3f5d975618dc64e01ed3df11688671d3e61dd7f
 ConnectedServices:
-      - serviceName: AirService
-        serviceType: service
+      - serviceName: gateway-service
+        serviceType: gateway
         serviceUrl: localhost
-        healthcheckPort: :7002
-        grpcPort: :4000
-      - serviceName: BusService
-        serviceType: service
-        serviceUrl: localhost
-        healthcheckPort: :7012
-        grpcPort: :4001
+        healthcheckPort: :8002
+        httpPort: :8000
 #      - serviceName: { { .Values.bike.Name } }
 #        serviceType: { { .Values.bike.Type } }
 #        serviceUrl: { { .Values.bike.Url } }
@@ -48,3 +43,8 @@ ConnectedServices:
 #        serviceUrl: { { .Values.bin.Url } }
 #        healthcheckPort: { { .Values.bin.HealthcheckPort } }
 #        grpcPort: { { .Values.bin.GrpcPort } }
+#      - serviceName: { { .Values.bus.Name } }
+#        serviceType: { { .Values.bus.Type } }
+#        serviceUrl: { { .Values.bus.Url } }
+#        healthcheckPort: { { .Values.bus.HealthcheckPort } }
+#        grpcPort: { { .Values.bus.GrpcPort } }

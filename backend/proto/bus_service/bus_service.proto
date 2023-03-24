@@ -1,0 +1,19 @@
+syntax = "proto3";
+
+option go_package = "bus/bus-pd";
+
+service BusService {
+  rpc GetBusDataByRouteId (RouteIdRequest) returns (BusJsonStringResponse) {}
+}
+
+message BusNilRequest {
+
+}
+
+message RouteIdRequest {
+  string id = 1;
+}
+
+message BusJsonStringResponse {
+  string message = 1;
+}

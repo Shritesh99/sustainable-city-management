@@ -27,6 +27,15 @@ type AqiDatum struct {
 	Longitude   float64   `json:"longitude"`
 }
 
+type BusDatum struct {
+	VehicleID   int32   `json:"vehicle_id"`
+	Latitude    float64 `json:"latitude"`
+	Longitude   float64 `json:"longitude"`
+	RouteID     string  `json:"route_id"`
+	DirectionID string  `json:"direction_id"`
+	Detail      string  `json:"detail"`
+}
+
 type LoginDetail struct {
 	RoleID   int32  `json:"role_id"`
 	UserID   int32  `json:"user_id"`

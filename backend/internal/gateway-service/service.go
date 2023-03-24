@@ -26,6 +26,8 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Get("/getRoles", server.GetRoles)
 	router.Get("/getAirStation", server.GetAirStation)
 	router.Get("/getDetailedAirData", server.GetDetailedAirData)
+	router.Get("/getNoiseData", server.GetNoiseData)
+	router.Get("/getBusDataByRouteId", server.GetBusDataByRouteId)
 
 	err := server.CollectStationData()
 	if err != nil {

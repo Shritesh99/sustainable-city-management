@@ -4,7 +4,8 @@ import (
 	"context"
 	_ "encoding/json"
 	"fmt"
-	pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
+	pb_air "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
+	pb_bus "github.com/Eytins/sustainable-city-management/backend/pb/bus/bus-pd"
 	_ "net/http"
 	"strings"
 	"time"
@@ -57,6 +58,19 @@ type RoleStruct struct {
 type Claims struct {
 	Username string `json:"username"`
 	jwt.RegisteredClaims
+}
+
+func validateUser(c *fiber.Ctx, server *GatewayService) (error, bool) {
+	tknStr := c.GetReqHeaders()["Token"]
+	var authorization = server.Authenticate(tknStr)
+	if !authorization {
+		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
+			"error": true,
+			"msg":   "Invalid Token",
+			"user":  nil,
+		}), true
+	}
+	return nil, false
 }
 
 func (server *GatewayService) Register(c *fiber.Ctx) error {
@@ -177,15 +191,9 @@ func (server *GatewayService) Login(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
-
-	tknStr := c.Get("Token")
-	var authorization = server.Authenticate(tknStr)
-	if !authorization {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Invalid Token",
-			"user":  nil,
-		})
+	err, done := validateUser(c, server)
+	if done {
+		return err
 	}
 
 	req := new(UserInfoRequest)
@@ -227,20 +235,15 @@ func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) Logout(c *fiber.Ctx) error {
-	var tknStr = c.Get("Token")
 	req := new(LogoutRequest)
 	// Get the JSON body and decode into LogoutRequest
 	if err := c.BodyParser(req); err != nil {
 		server.log.Infof("Failed to parse body: %v", err)
 	}
 	fmt.Printf("[Logout] username: %s\n", req.Username)
-	var authorization = server.Authenticate(tknStr)
-	if !authorization {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Invalid Token",
-			"user":  nil,
-		})
+	err, done := validateUser(c, server)
+	if done {
+		return err
 	}
 
 	expirationTime := time.Now()
@@ -315,18 +318,13 @@ func (server *GatewayService) Authenticate(tknStr string) bool {
 }
 
 func (server *GatewayService) GetAirStation(c *fiber.Ctx) error {
-	tknStr := c.GetReqHeaders()["Token"]
-	var authorization = server.Authenticate(tknStr)
-	if !authorization {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Invalid Token",
-			"user":  nil,
-		})
+	err, done := validateUser(c, server)
+	if done {
+		return err
 	}
 	stationId := c.Query("id")
-	client := pb.NewAirServiceClient(server.airClientConn)
-	resp, err := client.GetAirData(context.Background(), &pb.AirIdRequest{StationId: stationId})
+	client := pb_air.NewAirServiceClient(server.airClientConn)
+	resp, err := client.GetAirData(context.Background(), &pb_air.AirIdRequest{StationId: stationId})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
@@ -342,8 +340,8 @@ func (server *GatewayService) GetAirStation(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
-	client := pb.NewAirServiceClient(server.airClientConn)
-	req := pb.NilRequest{}
+	client := pb_air.NewAirServiceClient(server.airClientConn)
+	req := pb_air.NilRequest{}
 	resp, err := client.GetAQI(context.Background(), &req)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
@@ -387,8 +385,8 @@ func (server *GatewayService) GetRoles(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetNoiseData(c *fiber.Ctx) error {
-	client := pb.NewAirServiceClient(server.airClientConn)
-	resp, err := client.GetNoiseData(context.Background(), &pb.NilRequest{})
+	client := pb_air.NewAirServiceClient(server.airClientConn)
+	resp, err := client.GetNoiseData(context.Background(), &pb_air.NilRequest{})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
@@ -399,5 +397,27 @@ func (server *GatewayService) GetNoiseData(c *fiber.Ctx) error {
 		"noise_data": resp.GetMessage(),
 		"error":      false,
 		"msg":        "success",
+	})
+}
+
+func (server *GatewayService) GetBusDataByRouteId(c *fiber.Ctx) error {
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
+
+	client := pb_bus.NewBusServiceClient(server.busClientConn)
+	req := pb_bus.RouteIdRequest{Id: c.Query("id")}
+	resp, err := client.GetBusDataByRouteId(context.Background(), &req)
+	if err != nil {
+		return c.Status(fiber.StatusNoContent).JSON(fiber.Map{
+			"error": err,
+			"msg":   "Data not found",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"bus_data": resp.GetMessage(),
+		"error":    false,
+		"msg":      "success",
 	})
 }
