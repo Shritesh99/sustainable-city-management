@@ -77,7 +77,7 @@ func (a *service) Run() error {
 	if a.cfg.ServiceType == "gateway" {
 		a.fiber = fiber.New()
 		a.fiber.Use(cors.New(conf.GetCorsConf()))
-		gateway := a.fiber.Group("/auth")
+		gateway := a.fiber.Group("/gateway")
 
 		a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl+a.cfg.ConnectedServices[0].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		//a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[3].ServiceUrl + a.cfg.ConnectedServices[3].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))

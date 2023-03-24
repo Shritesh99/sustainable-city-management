@@ -314,8 +314,8 @@ func (server *GatewayService) Authenticate(tknStr string) bool {
 	return true
 }
 
-func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
-	tknStr := c.Get("Token")
+func (server *GatewayService) GetAirStation(c *fiber.Ctx) error {
+	tknStr := c.GetReqHeaders()["Token"]
 	var authorization = server.Authenticate(tknStr)
 	if !authorization {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
@@ -324,7 +324,7 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 			"user":  nil,
 		})
 	}
-	stationId := c.Get("id")
+	stationId := c.Query("id")
 	client := pb.NewAirServiceClient(server.airClientConn)
 	resp, err := client.GetAirData(context.Background(), &pb.AirIdRequest{StationId: stationId})
 	if err != nil {
@@ -341,7 +341,7 @@ func (server *GatewayService) GetAirData(c *fiber.Ctx) error {
 	})
 }
 
-func (server *GatewayService) GetAQI(c *fiber.Ctx) error {
+func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
 	client := pb.NewAirServiceClient(server.airClientConn)
 	req := pb.NilRequest{}
 	resp, err := client.GetAQI(context.Background(), &req)

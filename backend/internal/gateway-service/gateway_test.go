@@ -19,7 +19,7 @@ func TestRegisterValidRequest(t *testing.T) {
         "password": "pwd123",
         "roleID": 0
     }`
-	resp, err := http.Post("http://127.0.0.1:8000/auth/register", "application/json", strings.NewReader(registerBody))
+	resp, err := http.Post("http://127.0.0.1:8000/gateway/register", "application/json", strings.NewReader(registerBody))
 	if err != nil {
 		print(err)
 	}
@@ -35,7 +35,7 @@ func TestRegisterForExistingEmail(t *testing.T) {
         "password": "passsord1233",
         "roleID": 1
     }`
-	resp, err := http.Post("http://127.0.0.1:8000/auth/register", "application/json", strings.NewReader(registerBody))
+	resp, err := http.Post("http://127.0.0.1:8000/gateway/register", "application/json", strings.NewReader(registerBody))
 	if err != nil {
 		print(err)
 	}
@@ -47,7 +47,7 @@ func TestRegisterForInvalidJSON(t *testing.T) {
 	registerBody := `{
     invalid
     }`
-	resp, err := http.Post("http://127.0.0.1:8000/auth/register", "application/json", strings.NewReader(registerBody))
+	resp, err := http.Post("http://127.0.0.1:8000/gateway/register", "application/json", strings.NewReader(registerBody))
 	if err != nil {
 		print(err)
 	}
@@ -60,7 +60,7 @@ func TestLoginRequest(t *testing.T) {
         "username": "johasan2doe@example.com",
         "password": "passsord1233"
     }`
-	resp, err := http.Post("http://127.0.0.1:8000/auth/login", "application/json", strings.NewReader(registerBody))
+	resp, err := http.Post("http://127.0.0.1:8000/gateway/login", "application/json", strings.NewReader(registerBody))
 	if err != nil {
 		print(err)
 	}
@@ -73,7 +73,7 @@ func TestLoginRequestRegisteredEmail(t *testing.T) {
         "username": "johasssan2doe@example.com",
         "password": "passsord1233"
     }`
-	resp, err := http.Post("http://127.0.0.1:8000/auth/login", "application/json", strings.NewReader(registerBody))
+	resp, err := http.Post("http://127.0.0.1:8000/gateway/login", "application/json", strings.NewReader(registerBody))
 	if err != nil {
 		print(err)
 	}
@@ -86,7 +86,7 @@ func TestLoginRequestWrongPassword(t *testing.T) {
         "username": "johasan2doe@example.com",
         "password": "passsorsd1233"
     }`
-	resp, err := http.Post("http://127.0.0.1:8000/auth/login", "application/json", strings.NewReader(registerBody))
+	resp, err := http.Post("http://127.0.0.1:8000/gateway/login", "application/json", strings.NewReader(registerBody))
 	if err != nil {
 		print(err)
 	}
@@ -99,9 +99,7 @@ func TestGetProfileWithoutToken(t *testing.T) {
         "username": "johasan2doe@example.com"
     }`
 
-	// Iterate through test single test cases
-
-	resp, err := http.Post("http://127.0.0.1:8000/auth/profile", "application/json", strings.NewReader(registerBody))
+	resp, err := http.Post("http://127.0.0.1:8000/gateway/profile", "application/json", strings.NewReader(registerBody))
 	if err != nil {
 		print(err)
 	}
@@ -116,7 +114,7 @@ func TestGetProfileWithToken(t *testing.T) {
     }`
 
 	// Iterate through test single test cases
-	req, err := http.NewRequest("POST", "http://127.0.0.1:8000/auth/profile", strings.NewReader(registerBody))
+	req, err := http.NewRequest("POST", "http://127.0.0.1:8000/gateway/profile", strings.NewReader(registerBody))
 	if err != nil {
 		return
 	}
@@ -131,7 +129,7 @@ func TestGetProfileWithToken(t *testing.T) {
 }
 
 func TestGatewayService_GetRoles(t *testing.T) {
-	resp, err := http.Get("http://127.0.0.1:8000/auth/roles")
+	resp, err := http.Get("http://127.0.0.1:8000/gateway/getRoles")
 	if err != nil {
 		print(err)
 	}
@@ -139,15 +137,14 @@ func TestGatewayService_GetRoles(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
-func TestGatewayService_GetAirData(t *testing.T) {
+func TestGatewayService_GetAirStations(t *testing.T) {
 	var token = GenerateToken()
 
-	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/auth/airstationdata", nil)
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getAirStation?id=@13372", nil)
 	if err != nil {
 		return
 	}
 	req.Header.Set("Token", token)
-	req.Header.Set("id", "@13372")
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
@@ -156,8 +153,8 @@ func TestGatewayService_GetAirData(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
-func TestGatewayService_GetAQI(t *testing.T) {
-	resp, err := http.Get("http://127.0.0.1:8000/auth/airdata")
+func TestGatewayService_GetDetailedAirData(t *testing.T) {
+	resp, err := http.Get("http://127.0.0.1:8000/gateway/getDetailedAirData")
 	if err != nil {
 		return
 	}
@@ -166,6 +163,7 @@ func TestGatewayService_GetAQI(t *testing.T) {
 }
 
 func TestGatewayService_GetNoiseData(t *testing.T) {
+
 }
 
 func GenerateToken() string {
