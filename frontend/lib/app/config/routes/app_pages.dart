@@ -1,5 +1,6 @@
 import 'package:sustainable_city_management/app/features/dashboard/views/screens/bus_screen.dart';
 
+import '../../features/dashboard/views/screens/air_screen.dart';
 import '../../features/dashboard/views/screens/dashboard_screen.dart';
 import '../../features/dashboard/views/screens/bike_screen.dart';
 import 'package:get/get.dart';
@@ -13,6 +14,7 @@ class AppPages {
   /// when the app is opened, this page will be the first to be shown
   static const initial = Routes.dashboard;
   static const bike = Routes.bike;
+  static const air = Routes.air;
 
   static final routes = [
     GetPage(
@@ -25,6 +27,7 @@ class AppPages {
     GetPage(
       name: _Paths.bike,
       page: () => const BikeScreen(),
-    )
+    ),
+    GetPage(name: _Paths.air, page: () => const AirScreen())
   ];
 }

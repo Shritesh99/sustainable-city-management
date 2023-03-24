@@ -90,8 +90,11 @@ class _Sidebar extends StatelessWidget {
                 //   Navigator.push(context,
                 //       MaterialPageRoute(builder: (context) => BusScreen()));
                 // }
-
-                Get.toNamed("/${value.label.toLowerCase()}");
+                if (index == 0) {
+                  Get.toNamed(Routes.air);
+                } else {
+                  Get.toNamed("/${value.label.toLowerCase()}");
+                }
               },
             ),
             // const Divider(thickness: 1),
