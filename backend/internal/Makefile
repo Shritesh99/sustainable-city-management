@@ -11,7 +11,7 @@ migratedown:
 
 # There's a param need to be changed at the last of this command.(Version)
 migrategoto:
-	migrate -path db/migration -database "postgresql://postgres:password@ec2-54-75-62-18.eu-west-1.compute.amazonaws.com:5432/city_management?sslmode=disable" -verbose goto 4
+	migrate -path db/migration -database "postgresql://postgres:password@ec2-54-75-62-18.eu-west-1.compute.amazonaws.com:5432/city_management?sslmode=disable" -verbose goto 5
 
 # database migration only for github actions
 action_migrateup:

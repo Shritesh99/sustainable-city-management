@@ -37,5 +37,9 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	if err != nil {
 		return nil
 	}
+	err = server.SaveBusData()
+	if err != nil {
+		return nil
+	}
 	return server
 }

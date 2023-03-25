@@ -163,7 +163,27 @@ func TestGatewayService_GetDetailedAirData(t *testing.T) {
 }
 
 func TestGatewayService_GetNoiseData(t *testing.T) {
+	var token = GenerateToken()
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getNoiseData", nil)
+	req.Header.Set("Token", token)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
 
+func TestGatewayService_GetBusDataByRouteId(t *testing.T) {
+	var token = GenerateToken()
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getBusDataByRouteId?routeId=2961_46101", nil)
+	req.Header.Set("Token", token)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func GenerateToken() string {

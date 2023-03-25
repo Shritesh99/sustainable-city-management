@@ -248,3 +248,55 @@ func (server *GatewayService) CollectNoiseData() NOISEDATA {
 	}
 	return noise
 }
+
+type BUSDATA struct {
+	Header struct {
+		GtfsRealtimeVersion string `json:"gtfs_realtime_version"`
+		Incrementality      string `json:"incrementality"`
+		Timestamp           string `json:"timestamp"`
+	} `json:"header"`
+	Entity []struct {
+		Id      string `json:"id"`
+		Vehicle struct {
+			Trip struct {
+				TripId               string `json:"trip_id"`
+				StartTime            string `json:"start_time"`
+				StartDate            string `json:"start_date"`
+				ScheduleRelationship string `json:"schedule_relationship"`
+				RouteId              string `json:"route_id"`
+				DirectionId          int    `json:"direction_id"`
+			} `json:"trip"`
+			Position struct {
+				Latitude  float64 `json:"latitude"`
+				Longitude float64 `json:"longitude"`
+			} `json:"position"`
+			Timestamp string `json:"timestamp"`
+			Vehicle   struct {
+				Id string `json:"id"`
+			} `json:"vehicle"`
+		} `json:"vehicle"`
+	} `json:"entity"`
+}
+
+func (server *GatewayService) CollectBusData() BUSDATA {
+	var bus BUSDATA
+	req, err := http.NewRequest("GET", "https://api.nationaltransport.ie/gtfsr/v2/Vehicles?format=json", nil)
+	req.Header.Set("x-api-key", "e4c8038e1781436f857aa347bcb67d05")
+	req.Header.Set("Cache-Control", "no-cache")
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		util.LogFatal("Cannot get data from bus api", err)
+		return bus
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		util.LogFatal("Cannot read response bus body", err)
+		return bus
+	}
+	err = json.Unmarshal(body, &bus)
+	if err != nil {
+		util.LogFatal("Cannot convert bus response body to json", err)
+		return bus
+	}
+	return bus
+}

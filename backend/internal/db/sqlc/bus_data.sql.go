@@ -14,25 +14,22 @@ INSERT INTO bus_data ("vehicle_id",
                       "latitude",
                       "longitude",
                       "route_id",
-                      "direction_id",
-                      "detail")
-VALUES ($1, $2, $3, $4, $5, $6)
+                      "direction_id")
+VALUES ($1, $2, $3, $4, $5)
 ON CONFLICT(vehicle_id) DO
 UPDATE SET "latitude" = $2,
            "longitude" = $3,
            "route_id" = $4,
-           "direction_id" = $5,
-           "detail" = $6
-RETURNING vehicle_id, latitude, longitude, route_id, direction_id, detail
+           "direction_id" = $5
+RETURNING vehicle_id, latitude, longitude, route_id, direction_id
 `
 
 type CreateBusDataParams struct {
-	VehicleID   int32   `json:"vehicle_id"`
+	VehicleID   string  `json:"vehicle_id"`
 	Latitude    float64 `json:"latitude"`
 	Longitude   float64 `json:"longitude"`
 	RouteID     string  `json:"route_id"`
-	DirectionID string  `json:"direction_id"`
-	Detail      string  `json:"detail"`
+	DirectionID int32   `json:"direction_id"`
 }
 
 func (q *Queries) CreateBusData(ctx context.Context, arg CreateBusDataParams) (BusDatum, error) {
@@ -42,7 +39,6 @@ func (q *Queries) CreateBusData(ctx context.Context, arg CreateBusDataParams) (B
 		arg.Longitude,
 		arg.RouteID,
 		arg.DirectionID,
-		arg.Detail,
 	)
 	var i BusDatum
 	err := row.Scan(
@@ -51,13 +47,12 @@ func (q *Queries) CreateBusData(ctx context.Context, arg CreateBusDataParams) (B
 		&i.Longitude,
 		&i.RouteID,
 		&i.DirectionID,
-		&i.Detail,
 	)
 	return i, err
 }
 
 const getBusDataByRouteId = `-- name: GetBusDataByRouteId :many
-SELECT vehicle_id, latitude, longitude, route_id, direction_id, detail
+SELECT vehicle_id, latitude, longitude, route_id, direction_id
 FROM bus_data
 WHERE route_id = $1
 `
@@ -77,7 +72,6 @@ func (q *Queries) GetBusDataByRouteId(ctx context.Context, routeID string) ([]Bu
 			&i.Longitude,
 			&i.RouteID,
 			&i.DirectionID,
-			&i.Detail,
 		); err != nil {
 			return nil, err
 		}

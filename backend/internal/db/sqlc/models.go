@@ -28,12 +28,11 @@ type AqiDatum struct {
 }
 
 type BusDatum struct {
-	VehicleID   int32   `json:"vehicle_id"`
+	VehicleID   string  `json:"vehicle_id"`
 	Latitude    float64 `json:"latitude"`
 	Longitude   float64 `json:"longitude"`
 	RouteID     string  `json:"route_id"`
-	DirectionID string  `json:"direction_id"`
-	Detail      string  `json:"detail"`
+	DirectionID int32   `json:"direction_id"`
 }
 
 type LoginDetail struct {
