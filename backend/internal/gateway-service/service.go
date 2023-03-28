@@ -6,6 +6,7 @@ import (
 	"github.com/Eytins/sustainable-city-management/backend/pkg/logger"
 	"github.com/gofiber/fiber/v2"
 	"google.golang.org/grpc"
+	"time"
 )
 
 type GatewayService struct {
@@ -31,17 +32,24 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Get("/getNoiseData", server.GetNoiseData)
 	router.Get("/getBusDataByRouteId", server.GetBusDataByRouteId)
 
-	err := server.CollectStationData()
-	if err != nil {
-		return nil
-	}
-	err = server.SaveNoiseData()
-	if err != nil {
-		return nil
-	}
-	err = server.SaveBusData()
-	if err != nil {
-		return nil
-	}
+	go CollectDataTimerTask(server, logger2)
 	return server
+}
+
+func CollectDataTimerTask(server *GatewayService, logger logger.Logger) {
+	for {
+		err := server.CollectStationData()
+		if err != nil {
+			logger.Fatal("Collect air station data failed")
+		}
+		err = server.SaveNoiseData()
+		if err != nil {
+			logger.Fatal("Collect noise data failed")
+		}
+		err = server.SaveBusData()
+		if err != nil {
+			logger.Fatal("Collect bus data failed")
+		}
+		time.Sleep(1 * time.Hour)
+	}
 }
