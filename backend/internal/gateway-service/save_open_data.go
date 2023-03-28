@@ -97,3 +97,7 @@ func (server *GatewayService) SaveBusData() error {
 	}()
 	return nil
 }
+
+func (server *GatewayService) SavePedestrianData() error {
+	return nil
+}
