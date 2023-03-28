@@ -9,6 +9,7 @@ class Routes {
 
   static const air = _Paths.air;
   static const bin_truck = _Paths.bin_truck;
+  static const bus = _Paths.bus;
 }
 
 /// contains a list of route names.
@@ -17,7 +18,7 @@ class _Paths {
   static const dashboard = '/dashboard';
   //static const loginpage = '/loginpage';
   static const bike = '/bike';
-
+  static const bus = '/bus';
   static const air = '/air';
   static const bin_truck = '/bin_truck';
   // Example :

@@ -15,7 +15,8 @@ class BusScreen extends StatefulWidget {
 
 Future<String> loadAsset(BuildContext context) async {
   return await DefaultAssetBundle.of(context)
-      .loadString('assets/DublinBus1.geojson');
+      .loadString('/Test1.geojson'); //This is for the one line. testing.
+  //.loadString('/DublinBus1.geojson'); // This is the original one.
 }
 
 class BusScreenState extends State<BusScreen> {
@@ -27,30 +28,116 @@ class BusScreenState extends State<BusScreen> {
     zoom: 14.4746,
   );
 
+  // static const Polyline myLine = Polyline(
+  //     polylineId: PolylineId('_kPolyline'),
+  //     points: [
+  //       LatLng(-6.4202783, 53.2976017),
+  //       LatLng(-6.4200189390546, 53.2978629619594),
+  //       LatLng(-6.4199855, 53.2978967),
+  //     ],
+  //     width: 5);
+
+  static const Marker homeMarker = Marker(
+    markerId: MarkerId('_homeMarker'),
+    infoWindow: InfoWindow(title: 'Home'),
+    icon: BitmapDescriptor.defaultMarker,
+    position: LatLng(-6.4199855, 53.2978967),
+    //LatLng(-6.4202783, 53.2976017),
+  );
+// class GetJsonData {
+//   String agency_name;
+//   String route_short_name;
+
+//   GetJsonData.fromJson(Map geojson)
+//       : agency_name = json['agency_name'],
+//         route_short_name = json['route_short_name'];
+
+//   Map toJson() {
+//     return {'agency_name': agency_name, 'route_short_name': route_short_name};
+//   }
+// }
+// FutureBuilder : Let's say you want to fetch some data from the backend on page launch and show a loader until data comes.
+// FutureBuilder : Give the async task in futre of FutureBuilder.
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
-        future: loadAsset(context),
+        //He will give future job to the rendering page.
+        future: loadAsset(
+            context), // Geo.json will fetch (loading, active(streams), done)
+        //Snapshot is a wrapper around your data with some useful properties. It provides the state of your connection.
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.data != null) {
             String? geojson = snapshot.data;
-            var layers = GeoJSONGoogleMapsResult.fromJson(jsonDecode(geojson!));
-
+            // I got the geoJson data.
             // print(geojson);
-            return Scaffold(
-              body: GoogleMap(
-                mapType: MapType.normal,
-                polygons: Set.of(layers.polygons),
-                polylines: Set.of(layers.polylines),
-                markers: Set.of(layers.markers),
-                initialCameraPosition: _kGooglePlex,
-                onMapCreated: (GoogleMapController controller) {
-                  _controller.complete(controller);
-                },
-              ),
-            );
-          } else
-            return Text("Loading...");
+            //This line below has an error.
+            final layers =
+                GeoJSONGoogleMapsResult.fromJson(jsonDecode(geojson!));
+
+            // final getGeojsondata = GetJsonData.fromJson(geojson);
+
+            //Need to do something in GeoJSONGoogleMapResult.
+            //Instance of 'GeoJSONGoogleMapsResult'
+            print(layers);
+
+            //  print(layers.markers.length);
+            return SafeArea(
+                child: Scaffold(
+                    backgroundColor: Colors.transparent,
+                    extendBodyBehindAppBar: true,
+                    appBar: AppBar(
+                      elevation: 0,
+                      backgroundColor: Colors.transparent,
+                    ),
+                    body: GoogleMap(
+                      mapType: MapType.normal,
+                      //polygons: Set.of(layers.polygons),
+                      polylines: Set<Polyline>.of(layers.polylines),
+                      // Here is the algorithm that I want to use it.
+                      // Collecting the 'route_short_name' into the list or dictionaray(?)
+                      // becuase there is a lot of redundancy in data and If the number of What I choose, then show on the map.
+                      //
+                      // How to using a Property in here?
+
+                      // Property: Set.of(layers.route_short_name),
+
+                      // markers: Set.of(layers.markers),
+
+                      markers: {
+                        homeMarker,
+                      },
+                      initialCameraPosition: _kGooglePlex,
+                      onMapCreated: (GoogleMapController controller) {
+                        _controller.complete(controller);
+                      },
+                    ),
+                    endDrawer: Drawer(
+                      child: ListView(padding: EdgeInsets.zero, children: [
+                        const DrawerHeader(
+                          decoration: BoxDecoration(
+                            color: Colors.blue,
+                          ),
+                          child: Text('Showing Bus, Tram list'
+                              'Whenever click the bus, shows on the map'),
+                        ),
+                        ListTile(
+                          title: const Text('Bus 83'),
+                          onTap: () {
+                            //When Click this, bring up the Bus 83 Route.
+                            Navigator.pop(context);
+                          },
+                        ),
+                        ListTile(
+                          title: const Text('Bus 39A'),
+                          onTap: () {
+                            Navigator.pop(context);
+                          },
+                        ),
+                      ]),
+                    )));
+          } else {
+            return const Text("Loading......");
+          }
         });
   }
 }

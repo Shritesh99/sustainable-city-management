@@ -14,11 +14,16 @@ class GeoJSONParser {
 }
 
 class GeoJSONGoogleMapsResult {
+  //In this class we have a functions polygons, markers, polylines.
   final List<Polygon> polygons;
   final List<Marker> markers;
   final List<Polyline> polylines;
 
-  GeoJSONGoogleMapsResult(this.polygons, this.markers, this.polylines);
+  GeoJSONGoogleMapsResult(
+    this.polygons,
+    this.markers,
+    this.polylines,
+  );
 
   factory GeoJSONGoogleMapsResult.fromJson(Map<String, dynamic> json) {
     var parsedJson = GeoJSONParser.parse(json);
@@ -44,13 +49,6 @@ class GeoJSONGoogleMapsResult {
   static Polygon _featureToGooglePolygon(internalModels.Feature feature) {
     return Polygon(
       polygonId: PolygonId(Uuid().v4()),
-      fillColor: HexColor(feature.properties.fill)
-              .withOpacity(feature.properties.fillOpacity ?? 1.0) ??
-          Colors.black.withOpacity(0.5),
-      strokeWidth: feature.properties.strokeWidth?.toInt() ?? 10,
-      strokeColor: HexColor(feature.properties.stroke)
-              .withOpacity(feature.properties.strokeOpacity ?? 1.0) ??
-          Colors.black.withOpacity(0.5),
       points: (feature.geometry as internalModels.Polygon)
           .coordinates
           .first
@@ -63,8 +61,8 @@ class GeoJSONGoogleMapsResult {
     var cords = (feature.geometry as internalModels.Point).coordinates;
     return Marker(
       markerId: MarkerId(Uuid().v4()),
-      infoWindow: feature.properties.name != null
-          ? InfoWindow(title: feature.properties.name)
+      infoWindow: feature.properties.agency_name != null
+          ? InfoWindow(title: feature.properties.agency_name)
           : InfoWindow.noText,
       position: LatLng(cords[1], cords[0]),
     );
@@ -74,9 +72,6 @@ class GeoJSONGoogleMapsResult {
     var cords = (feature.geometry as internalModels.LineString).coordinates;
     return Polyline(
         polylineId: PolylineId(Uuid().v4()),
-        color: HexColor(feature.properties.stroke)
-                .withOpacity(feature.properties.strokeOpacity ?? 1.0) ??
-            Colors.black.withOpacity(0.5),
         points: cords.map((x) => LatLng(x[1], x[0])).toList());
   }
 }
