@@ -2,12 +2,10 @@ syntax = "proto3";
 
 option go_package = "air-quality/air-pd";
 
-//import fiber "github.com/gofiber/fiber/v2";
-
 service AirService {
-  rpc GetAirData (AirIdRequest) returns (JsonStringResponse) {}
-  rpc GetAQI (NilRequest) returns (JsonStringResponse) {}
-  rpc GetNoiseData (NilRequest) returns (JsonStringResponse) {}
+  rpc GetAirStation (AirIdRequest) returns (GetAirStationResponse) {}
+  rpc GetDetailedAirData (NilRequest) returns (GetDetailedAirDataResponse) {}
+  rpc GetNoiseData (NilRequest) returns (GetNoiseDataResponse) {}
 }
 
 message NilRequest {
@@ -18,6 +16,49 @@ message AirIdRequest {
   string stationId = 1;
 }
 
-message JsonStringResponse {
-  string message = 1;
+message GetAirStationResponse {
+  int32 id = 1;
+  string stationId = 2;
+  string stationName = 3;
+  float aqi = 4;
+  string measureTime = 5;
+  string epa = 6;
+  float pm25 = 7;
+  float pm10 = 8;
+  float ozone = 9;
+  float no2 = 10;
+  float so2 = 11;
+  float co = 12;
+  int64 insertTime = 13;
+  int64 updateTime = 14;
+  float Latitude = 15;
+  float Longitude = 16;
+}
+
+message GetDetailedAirDataResponse {
+  repeated InsideGetDetailedAirDataResponse airData = 1;
+}
+
+message InsideGetDetailedAirDataResponse {
+  string stationID = 1;
+  string stationName = 2;
+  float latitude = 3;
+  float longitude = 4;
+  float aqi = 5;
+}
+
+message GetNoiseDataResponse {
+  repeated InsideGetNoiseDataResponse noiseData = 1;
+}
+
+message InsideGetNoiseDataResponse {
+  int32 monitorID = 1;
+  string location = 2;
+  string latitude = 3;
+  string longitude = 4;
+  string recordTime = 5;
+  float laeq = 6;
+  int32 currentRating = 7;
+  float dailyAvg = 8;
+  float hourlyAvg = 9;
 }

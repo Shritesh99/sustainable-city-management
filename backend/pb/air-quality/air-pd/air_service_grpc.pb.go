@@ -22,9 +22,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type AirServiceClient interface {
-	GetAirData(ctx context.Context, in *AirIdRequest, opts ...grpc.CallOption) (*JsonStringResponse, error)
-	GetAQI(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*JsonStringResponse, error)
-	GetNoiseData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*JsonStringResponse, error)
+	GetAirStation(ctx context.Context, in *AirIdRequest, opts ...grpc.CallOption) (*GetAirStationResponse, error)
+	GetDetailedAirData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetDetailedAirDataResponse, error)
+	GetNoiseData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetNoiseDataResponse, error)
 }
 
 type airServiceClient struct {
@@ -35,26 +35,26 @@ func NewAirServiceClient(cc grpc.ClientConnInterface) AirServiceClient {
 	return &airServiceClient{cc}
 }
 
-func (c *airServiceClient) GetAirData(ctx context.Context, in *AirIdRequest, opts ...grpc.CallOption) (*JsonStringResponse, error) {
-	out := new(JsonStringResponse)
-	err := c.cc.Invoke(ctx, "/AirService/GetAirData", in, out, opts...)
+func (c *airServiceClient) GetAirStation(ctx context.Context, in *AirIdRequest, opts ...grpc.CallOption) (*GetAirStationResponse, error) {
+	out := new(GetAirStationResponse)
+	err := c.cc.Invoke(ctx, "/AirService/GetAirStation", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *airServiceClient) GetAQI(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*JsonStringResponse, error) {
-	out := new(JsonStringResponse)
-	err := c.cc.Invoke(ctx, "/AirService/GetAQI", in, out, opts...)
+func (c *airServiceClient) GetDetailedAirData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetDetailedAirDataResponse, error) {
+	out := new(GetDetailedAirDataResponse)
+	err := c.cc.Invoke(ctx, "/AirService/GetDetailedAirData", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *airServiceClient) GetNoiseData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*JsonStringResponse, error) {
-	out := new(JsonStringResponse)
+func (c *airServiceClient) GetNoiseData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetNoiseDataResponse, error) {
+	out := new(GetNoiseDataResponse)
 	err := c.cc.Invoke(ctx, "/AirService/GetNoiseData", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -66,9 +66,9 @@ func (c *airServiceClient) GetNoiseData(ctx context.Context, in *NilRequest, opt
 // All implementations must embed UnimplementedAirServiceServer
 // for forward compatibility
 type AirServiceServer interface {
-	GetAirData(context.Context, *AirIdRequest) (*JsonStringResponse, error)
-	GetAQI(context.Context, *NilRequest) (*JsonStringResponse, error)
-	GetNoiseData(context.Context, *NilRequest) (*JsonStringResponse, error)
+	GetAirStation(context.Context, *AirIdRequest) (*GetAirStationResponse, error)
+	GetDetailedAirData(context.Context, *NilRequest) (*GetDetailedAirDataResponse, error)
+	GetNoiseData(context.Context, *NilRequest) (*GetNoiseDataResponse, error)
 	mustEmbedUnimplementedAirServiceServer()
 }
 
@@ -76,13 +76,13 @@ type AirServiceServer interface {
 type UnimplementedAirServiceServer struct {
 }
 
-func (UnimplementedAirServiceServer) GetAirData(context.Context, *AirIdRequest) (*JsonStringResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAirData not implemented")
+func (UnimplementedAirServiceServer) GetAirStation(context.Context, *AirIdRequest) (*GetAirStationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAirStation not implemented")
 }
-func (UnimplementedAirServiceServer) GetAQI(context.Context, *NilRequest) (*JsonStringResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetAQI not implemented")
+func (UnimplementedAirServiceServer) GetDetailedAirData(context.Context, *NilRequest) (*GetDetailedAirDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetDetailedAirData not implemented")
 }
-func (UnimplementedAirServiceServer) GetNoiseData(context.Context, *NilRequest) (*JsonStringResponse, error) {
+func (UnimplementedAirServiceServer) GetNoiseData(context.Context, *NilRequest) (*GetNoiseDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNoiseData not implemented")
 }
 func (UnimplementedAirServiceServer) mustEmbedUnimplementedAirServiceServer() {}
@@ -98,38 +98,38 @@ func RegisterAirServiceServer(s grpc.ServiceRegistrar, srv AirServiceServer) {
 	s.RegisterService(&AirService_ServiceDesc, srv)
 }
 
-func _AirService_GetAirData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AirService_GetAirStation_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AirIdRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AirServiceServer).GetAirData(ctx, in)
+		return srv.(AirServiceServer).GetAirStation(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/AirService/GetAirData",
+		FullMethod: "/AirService/GetAirStation",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AirServiceServer).GetAirData(ctx, req.(*AirIdRequest))
+		return srv.(AirServiceServer).GetAirStation(ctx, req.(*AirIdRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-func _AirService_GetAQI_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _AirService_GetDetailedAirData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(NilRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(AirServiceServer).GetAQI(ctx, in)
+		return srv.(AirServiceServer).GetDetailedAirData(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/AirService/GetAQI",
+		FullMethod: "/AirService/GetDetailedAirData",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(AirServiceServer).GetAQI(ctx, req.(*NilRequest))
+		return srv.(AirServiceServer).GetDetailedAirData(ctx, req.(*NilRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -160,12 +160,12 @@ var AirService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*AirServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetAirData",
-			Handler:    _AirService_GetAirData_Handler,
+			MethodName: "GetAirStation",
+			Handler:    _AirService_GetAirStation_Handler,
 		},
 		{
-			MethodName: "GetAQI",
-			Handler:    _AirService_GetAQI_Handler,
+			MethodName: "GetDetailedAirData",
+			Handler:    _AirService_GetDetailedAirData_Handler,
 		},
 		{
 			MethodName: "GetNoiseData",

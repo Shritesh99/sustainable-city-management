@@ -324,7 +324,7 @@ func (server *GatewayService) GetAirStation(c *fiber.Ctx) error {
 	}
 	stationId := c.Query("id")
 	client := pb_air.NewAirServiceClient(server.airClientConn)
-	resp, err := client.GetAirData(context.Background(), &pb_air.AirIdRequest{StationId: stationId})
+	resp, err := client.GetAirStation(context.Background(), &pb_air.AirIdRequest{StationId: stationId})
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
@@ -333,7 +333,7 @@ func (server *GatewayService) GetAirStation(c *fiber.Ctx) error {
 	}
 
 	return c.JSON(fiber.Map{
-		"aqi_data": resp.GetMessage(),
+		"aqi_data": resp,
 		"error":    false,
 		"msg":      "success",
 	})
@@ -346,7 +346,7 @@ func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
 	}
 	client := pb_air.NewAirServiceClient(server.airClientConn)
 	req := pb_air.NilRequest{}
-	resp, err := client.GetAQI(context.Background(), &req)
+	resp, err := client.GetDetailedAirData(context.Background(), &req)
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
@@ -354,7 +354,7 @@ func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(fiber.Map{
-		"aqi_data": resp.GetMessage(),
+		"aqi_data": resp,
 		"error":    false,
 		"msg":      "success",
 	})
@@ -402,7 +402,7 @@ func (server *GatewayService) GetNoiseData(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(fiber.Map{
-		"noise_data": resp.GetMessage(),
+		"noise_data": resp,
 		"error":      false,
 		"msg":        "success",
 	})
@@ -423,7 +423,7 @@ func (server *GatewayService) GetBusDataByRouteId(c *fiber.Ctx) error {
 		})
 	}
 	return c.JSON(fiber.Map{
-		"bus_data": resp.GetMessage(),
+		"bus_data": resp,
 		"error":    false,
 		"msg":      "success",
 	})

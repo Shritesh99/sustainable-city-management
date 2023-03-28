@@ -176,7 +176,7 @@ func TestGatewayService_GetNoiseData(t *testing.T) {
 
 func TestGatewayService_GetBusDataByRouteId(t *testing.T) {
 	var token = GenerateToken()
-	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getBusDataByRouteId?routeId=2961_46101", nil)
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getBusDataByRouteId?id=2961_46101", nil)
 	req.Header.Set("Token", token)
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {

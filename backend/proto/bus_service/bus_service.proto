@@ -3,7 +3,7 @@ syntax = "proto3";
 option go_package = "bus/bus-pd";
 
 service BusService {
-  rpc GetBusDataByRouteId (RouteIdRequest) returns (BusJsonStringResponse) {}
+  rpc GetBusDataByRouteId (RouteIdRequest) returns (GetBusDataByRouteIdResponse) {}
 }
 
 message BusNilRequest {
@@ -14,6 +14,14 @@ message RouteIdRequest {
   string id = 1;
 }
 
-message BusJsonStringResponse {
-  string message = 1;
+message GetBusDataByRouteIdResponse {
+  repeated InsideGetBusDataByRouteIdResponse busData = 1;
+}
+
+message InsideGetBusDataByRouteIdResponse {
+  string vehicleID = 1;
+  float latitude = 2;
+  float longitude = 3;
+  string routeID = 4;
+  int32 directionID = 5;
 }

@@ -22,7 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BusServiceClient interface {
-	GetBusDataByRouteId(ctx context.Context, in *RouteIdRequest, opts ...grpc.CallOption) (*BusJsonStringResponse, error)
+	GetBusDataByRouteId(ctx context.Context, in *RouteIdRequest, opts ...grpc.CallOption) (*GetBusDataByRouteIdResponse, error)
 }
 
 type busServiceClient struct {
@@ -33,8 +33,8 @@ func NewBusServiceClient(cc grpc.ClientConnInterface) BusServiceClient {
 	return &busServiceClient{cc}
 }
 
-func (c *busServiceClient) GetBusDataByRouteId(ctx context.Context, in *RouteIdRequest, opts ...grpc.CallOption) (*BusJsonStringResponse, error) {
-	out := new(BusJsonStringResponse)
+func (c *busServiceClient) GetBusDataByRouteId(ctx context.Context, in *RouteIdRequest, opts ...grpc.CallOption) (*GetBusDataByRouteIdResponse, error) {
+	out := new(GetBusDataByRouteIdResponse)
 	err := c.cc.Invoke(ctx, "/BusService/GetBusDataByRouteId", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -46,7 +46,7 @@ func (c *busServiceClient) GetBusDataByRouteId(ctx context.Context, in *RouteIdR
 // All implementations must embed UnimplementedBusServiceServer
 // for forward compatibility
 type BusServiceServer interface {
-	GetBusDataByRouteId(context.Context, *RouteIdRequest) (*BusJsonStringResponse, error)
+	GetBusDataByRouteId(context.Context, *RouteIdRequest) (*GetBusDataByRouteIdResponse, error)
 	mustEmbedUnimplementedBusServiceServer()
 }
 
@@ -54,7 +54,7 @@ type BusServiceServer interface {
 type UnimplementedBusServiceServer struct {
 }
 
-func (UnimplementedBusServiceServer) GetBusDataByRouteId(context.Context, *RouteIdRequest) (*BusJsonStringResponse, error) {
+func (UnimplementedBusServiceServer) GetBusDataByRouteId(context.Context, *RouteIdRequest) (*GetBusDataByRouteIdResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBusDataByRouteId not implemented")
 }
 func (UnimplementedBusServiceServer) mustEmbedUnimplementedBusServiceServer() {}

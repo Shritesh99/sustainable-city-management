@@ -2,24 +2,10 @@ package airquality_service
 
 import (
 	"context"
-	"encoding/json"
 	pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
 )
 
-func convertToJsonString(err error, data any, server *AirService) (*pb.JsonStringResponse, error) {
-	body, err := json.Marshal(&data)
-	if err != nil {
-		server.log.Infof("Error converting air data: %v", err)
-		return &pb.JsonStringResponse{
-			Message: "Data converting failed",
-		}, err
-	}
-	return &pb.JsonStringResponse{
-		Message: string(body),
-	}, nil
-}
-
-func (server *AirService) GetAirData(ctx context.Context, in *pb.AirIdRequest) (*pb.JsonStringResponse, error) {
+func (server *AirService) GetAirStation(ctx context.Context, in *pb.AirIdRequest) (*pb.GetAirStationResponse, error) {
 	stationId := in.GetStationId()
 
 	server.log.Infof("station id : %s", stationId)
@@ -27,35 +13,73 @@ func (server *AirService) GetAirData(ctx context.Context, in *pb.AirIdRequest) (
 
 	if err != nil {
 		server.log.Infof("Error fetching air data: %v", err)
-		return &pb.JsonStringResponse{
-			Message: "Data not found",
-		}, err
+		return &pb.GetAirStationResponse{}, err
 	}
 
-	return convertToJsonString(err, airData, server)
+	return &pb.GetAirStationResponse{
+		Id:          airData.ID,
+		StationId:   airData.StationID,
+		StationName: airData.StationName,
+		Aqi:         float32(airData.Aqi),
+		MeasureTime: airData.MeasureTime,
+		Epa:         airData.Epa,
+		Pm25:        float32(airData.Pm25),
+		Pm10:        float32(airData.Pm10),
+		Ozone:       float32(airData.Ozone),
+		No2:         float32(airData.No2),
+		So2:         float32(airData.So2),
+		Co:          float32(airData.Co),
+		InsertTime:  airData.InsertTime.Unix(),
+		UpdateTime:  airData.UpdatedTime.Unix(),
+		Latitude:    float32(airData.Latitude),
+		Longitude:   float32(airData.Longitude),
+	}, nil
 }
 
-func (server *AirService) GetAQI(ctx context.Context, in *pb.NilRequest) (*pb.JsonStringResponse, error) {
+func (server *AirService) GetDetailedAirData(ctx context.Context, in *pb.NilRequest) (*pb.GetDetailedAirDataResponse, error) {
 	aqi, err := server.store.GetAQI(ctx)
 	if err != nil {
 		server.log.Infof("Error fetching AQI data: %v", err)
-		return &pb.JsonStringResponse{
-			Message: "Data not found",
-		}, err
+		return &pb.GetDetailedAirDataResponse{}, err
 	}
-
-	return convertToJsonString(err, aqi, server)
+	var res []*pb.InsideGetDetailedAirDataResponse
+	for _, each := range aqi {
+		res = append(res, &pb.InsideGetDetailedAirDataResponse{
+			StationID:   each.StationID,
+			StationName: each.StationName,
+			Latitude:    float32(each.Latitude),
+			Longitude:   float32(each.Longitude),
+			Aqi:         float32(each.Aqi),
+		})
+	}
+	return &pb.GetDetailedAirDataResponse{
+		AirData: res,
+	}, err
 }
 
-func (server *AirService) GetNoiseData(ctx context.Context, in *pb.NilRequest) (*pb.JsonStringResponse, error) {
+func (server *AirService) GetNoiseData(ctx context.Context, in *pb.NilRequest) (*pb.GetNoiseDataResponse, error) {
 	data, err := server.store.GetAllNoiseData(ctx)
 	if err != nil {
 		server.log.Infof("Error fetching Noise data: %v", err)
-		return &pb.JsonStringResponse{
-			Message: "Data not found",
-		}, err
+		return &pb.GetNoiseDataResponse{}, err
 	}
-	return convertToJsonString(err, data, server)
+	var res []*pb.InsideGetNoiseDataResponse
+	for _, each := range data {
+		res = append(res, &pb.InsideGetNoiseDataResponse{
+			MonitorID:     each.MonitorID,
+			Location:      each.Location,
+			Latitude:      each.Latitude,
+			Longitude:     each.Longitude,
+			RecordTime:    each.RecordTime,
+			Laeq:          float32(each.Laeq),
+			CurrentRating: each.CurrentRating,
+			DailyAvg:      float32(each.DailyAvg),
+			HourlyAvg:     float32(each.HourlyAvg),
+		})
+	}
+	return &pb.GetNoiseDataResponse{
+		NoiseData: res,
+	}, err
 }
 
 // lauda lasson functions
