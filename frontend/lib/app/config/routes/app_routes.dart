@@ -8,6 +8,7 @@ class Routes {
   static const bike = _Paths.bike;
 
   static const air = _Paths.air;
+  static const bin_truck = _Paths.bin_truck;
 }
 
 /// contains a list of route names.
@@ -18,6 +19,7 @@ class _Paths {
   static const bike = '/bike';
 
   static const air = '/air';
+  static const bin_truck = '/bin_truck';
   // Example :
   // static const index = '/';
   // static const splash = '/splash';

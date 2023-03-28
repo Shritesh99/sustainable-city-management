@@ -6,6 +6,7 @@ import '../../features/dashboard/views/screens/bike_screen.dart';
 import 'package:get/get.dart';
 import '../../features/dashboard/views/screens/login_screen.dart';
 import '../../features/dashboard/views/screens/bus_screen.dart';
+import '../../features/dashboard/views/screens/bin_truck_screen.dart';
 
 part 'app_routes.dart';
 
@@ -28,6 +29,7 @@ class AppPages {
       name: _Paths.bike,
       page: () => const BikeScreen(),
     ),
-    GetPage(name: _Paths.air, page: () => const AirScreen())
+    GetPage(name: _Paths.air, page: () => const AirScreen()),
+    GetPage(name: _Paths.bin_truck, page: () => const BinTruckScreen())
   ];
 }

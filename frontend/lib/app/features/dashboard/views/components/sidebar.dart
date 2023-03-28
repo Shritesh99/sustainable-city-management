@@ -92,10 +92,7 @@ class _Sidebar extends StatelessWidget {
                 // }
                 if (index == 0) {
                   Get.toNamed(Routes.air);
-                } else {
-                  Get.toNamed("/${value.label.toLowerCase()}");
-                }
-                if (index == 5) {
+                } else if (index == 5) {
                   Get.toNamed(Routes.bin_truck);
                 } else {
                   Get.toNamed("/${value.label.toLowerCase()}");
