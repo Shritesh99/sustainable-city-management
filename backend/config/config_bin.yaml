@@ -1,0 +1,50 @@
+serviceName: BinService
+serviceType: service
+serviceUrl: http://gateway-microservice-service.default.svc.cluster.local
+Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
+development: true
+http:
+     port: 8000
+     development: true
+     basePath: /
+     debugErrorsResponse: true
+grpc:
+     port: 4003
+     development: true
+probes:
+     readinessPath: /live
+     livenessPath: /ready
+     port: :7032
+     pprof: :5031
+     prometheusPath: /metrics
+     prometheusPort: :7031
+     checkIntervalSeconds: 10
+logger:
+     level: info
+     devMode: false
+     encoder: json
+db:
+     DB_SOURCE: postgresql://group_admin:group007@18.202.24.40:5432/masterdb?sslmode=disable
+     DB_DRIVER: postgres
+     AIR_TOKEN: d3f5d975618dc64e01ed3df11688671d3e61dd7f
+ConnectedServices:
+      - serviceName: gateway-service
+        serviceType: gateway
+        serviceUrl: localhost
+        healthcheckPort: :8002
+        httpPort: :8000
+#      - serviceName: { { .Values.bike.Name } }
+#        serviceType: { { .Values.bike.Type } }
+#        serviceUrl: { { .Values.bike.Url } }
+#        healthcheckPort: { { .Values.bike.HealthcheckPort } }
+#        grpcPort: { { .Values.bike.GrpcPort } }
+#      - serviceName: { { .Values.bin.Name } }
+#        serviceType: { { .Values.bin.Type } }
+#        serviceUrl: { { .Values.bin.Url } }
+#        healthcheckPort: { { .Values.bin.HealthcheckPort } }
+#        grpcPort: { { .Values.bin.GrpcPort } }
+#      - serviceName: { { .Values.bus.Name } }
+#        serviceType: { { .Values.bus.Type } }
+#        serviceUrl: { { .Values.bus.Url } }
+#        healthcheckPort: { { .Values.bus.HealthcheckPort } }
+#        grpcPort: { { .Values.bus.GrpcPort } }

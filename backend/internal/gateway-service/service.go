@@ -9,16 +9,18 @@ import (
 )
 
 type GatewayService struct {
-	log           logger.Logger
-	router        fiber.Router
-	store         *db.SQLStore
-	cfg           *config.Config
-	airClientConn *grpc.ClientConn
-	busClientConn *grpc.ClientConn
+	log            logger.Logger
+	router         fiber.Router
+	store          *db.SQLStore
+	cfg            *config.Config
+	airClientConn  *grpc.ClientConn
+	busClientConn  *grpc.ClientConn
+	bikeClientConn *grpc.ClientConn
+	binClientConn  *grpc.ClientConn
 }
 
-func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Config, logger2 logger.Logger, airClientConn *grpc.ClientConn, busClientConn *grpc.ClientConn) *GatewayService {
-	server := &GatewayService{router: router, store: store, cfg: cfg, log: logger2, airClientConn: airClientConn, busClientConn: busClientConn}
+func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Config, logger2 logger.Logger, airClientConn *grpc.ClientConn, busClientConn *grpc.ClientConn, bikeClientConn *grpc.ClientConn, binClientConn *grpc.ClientConn) *GatewayService {
+	server := &GatewayService{router: router, store: store, cfg: cfg, log: logger2, airClientConn: airClientConn, busClientConn: busClientConn, bikeClientConn: bikeClientConn, binClientConn: binClientConn}
 	router.Post("/register", server.Register)
 	router.Post("/login", server.Login)
 	router.Post("/logout", server.Logout)
