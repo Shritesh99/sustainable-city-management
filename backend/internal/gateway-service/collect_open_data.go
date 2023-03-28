@@ -1,10 +1,12 @@
 package gateway_service
 
 import (
+	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/Eytins/sustainable-city-management/backend/internal/util"
@@ -302,5 +304,22 @@ func (server *GatewayService) CollectBusData() BUSDATA {
 }
 
 func (server *GatewayService) CollectPedestrianData() {
+	f, err := os.Open("../../dcc-footfall-counter-locations-14082020.csv")
+	if err != nil {
+		util.LogFatal("Read pedestrian csv file failed", err)
+	}
 
+	// TODO Collect data from csv file
+	csvReader := csv.NewReader(f)
+	data, err := csvReader.ReadAll()
+	if err != nil {
+		util.LogFatal("Parse pedestrian csv file failed", err)
+	}
+	print(data)
+
+	err = f.Close()
+	if err != nil {
+		util.LogFatal("Close pedestrian csv file failed", err)
+		return
+	}
 }
