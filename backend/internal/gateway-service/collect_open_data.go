@@ -300,3 +300,7 @@ func (server *GatewayService) CollectBusData() BUSDATA {
 	}
 	return bus
 }
+
+func (server *GatewayService) CollectPedestrianData() {
+
+}
