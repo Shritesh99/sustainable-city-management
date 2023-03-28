@@ -6,6 +6,8 @@ class Routes {
   //login
   //static const loginpage = _Paths.loginpage;
   static const bike = _Paths.bike;
+
+  static const air = _Paths.air;
 }
 
 /// contains a list of route names.
@@ -15,6 +17,7 @@ class _Paths {
   //static const loginpage = '/loginpage';
   static const bike = '/bike';
 
+  static const air = '/air';
   // Example :
   // static const index = '/';
   // static const splash = '/splash';

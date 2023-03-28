@@ -1,51 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sustainable_city_management/app/features/dashboard/views/components/bike/custom_info_window.dart';
-
-import '../../models/bike_station_Info.dart';
+import 'package:sustainable_city_management/app/features/dashboard/models/bike_station_model.dart';
+import 'package:sustainable_city_management/app/features/dashboard/views/components/custom_info_window.dart';
+import 'package:sustainable_city_management/app/utils/services/bike_services.dart';
 
 class BikeScreen extends StatelessWidget {
   const BikeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MapScreen();
+    return _BikeMapScreen();
   }
 }
 
-class MapScreen extends StatefulWidget {
+class _BikeMapScreen extends StatefulWidget {
   @override
-  State<MapScreen> createState() => _MapScreenState();
+  State<_BikeMapScreen> createState() => _BikeMapScreenState();
 }
 
-class _MapScreenState extends State<MapScreen> {
+class _BikeMapScreenState extends State<_BikeMapScreen> {
   final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
   final double _zoom = 15.0;
-
-  BikeStationInfo bikeStation = BikeStationInfo(
-      number: 42,
-      stationName: "Hello World",
-      stationAddr: "hello world",
-      numOfBikeStands: 5,
-      numOfMechanicalBike: 1,
-      numOfElectricBike: 3,
-      status: "open",
-      lat: 53.342686,
-      lng: -6.267118);
-
-  BikeStationInfo bikeStation2 = BikeStationInfo(
-      number: 43,
-      stationName: "Hello Hell",
-      stationAddr: "hello hell",
-      numOfBikeStands: 4,
-      numOfMechanicalBike: 2,
-      numOfElectricBike: 5,
-      status: "open",
-      lat: 53.342686,
-      lng: -7.367118);
+  List<BikeStationModel> bikeStations = <BikeStationModel>[];
+  final Set<Marker> _markers = {};
 
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
+
+  @override
+  void initState() {
+    super.initState();
+    getBikeStation();
+  }
 
   @override
   void dispose() {
@@ -53,215 +39,126 @@ class _MapScreenState extends State<MapScreen> {
     super.dispose();
   }
 
-  Set<Marker> _markers = {};
+  void getBikeStation() async {
+    BikeServices bikeService = BikeServices();
+    await bikeService.listBikeStation().then((value) => setState(() {
+          bikeStations = value;
+        }));
+    addMarkers();
+  }
+
+  void addMarkers() {
+    for (var bs in bikeStations) {
+      _markers.add(Marker(
+          markerId: MarkerId(bs.number.toString()),
+          position: LatLng(bs.position.latitude, bs.position.longitude),
+          onTap: () {
+            _customInfoWindowController.addInfoWindow!(
+              Container(
+                  margin: const EdgeInsets.all(20),
+                  height: 70,
+                  decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: const BorderRadius.all(Radius.circular(50)),
+                      boxShadow: <BoxShadow>[
+                        BoxShadow(
+                            blurRadius: 20,
+                            offset: Offset.zero,
+                            color: Colors.grey.withOpacity(0.5))
+                      ]),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      Expanded(
+                          child: Container(
+                              margin: const EdgeInsets.only(left: 20),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: <Widget>[
+                                  Text(
+                                    bs.name,
+                                    style:
+                                        const TextStyle(color: Colors.black87),
+                                  ),
+                                  Text(
+                                    bs.address,
+                                    style: const TextStyle(
+                                        color: Colors.grey, fontSize: 8),
+                                  ),
+                                  Row(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.start,
+                                      children: <Widget>[
+                                        Text.rich(TextSpan(children: [
+                                          TextSpan(
+                                              text: bs.mainStands.availabilities
+                                                  .mechanicalBikes
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                color: Colors.black87,
+                                                fontSize: 20,
+                                              )),
+                                          const WidgetSpan(
+                                              child: Padding(
+                                            padding: EdgeInsets.only(left: 2.0),
+                                          )),
+                                          const WidgetSpan(
+                                              child: Icon(Icons.directions_bike,
+                                                  color: Colors.black87)),
+                                          const WidgetSpan(
+                                              child: Padding(
+                                            padding: EdgeInsets.only(left: 4.0),
+                                          )),
+                                          TextSpan(
+                                              text: bs.mainStands.availabilities
+                                                  .electricalBikes
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.black87,
+                                                  fontSize: 20)),
+                                          const WidgetSpan(
+                                              child: Padding(
+                                            padding: EdgeInsets.only(left: 2.0),
+                                          )),
+                                          const WidgetSpan(
+                                              child: Icon(Icons.electric_bike,
+                                                  color: Colors.black87)),
+                                          const WidgetSpan(
+                                              child: Padding(
+                                            padding: EdgeInsets.only(left: 4.0),
+                                          )),
+                                          TextSpan(
+                                              text: bs.mainStands.availabilities
+                                                  .stands
+                                                  .toString(),
+                                              style: const TextStyle(
+                                                  color: Colors.black87,
+                                                  fontSize: 20)),
+                                          const WidgetSpan(
+                                              child: Icon(Icons.local_parking,
+                                                  color: Colors.black87)),
+                                        ])),
+                                      ])
+                                ],
+                              )))
+                    ],
+                  )),
+              LatLng(bs.position.latitude, bs.position.longitude),
+            );
+          }));
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    _markers.add(
-      Marker(
-        markerId: MarkerId(bikeStation.number.toString()),
-        position: LatLng(bikeStation.lat, bikeStation.lng),
-        onTap: () {
-          _customInfoWindowController.addInfoWindow!(
-            Container(
-                margin: const EdgeInsets.all(20),
-                height: 70,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.all(Radius.circular(50)),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          blurRadius: 20,
-                          offset: Offset.zero,
-                          color: Colors.grey.withOpacity(0.5))
-                    ]),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                        child: Container(
-                            margin: const EdgeInsets.only(left: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  bikeStation.stationName,
-                                  style: const TextStyle(color: Colors.black87),
-                                ),
-                                Text(
-                                  bikeStation.stationAddr,
-                                  style: const TextStyle(
-                                      color: Colors.grey, fontSize: 8),
-                                ),
-                                Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text.rich(TextSpan(children: [
-                                        TextSpan(
-                                            text: bikeStation
-                                                .numOfMechanicalBike
-                                                .toString(),
-                                            style: const TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 20,
-                                            )),
-                                        const WidgetSpan(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(left: 2.0),
-                                        )),
-                                        const WidgetSpan(
-                                            child: Icon(Icons.directions_bike,
-                                                color: Colors.black87)),
-                                        const WidgetSpan(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(left: 4.0),
-                                        )),
-                                        TextSpan(
-                                            text: bikeStation.numOfElectricBike
-                                                .toString(),
-                                            style: const TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: 20)),
-                                        const WidgetSpan(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(left: 2.0),
-                                        )),
-                                        const WidgetSpan(
-                                            child: Icon(Icons.electric_bike,
-                                                color: Colors.black87)),
-                                        const WidgetSpan(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(left: 4.0),
-                                        )),
-                                        TextSpan(
-                                            text: bikeStation.numOfBikeStands
-                                                .toString(),
-                                            style: const TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: 20)),
-                                        const WidgetSpan(
-                                            child: Icon(Icons.local_parking,
-                                                color: Colors.black87)),
-                                      ])),
-                                    ])
-                              ],
-                            )))
-                  ],
-                )),
-            LatLng(bikeStation.lat, bikeStation.lng),
-          );
-        },
-      ),
-    );
-
-    _markers.add(
-      Marker(
-        markerId: MarkerId(bikeStation2.number.toString()),
-        position: LatLng(bikeStation.lat, bikeStation.lng),
-        onTap: () {
-          _customInfoWindowController.addInfoWindow!(
-            Container(
-                margin: const EdgeInsets.all(20),
-                height: 70,
-                decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: const BorderRadius.all(Radius.circular(50)),
-                    boxShadow: <BoxShadow>[
-                      BoxShadow(
-                          blurRadius: 20,
-                          offset: Offset.zero,
-                          color: Colors.grey.withOpacity(0.5))
-                    ]),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                        child: Container(
-                            margin: const EdgeInsets.only(left: 20),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: <Widget>[
-                                Text(
-                                  bikeStation.stationName,
-                                  style: const TextStyle(color: Colors.black87),
-                                ),
-                                Text(
-                                  bikeStation.stationAddr,
-                                  style: const TextStyle(
-                                      color: Colors.grey, fontSize: 8),
-                                ),
-                                Row(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisAlignment: MainAxisAlignment.start,
-                                    children: <Widget>[
-                                      Text.rich(TextSpan(children: [
-                                        TextSpan(
-                                            text: bikeStation
-                                                .numOfMechanicalBike
-                                                .toString(),
-                                            style: const TextStyle(
-                                              color: Colors.black87,
-                                              fontSize: 20,
-                                            )),
-                                        const WidgetSpan(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(left: 2.0),
-                                        )),
-                                        const WidgetSpan(
-                                            child: Icon(Icons.directions_bike,
-                                                color: Colors.black87)),
-                                        const WidgetSpan(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(left: 4.0),
-                                        )),
-                                        TextSpan(
-                                            text: bikeStation.numOfElectricBike
-                                                .toString(),
-                                            style: const TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: 20)),
-                                        const WidgetSpan(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(left: 2.0),
-                                        )),
-                                        const WidgetSpan(
-                                            child: Icon(Icons.electric_bike,
-                                                color: Colors.black87)),
-                                        const WidgetSpan(
-                                            child: Padding(
-                                          padding: EdgeInsets.only(left: 4.0),
-                                        )),
-                                        TextSpan(
-                                            text: bikeStation.numOfBikeStands
-                                                .toString(),
-                                            style: const TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: 20)),
-                                        const WidgetSpan(
-                                            child: Icon(Icons.local_parking,
-                                                color: Colors.black87)),
-                                      ])),
-                                    ])
-                              ],
-                            )))
-                  ],
-                )),
-            LatLng(bikeStation2.lat, bikeStation2.lng),
-          );
-        },
-      ),
-    );
     return Scaffold(
       appBar: AppBar(
-        title: Text('Dublinbikes'),
-        backgroundColor: Color.fromRGBO(29, 22, 70, 1),
+        title: const Text('Dublinbikes'),
+        backgroundColor: const Color.fromRGBO(29, 22, 70, 1),
       ),
       body: Stack(
         children: <Widget>[
@@ -275,9 +172,10 @@ class _MapScreenState extends State<MapScreen> {
             onMapCreated: (GoogleMapController controller) async {
               _customInfoWindowController.googleMapController = controller;
             },
+            myLocationButtonEnabled: false,
             markers: _markers,
             initialCameraPosition: CameraPosition(
-              target: LatLng(bikeStation.lat, bikeStation.lng),
+              target: _initialLocation,
               zoom: _zoom,
             ),
           ),
@@ -285,7 +183,7 @@ class _MapScreenState extends State<MapScreen> {
             (top, left, width, height) => null,
             controller: _customInfoWindowController,
             height: 130,
-            width: 200,
+            width: 250,
             offset: 30,
           ),
         ],

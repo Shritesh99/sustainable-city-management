@@ -82,20 +82,23 @@ class _Sidebar extends StatelessWidget {
               onSelected: (index, value) {
                 log("index : $index | label : ${value.label}");
 
-                Get.toNamed("/${value.label.toLowerCase()}");
-
-                if (index == 7) {
-                  //Might be do pop?
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => LoginScreen()));
-                } else if (index == 5) {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => BinTruckScreen()));
-                } else if (index == 3) {
-                  Navigator.push(context,
-                      MaterialPageRoute(builder: (context) => BusScreen()));
+                // if (index == 7) {
+                //   //Might be do pop?
+                //   Navigator.push(context,
+                //       MaterialPageRoute(builder: (context) => LoginScreen()));
+                // } else if (index == 3) {
+                //   Navigator.push(context,
+                //       MaterialPageRoute(builder: (context) => BusScreen()));
+                // }
+                if (index == 0) {
+                  Get.toNamed(Routes.air);
+                } else {
+                  Get.toNamed("/${value.label.toLowerCase()}");
+                }
+                if (index == 5) {
+                  Get.toNamed(Routes.bin_truck);
+                } else {
+                  Get.toNamed("/${value.label.toLowerCase()}");
                 }
               },
             ),
