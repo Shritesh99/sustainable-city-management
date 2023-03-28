@@ -54,6 +54,17 @@ type NoiseDatum struct {
 	HourlyAvg     float64 `json:"hourly_avg"`
 }
 
+type PedestrianDatum struct {
+	ID           int32     `json:"id"`
+	LocationName string    `json:"location_name"`
+	Total        int32     `json:"total"`
+	Longitude    float64   `json:"longitude"`
+	Latitude     float64   `json:"latitude"`
+	CounterTime  time.Time `json:"counter_time"`
+	InsertTime   time.Time `json:"insert_time"`
+	UpdateTime   time.Time `json:"update_time"`
+}
+
 type Role struct {
 	RoleID   int32  `json:"role_id"`
 	RoleName string `json:"role_name"`

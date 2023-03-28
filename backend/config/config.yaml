@@ -39,13 +39,13 @@ ConnectedServices:
         serviceUrl: localhost
         healthcheckPort: :7012
         grpcPort: :4001
-#      - serviceName: { { .Values.bike.Name } }
-#        serviceType: { { .Values.bike.Type } }
-#        serviceUrl: { { .Values.bike.Url } }
-#        healthcheckPort: { { .Values.bike.HealthcheckPort } }
-#        grpcPort: { { .Values.bike.GrpcPort } }
-#      - serviceName: { { .Values.bin.Name } }
-#        serviceType: { { .Values.bin.Type } }
-#        serviceUrl: { { .Values.bin.Url } }
-#        healthcheckPort: { { .Values.bin.HealthcheckPort } }
-#        grpcPort: { { .Values.bin.GrpcPort } }
+      - serviceName: BikeService
+        serviceType: service
+        serviceUrl: localhost
+        healthcheckPort: 7022
+        grpcPort: 4002
+      - serviceName: BinService
+        serviceType: service
+        serviceUrl: localhost
+        healthcheckPort: 7032
+        grpcPort: 4003

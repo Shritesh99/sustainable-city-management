@@ -1,0 +1,6 @@
+syntax = "proto3";
+
+option go_package = "bin/bin-pd";
+
+service BinService {
+}

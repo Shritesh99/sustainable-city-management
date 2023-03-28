@@ -5,6 +5,8 @@ import (
 	"database/sql"
 	"fmt"
 	airquality_service "github.com/Eytins/sustainable-city-management/backend/internal/airquality-service"
+	bike_service "github.com/Eytins/sustainable-city-management/backend/internal/bike-service"
+	bin_service "github.com/Eytins/sustainable-city-management/backend/internal/bin-service"
 	bus_service "github.com/Eytins/sustainable-city-management/backend/internal/bus-service"
 	"google.golang.org/grpc/credentials/insecure"
 	"net"
@@ -20,6 +22,8 @@ import (
 	gateway_service "github.com/Eytins/sustainable-city-management/backend/internal/gateway-service"
 	"github.com/Eytins/sustainable-city-management/backend/internal/metrics"
 	air_pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
+	bike_pb "github.com/Eytins/sustainable-city-management/backend/pb/bike/bike-pd"
+	bin_pb "github.com/Eytins/sustainable-city-management/backend/pb/bin/bin-pd"
 	bus_pb "github.com/Eytins/sustainable-city-management/backend/pb/bus/bus-pd"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/constants"
 	"github.com/Eytins/sustainable-city-management/backend/pkg/logger"
@@ -58,6 +62,10 @@ type service struct {
 	airConn           *grpc.ClientConn
 	busService        *bus_service.BusService
 	busConn           *grpc.ClientConn
+	bikeService       *bike_service.BikeService
+	bikeConn          *grpc.ClientConn
+	binService        *bin_service.BinService
+	binConn           *grpc.ClientConn
 }
 
 func NewService(log logger.Logger, cfg *config.Config) *service {
@@ -82,7 +90,9 @@ func (a *service) Run() error {
 
 		a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl+a.cfg.ConnectedServices[0].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
 		a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[1].ServiceUrl+a.cfg.ConnectedServices[1].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
-		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log, a.airConn, a.busConn)
+		a.bikeConn, err = grpc.Dial(a.cfg.ConnectedServices[2].ServiceUrl+a.cfg.ConnectedServices[2].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		a.binConn, err = grpc.Dial(a.cfg.ConnectedServices[3].ServiceUrl+a.cfg.ConnectedServices[3].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log, a.airConn, a.busConn, a.bikeConn, a.binConn)
 
 		go func() {
 			if err := a.fiber.Listen(fmt.Sprintf(":%s", a.cfg.Http.Port)); err != nil {
@@ -100,6 +110,8 @@ func (a *service) Run() error {
 			}
 			air_pb.RegisterAirServiceServer(a.grpcServer, airquality_service.NewAirService(db.NewStore(conn), a.cfg, a.log))
 			bus_pb.RegisterBusServiceServer(a.grpcServer, bus_service.NewBusService(db.NewStore(conn), a.cfg, a.log))
+			bike_pb.RegisterBikeServiceServer(a.grpcServer, bike_service.NewBikeService(db.NewStore(conn), a.cfg, a.log))
+			bin_pb.RegisterBinServiceServer(a.grpcServer, bin_service.NewBinService(db.NewStore(conn), a.cfg, a.log))
 			err = a.grpcServer.Serve(listener)
 			if err != nil {
 				a.log.Errorf("(Grpc server) err: %v", err)

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	pb_air "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
 	pb_bus "github.com/Eytins/sustainable-city-management/backend/pb/bus/bus-pd"
+	"golang.org/x/crypto/bcrypt"
 	_ "net/http"
 	"strings"
 	"time"
@@ -79,11 +80,11 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 		server.log.Infof("Failed to parse body: %v", err)
 	}
 
-	// fmt.Printf("[Register] username: %s, password: %s\n", req.Username, req.Password)
+	encryptedPwd, err := bcrypt.GenerateFromPassword([]byte(req.Password), bcrypt.DefaultCost)
 
 	argCheck := db.CreateLoginDetailParams{
 		Email:    req.Username,
-		Password: req.Password,
+		Password: string(encryptedPwd),
 	}
 
 	loginInfo, err := server.store.GetLoginDetail(context.Background(), argCheck.Email)
@@ -113,7 +114,7 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 		RoleID:   req.RoleID,
 		UserID:   user.UserID,
 		Email:    req.Username,
-		Password: req.Password,
+		Password: string(encryptedPwd),
 	}
 
 	loginDetails, err := server.store.CreateLoginDetail(context.Background(), argLogin)
@@ -125,9 +126,7 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 		"error":  false,
 		"msg":    "success",
 		"userId": user.UserID,
-		// "roleID":   loginDetails.RoleID,
-		"email": loginDetails.Email,
-		// "password": loginDetails.Password,
+		"email":  loginDetails.Email,
 	})
 }
 
@@ -152,7 +151,8 @@ func (server *GatewayService) Login(c *fiber.Ctx) error {
 		})
 	}
 
-	if loginDetails.Password != arg.Password {
+	err = bcrypt.CompareHashAndPassword([]byte(loginDetails.Password), []byte(req.Password))
+	if err != nil {
 		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
 			"error": true,
 			"msg":   "Incorrect Password",
