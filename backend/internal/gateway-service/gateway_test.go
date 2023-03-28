@@ -110,7 +110,7 @@ func TestGetProfileWithoutToken(t *testing.T) {
 func TestGetProfileWithToken(t *testing.T) {
 	var token = GenerateToken()
 	registerBody := `{
-        "username": "abcd@gmail.com"
+        "username": "abcdef@gmail.com"
     }`
 
 	// Iterate through test single test cases
@@ -154,7 +154,14 @@ func TestGatewayService_GetAirStations(t *testing.T) {
 }
 
 func TestGatewayService_GetDetailedAirData(t *testing.T) {
-	resp, err := http.Get("http://127.0.0.1:8000/gateway/getDetailedAirData")
+	var token = GenerateToken()
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getDetailedAirData", nil)
+	if err != nil {
+		return
+	}
+	req.Header.Set("Token", token)
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return
 	}

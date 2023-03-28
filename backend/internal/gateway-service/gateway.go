@@ -414,7 +414,7 @@ func (server *GatewayService) GetBusDataByRouteId(c *fiber.Ctx) error {
 		return err
 	}
 	client := pb_bus.NewBusServiceClient(server.busClientConn)
-	req := pb_bus.RouteIdRequest{Id: c.Get("id")}
+	req := pb_bus.RouteIdRequest{Id: c.Query("id")}
 	resp, err := client.GetBusDataByRouteId(context.Background(), &req)
 	if err != nil {
 		return c.Status(fiber.StatusNoContent).JSON(fiber.Map{
