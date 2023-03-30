@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sustainable_city_management/app/shared_components/user.dart';
+import 'package:sustainable_city_management/app/features/dashboard/models/user.dart';
 import 'package:sustainable_city_management/app/features/dashboard/views/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
