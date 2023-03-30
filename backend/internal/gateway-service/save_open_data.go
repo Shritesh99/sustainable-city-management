@@ -101,3 +101,79 @@ func (server *GatewayService) SaveBusData() error {
 func (server *GatewayService) SavePedestrianData() error {
 	return nil
 }
+
+func (server *GatewayService) SaveBikeData() error {
+	resp := server.CollectBikeData()
+	for _, data := range resp {
+		arg := db.CreateBikeDataParams{
+			ID:              int32(data.Number),
+			ContractName:    data.ContractName,
+			Name:            data.Name,
+			Address:         data.Address,
+			Latitude:        data.Position.Latitude,
+			Longitude:       data.Position.Longitude,
+			Status:          data.Status,
+			LastUpdate:      data.LastUpdate,
+			Bikes:           int32(data.TotalStands.Availabilities.Bikes),
+			Stands:          int32(data.TotalStands.Availabilities.Stands),
+			MechanicalBikes: int32(data.TotalStands.Availabilities.MechanicalBikes),
+			ElectricalBikes: int32(data.TotalStands.Availabilities.ElectricalBikes),
+		}
+
+		_, err := server.store.CreateBikeData(context.Background(), arg)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered from panic: %v\n", r)
+			log.Println("Panic occurred while creating bike data param of db:", r)
+		}
+	}()
+	return nil
+}
+
+func (server *GatewayService) SaveBinData() error {
+	resp := server.CollectBinData()
+	for i, data := range resp.Features {
+		if i%13 != 0 {
+			continue
+		}
+		var region int
+		if data.Geometry.Coordinates[0] < -6.308742151386624 {
+			region = 1
+		} else if -6.308742151386624 <= data.Geometry.Coordinates[0] && data.Geometry.Coordinates[0] < -6.291845689366002 {
+			region = 2
+		} else if -6.291845689366002 <= data.Geometry.Coordinates[0] && data.Geometry.Coordinates[0] < -6.274597217719949 {
+			region = 3
+		} else if -6.274597217719949 <= data.Geometry.Coordinates[0] && data.Geometry.Coordinates[0] < -6.259460803826475 {
+			region = 4
+		} else if -6.259460803826475 <= data.Geometry.Coordinates[0] && data.Geometry.Coordinates[0] < -6.245380418809289 {
+			region = 5
+		} else if -6.245380418809289 <= data.Geometry.Coordinates[0] && data.Geometry.Coordinates[0] < -6.2358761589226885 {
+			region = 6
+		} else {
+			region = 7
+		}
+
+		arg := db.CreateBinDataParams{
+			ID:        data.Properties.BinID,
+			Latitude:  data.Geometry.Coordinates[0],
+			Longitude: data.Geometry.Coordinates[1],
+			Region:    int32(region),
+		}
+
+		_, err := server.store.CreateBinData(context.Background(), arg)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered from panic: %v\n", r)
+			log.Println("Panic occurred while creating bin data param of db:", r)
+		}
+	}()
+	return nil
+}

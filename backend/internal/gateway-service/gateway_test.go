@@ -193,6 +193,42 @@ func TestGatewayService_GetBusDataByRouteId(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
+func TestGatewayService_GetBikes(t *testing.T) {
+	var token = GenerateToken()
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getBikes", nil)
+	req.Header.Set("Token", token)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestGatewayService_GetAllBins(t *testing.T) {
+	var token = GenerateToken()
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getAllBins", nil)
+	req.Header.Set("Token", token)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestGatewayService_GetBinsByRegion(t *testing.T) {
+	var token = GenerateToken()
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getBinsByRegion", nil)
+	req.Header.Set("Token", token)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
 func GenerateToken() string {
 	expirationTime := time.Now().Add(5 * time.Hour)
 	// Create the JWT claims, which includes the username and expiry time

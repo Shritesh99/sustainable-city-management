@@ -3,5 +3,26 @@ syntax = "proto3";
 option go_package = "bike/bike-pd";
 
 service BikeService {
+  rpc GetBikes(GetBikesRequest) returns (GetBikesResponse) {}
+}
 
+message GetBikesRequest {}
+
+message GetBikesResponse {
+  repeated Bike bikes = 1;
+}
+
+message Bike {
+  int32 id = 1;
+  string contractName = 2;
+  string name = 3;
+  string address = 4;
+  float latitude = 5;
+  float longitude = 6;
+  string status = 7;
+  int64 lastUpdate = 8;
+  int32 bikes = 9;
+  int32 stands = 10;
+  int32 mechanicalBikes = 11;
+  int32 electricalBikes = 12;
 }

@@ -7,7 +7,10 @@
 package bike_pd
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,6 +22,7 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BikeServiceClient interface {
+	GetBikes(ctx context.Context, in *GetBikesRequest, opts ...grpc.CallOption) (*GetBikesResponse, error)
 }
 
 type bikeServiceClient struct {
@@ -29,10 +33,20 @@ func NewBikeServiceClient(cc grpc.ClientConnInterface) BikeServiceClient {
 	return &bikeServiceClient{cc}
 }
 
+func (c *bikeServiceClient) GetBikes(ctx context.Context, in *GetBikesRequest, opts ...grpc.CallOption) (*GetBikesResponse, error) {
+	out := new(GetBikesResponse)
+	err := c.cc.Invoke(ctx, "/BikeService/GetBikes", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BikeServiceServer is the server API for BikeService service.
 // All implementations must embed UnimplementedBikeServiceServer
 // for forward compatibility
 type BikeServiceServer interface {
+	GetBikes(context.Context, *GetBikesRequest) (*GetBikesResponse, error)
 	mustEmbedUnimplementedBikeServiceServer()
 }
 
@@ -40,6 +54,9 @@ type BikeServiceServer interface {
 type UnimplementedBikeServiceServer struct {
 }
 
+func (UnimplementedBikeServiceServer) GetBikes(context.Context, *GetBikesRequest) (*GetBikesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBikes not implemented")
+}
 func (UnimplementedBikeServiceServer) mustEmbedUnimplementedBikeServiceServer() {}
 
 // UnsafeBikeServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -53,13 +70,36 @@ func RegisterBikeServiceServer(s grpc.ServiceRegistrar, srv BikeServiceServer) {
 	s.RegisterService(&BikeService_ServiceDesc, srv)
 }
 
+func _BikeService_GetBikes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBikesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BikeServiceServer).GetBikes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/BikeService/GetBikes",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BikeServiceServer).GetBikes(ctx, req.(*GetBikesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BikeService_ServiceDesc is the grpc.ServiceDesc for BikeService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var BikeService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "BikeService",
 	HandlerType: (*BikeServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "bike_service/bike_service.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetBikes",
+			Handler:    _BikeService_GetBikes_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "bike_service/bike_service.proto",
 }
