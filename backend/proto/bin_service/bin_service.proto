@@ -3,4 +3,28 @@ syntax = "proto3";
 option go_package = "bin/bin-pd";
 
 service BinService {
+  rpc GetAllBins (GetAllBinsRequest) returns (GetAllBinsResponse) {}
+  rpc GetBinsByRegion (GetBinsByRegionRequest) returns (GetBinsByRegionResponse) {}
+}
+
+message GetAllBinsRequest {
+}
+
+message GetAllBinsResponse {
+  repeated Bin bins = 1;
+}
+
+message GetBinsByRegionRequest {
+  int32 region = 1;
+}
+
+message GetBinsByRegionResponse {
+  repeated Bin bins = 1;
+}
+
+message Bin {
+  string id = 1;
+  float latitude = 2;
+  float longitude = 3;
+  int32 region = 4;
 }

@@ -7,7 +7,10 @@
 package bin_pd
 
 import (
+	context "context"
 	grpc "google.golang.org/grpc"
+	codes "google.golang.org/grpc/codes"
+	status "google.golang.org/grpc/status"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -19,6 +22,8 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type BinServiceClient interface {
+	GetAllBins(ctx context.Context, in *GetAllBinsRequest, opts ...grpc.CallOption) (*GetAllBinsResponse, error)
+	GetBinsByRegion(ctx context.Context, in *GetBinsByRegionRequest, opts ...grpc.CallOption) (*GetBinsByRegionResponse, error)
 }
 
 type binServiceClient struct {
@@ -29,10 +34,30 @@ func NewBinServiceClient(cc grpc.ClientConnInterface) BinServiceClient {
 	return &binServiceClient{cc}
 }
 
+func (c *binServiceClient) GetAllBins(ctx context.Context, in *GetAllBinsRequest, opts ...grpc.CallOption) (*GetAllBinsResponse, error) {
+	out := new(GetAllBinsResponse)
+	err := c.cc.Invoke(ctx, "/BinService/GetAllBins", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *binServiceClient) GetBinsByRegion(ctx context.Context, in *GetBinsByRegionRequest, opts ...grpc.CallOption) (*GetBinsByRegionResponse, error) {
+	out := new(GetBinsByRegionResponse)
+	err := c.cc.Invoke(ctx, "/BinService/GetBinsByRegion", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // BinServiceServer is the server API for BinService service.
 // All implementations must embed UnimplementedBinServiceServer
 // for forward compatibility
 type BinServiceServer interface {
+	GetAllBins(context.Context, *GetAllBinsRequest) (*GetAllBinsResponse, error)
+	GetBinsByRegion(context.Context, *GetBinsByRegionRequest) (*GetBinsByRegionResponse, error)
 	mustEmbedUnimplementedBinServiceServer()
 }
 
@@ -40,6 +65,12 @@ type BinServiceServer interface {
 type UnimplementedBinServiceServer struct {
 }
 
+func (UnimplementedBinServiceServer) GetAllBins(context.Context, *GetAllBinsRequest) (*GetAllBinsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAllBins not implemented")
+}
+func (UnimplementedBinServiceServer) GetBinsByRegion(context.Context, *GetBinsByRegionRequest) (*GetBinsByRegionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetBinsByRegion not implemented")
+}
 func (UnimplementedBinServiceServer) mustEmbedUnimplementedBinServiceServer() {}
 
 // UnsafeBinServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -53,13 +84,58 @@ func RegisterBinServiceServer(s grpc.ServiceRegistrar, srv BinServiceServer) {
 	s.RegisterService(&BinService_ServiceDesc, srv)
 }
 
+func _BinService_GetAllBins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAllBinsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BinServiceServer).GetAllBins(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/BinService/GetAllBins",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BinServiceServer).GetAllBins(ctx, req.(*GetAllBinsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _BinService_GetBinsByRegion_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetBinsByRegionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(BinServiceServer).GetBinsByRegion(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/BinService/GetBinsByRegion",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(BinServiceServer).GetBinsByRegion(ctx, req.(*GetBinsByRegionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // BinService_ServiceDesc is the grpc.ServiceDesc for BinService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
 var BinService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "BinService",
 	HandlerType: (*BinServiceServer)(nil),
-	Methods:     []grpc.MethodDesc{},
-	Streams:     []grpc.StreamDesc{},
-	Metadata:    "bin_service/bin_service.proto",
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "GetAllBins",
+			Handler:    _BinService_GetAllBins_Handler,
+		},
+		{
+			MethodName: "GetBinsByRegion",
+			Handler:    _BinService_GetBinsByRegion_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "bin_service/bin_service.proto",
 }

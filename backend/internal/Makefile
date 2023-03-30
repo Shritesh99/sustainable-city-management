@@ -11,7 +11,7 @@ migratedown:
 
 # There's a param need to be changed at the last of this command.(Version)
 migrategoto:
-	migrate -path db/migration -database "postgresql://group_admin:group007@18.202.24.40:5432/masterdb?sslmode=disable" -verbose goto 6
+	migrate -path db/migration -database "postgresql://group_admin:group007@18.202.24.40:5432/masterdb?sslmode=disable" -verbose goto 7
 
 # database migration only for github actions
 action_migrateup:

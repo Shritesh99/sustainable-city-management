@@ -42,6 +42,13 @@ type BikeDatum struct {
 	ElectricalBikes int32     `json:"electrical_bikes"`
 }
 
+type BinDatum struct {
+	ID        string  `json:"id"`
+	Latitude  float64 `json:"latitude"`
+	Longitude float64 `json:"longitude"`
+	Region    int32   `json:"region"`
+}
+
 type BusDatum struct {
 	VehicleID   string  `json:"vehicle_id"`
 	Latitude    float64 `json:"latitude"`

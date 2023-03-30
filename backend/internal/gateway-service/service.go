@@ -32,6 +32,8 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Get("/getNoiseData", server.GetNoiseData)
 	router.Get("/getBusDataByRouteId", server.GetBusDataByRouteId)
 	router.Get("/getBikes", server.GetBikes)
+	router.Get("/getAllBins", server.GetAllBins)
+	router.Get("/getBinsByRegion", server.GetBinsByRegion)
 
 	go CollectDataTimerTask(server, logger2)
 	return server

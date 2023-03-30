@@ -384,3 +384,47 @@ func (server *GatewayService) CollectBikeData() BIKEDATA {
 	}
 	return bike
 }
+
+type BINDATA struct {
+	Crs struct {
+		Properties struct {
+			Name string `json:"name"`
+		} `json:"properties"`
+		Type string `json:"type"`
+	} `json:"crs"`
+	Features []struct {
+		Geometry struct {
+			Coordinates []float64 `json:"coordinates"`
+			Type        string    `json:"type"`
+		} `json:"geometry"`
+		Properties struct {
+			BinID         string  `json:"Bin_ID"`
+			BinType       string  `json:"Bin_Type"`
+			ElectoralArea string  `json:"Electoral_Area"`
+			IrishX        float64 `json:"Irish_X"`
+			IrishY        float64 `json:"Irish_Y"`
+		} `json:"properties"`
+		Type string `json:"type"`
+	} `json:"features"`
+	Type string `json:"type"`
+}
+
+func (server *GatewayService) CollectBinData() BINDATA {
+	resp, err := http.Get("https://data.smartdublin.ie/dataset/6cbabf95-6b81-48e7-a2b8-b2345bbe80a1/resource/68e46a6b-383c-4f67-888c-95210e695df1/download/dcc_public_bin_locations.geojson")
+	if err != nil {
+		util.LogFatal("Cannot get data from bin api", err)
+		return BINDATA{}
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		util.LogFatal("Cannot read response bin body", err)
+		return BINDATA{}
+	}
+	var bin BINDATA
+	err = json.Unmarshal(body, &bin)
+	if err != nil {
+		util.LogFatal("Cannot convert bin response body to json", err)
+		return BINDATA{}
+	}
+	return bin
+}

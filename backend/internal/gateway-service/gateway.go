@@ -6,6 +6,7 @@ import (
 	"fmt"
 	pb_air "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
 	pb_bike "github.com/Eytins/sustainable-city-management/backend/pb/bike/bike-pd"
+	pb_bin "github.com/Eytins/sustainable-city-management/backend/pb/bin/bin-pd"
 	pb_bus "github.com/Eytins/sustainable-city-management/backend/pb/bus/bus-pd"
 	"golang.org/x/crypto/bcrypt"
 	_ "net/http"
@@ -448,5 +449,47 @@ func (server *GatewayService) GetBikes(c *fiber.Ctx) error {
 		"bike_data": resp,
 		"error":     false,
 		"msg":       "success",
+	})
+}
+
+func (server *GatewayService) GetAllBins(c *fiber.Ctx) error {
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
+	client := pb_bin.NewBinServiceClient(server.binClientConn)
+	req := pb_bin.GetAllBinsRequest{}
+	resp, err := client.GetAllBins(context.Background(), &req)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err,
+			"msg":   "Data not found",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"bin_data": resp,
+		"error":    false,
+		"msg":      "success",
+	})
+}
+
+func (server *GatewayService) GetBinsByRegion(c *fiber.Ctx) error {
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
+	client := pb_bin.NewBinServiceClient(server.binClientConn)
+	req := pb_bin.GetBinsByRegionRequest{Region: int32(c.QueryInt("region"))}
+	resp, err := client.GetBinsByRegion(context.Background(), &req)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err,
+			"msg":   "Data not found",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"bin_data": resp,
+		"error":    false,
+		"msg":      "success",
 	})
 }
