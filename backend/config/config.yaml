@@ -42,10 +42,10 @@ ConnectedServices:
       - serviceName: BikeService
         serviceType: service
         serviceUrl: localhost
-        healthcheckPort: 7022
-        grpcPort: 4002
+        healthcheckPort: :7022
+        grpcPort: :4002
       - serviceName: BinService
         serviceType: service
         serviceUrl: localhost
-        healthcheckPort: 7032
-        grpcPort: 4003
+        healthcheckPort: :7032
+        grpcPort: :4003

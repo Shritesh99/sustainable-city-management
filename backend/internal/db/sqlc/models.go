@@ -27,6 +27,21 @@ type AqiDatum struct {
 	Longitude   float64   `json:"longitude"`
 }
 
+type BikeDatum struct {
+	ID              int32     `json:"id"`
+	ContractName    string    `json:"contract_name"`
+	Name            string    `json:"name"`
+	Address         string    `json:"address"`
+	Latitude        float64   `json:"latitude"`
+	Longitude       float64   `json:"longitude"`
+	Status          string    `json:"status"`
+	LastUpdate      time.Time `json:"last_update"`
+	Bikes           int32     `json:"bikes"`
+	Stands          int32     `json:"stands"`
+	MechanicalBikes int32     `json:"mechanical_bikes"`
+	ElectricalBikes int32     `json:"electrical_bikes"`
+}
+
 type BusDatum struct {
 	VehicleID   string  `json:"vehicle_id"`
 	Latitude    float64 `json:"latitude"`

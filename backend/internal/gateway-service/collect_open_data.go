@@ -323,3 +323,64 @@ func (server *GatewayService) CollectPedestrianData() {
 		return
 	}
 }
+
+type BIKEDATA []struct {
+	Number       int    `json:"number"`
+	ContractName string `json:"contractName"`
+	Name         string `json:"name"`
+	Address      string `json:"address"`
+	Position     struct {
+		Latitude  float64 `json:"latitude"`
+		Longitude float64 `json:"longitude"`
+	} `json:"position"`
+	Banking     bool        `json:"banking"`
+	Bonus       bool        `json:"bonus"`
+	Status      string      `json:"status"`
+	LastUpdate  time.Time   `json:"lastUpdate"`
+	Connected   bool        `json:"connected"`
+	Overflow    bool        `json:"overflow"`
+	Shape       interface{} `json:"shape"`
+	TotalStands struct {
+		Availabilities struct {
+			Bikes                           int `json:"bikes"`
+			Stands                          int `json:"stands"`
+			MechanicalBikes                 int `json:"mechanicalBikes"`
+			ElectricalBikes                 int `json:"electricalBikes"`
+			ElectricalInternalBatteryBikes  int `json:"electricalInternalBatteryBikes"`
+			ElectricalRemovableBatteryBikes int `json:"electricalRemovableBatteryBikes"`
+		} `json:"availabilities"`
+		Capacity int `json:"capacity"`
+	} `json:"totalStands"`
+	MainStands struct {
+		Availabilities struct {
+			Bikes                           int `json:"bikes"`
+			Stands                          int `json:"stands"`
+			MechanicalBikes                 int `json:"mechanicalBikes"`
+			ElectricalBikes                 int `json:"electricalBikes"`
+			ElectricalInternalBatteryBikes  int `json:"electricalInternalBatteryBikes"`
+			ElectricalRemovableBatteryBikes int `json:"electricalRemovableBatteryBikes"`
+		} `json:"availabilities"`
+		Capacity int `json:"capacity"`
+	} `json:"mainStands"`
+	OverflowStands interface{} `json:"overflowStands"`
+}
+
+func (server *GatewayService) CollectBikeData() BIKEDATA {
+	resp, err := http.Get("https://api.jcdecaux.com/vls/v3/stations?apiKey=frifk0jbxfefqqniqez09tw4jvk37wyf823b5j1i&contract=dublin")
+	if err != nil {
+		util.LogFatal("Cannot get data from bike api", err)
+		return nil
+	}
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		util.LogFatal("Cannot read response bike body", err)
+		return nil
+	}
+	var bike BIKEDATA
+	err = json.Unmarshal(body, &bike)
+	if err != nil {
+		util.LogFatal("Cannot convert bike response body to json", err)
+		return nil
+	}
+	return bike
+}

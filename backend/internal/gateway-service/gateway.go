@@ -5,6 +5,7 @@ import (
 	_ "encoding/json"
 	"fmt"
 	pb_air "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
+	pb_bike "github.com/Eytins/sustainable-city-management/backend/pb/bike/bike-pd"
 	pb_bus "github.com/Eytins/sustainable-city-management/backend/pb/bus/bus-pd"
 	"golang.org/x/crypto/bcrypt"
 	_ "net/http"
@@ -426,5 +427,26 @@ func (server *GatewayService) GetBusDataByRouteId(c *fiber.Ctx) error {
 		"bus_data": resp,
 		"error":    false,
 		"msg":      "success",
+	})
+}
+
+func (server *GatewayService) GetBikes(c *fiber.Ctx) error {
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
+	client := pb_bike.NewBikeServiceClient(server.bikeClientConn)
+	req := pb_bike.GetBikesRequest{}
+	resp, err := client.GetBikes(context.Background(), &req)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err,
+			"msg":   "Data not found",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"bike_data": resp,
+		"error":     false,
+		"msg":       "success",
 	})
 }

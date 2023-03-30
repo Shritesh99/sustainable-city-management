@@ -101,3 +101,35 @@ func (server *GatewayService) SaveBusData() error {
 func (server *GatewayService) SavePedestrianData() error {
 	return nil
 }
+
+func (server *GatewayService) SaveBikeData() error {
+	resp := server.CollectBikeData()
+	for _, data := range resp {
+		arg := db.CreateBikeDataParams{
+			ID:              int32(data.Number),
+			ContractName:    data.ContractName,
+			Name:            data.Name,
+			Address:         data.Address,
+			Latitude:        data.Position.Latitude,
+			Longitude:       data.Position.Longitude,
+			Status:          data.Status,
+			LastUpdate:      data.LastUpdate,
+			Bikes:           int32(data.TotalStands.Availabilities.Bikes),
+			Stands:          int32(data.TotalStands.Availabilities.Stands),
+			MechanicalBikes: int32(data.TotalStands.Availabilities.MechanicalBikes),
+			ElectricalBikes: int32(data.TotalStands.Availabilities.ElectricalBikes),
+		}
+
+		_, err := server.store.CreateBikeData(context.Background(), arg)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			log.Printf("Recovered from panic: %v\n", r)
+			log.Println("Panic occurred while creating bike data param of db:", r)
+		}
+	}()
+	return nil
+}
