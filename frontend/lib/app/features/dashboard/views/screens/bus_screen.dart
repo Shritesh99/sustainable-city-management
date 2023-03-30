@@ -2,9 +2,11 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:uuid/uuid.dart';
 //import 'package:google_maps_flutter_geojson/google_maps_flutter_geojson.dart';
 
 import '../../../../../google_maps_flutter_geojson.dart';
+import '../../models/bus_route_model.dart';
 
 class BusScreen extends StatefulWidget {
   const BusScreen({Key? key}) : super(key: key);
@@ -14,8 +16,8 @@ class BusScreen extends StatefulWidget {
 }
 
 Future<String> loadAsset(BuildContext context) async {
-  return await DefaultAssetBundle.of(context)
-      .loadString('/Test1.geojson'); //This is for the one line. testing.
+  return await DefaultAssetBundle.of(context).loadString('/test.json');
+  // .loadString('/DublinBus1.geojson'); //This is for the one line. testing.
   //.loadString('/DublinBus1.geojson'); // This is the original one.
 }
 
@@ -58,28 +60,51 @@ class BusScreenState extends State<BusScreen> {
 // }
 // FutureBuilder : Let's say you want to fetch some data from the backend on page launch and show a loader until data comes.
 // FutureBuilder : Give the async task in futre of FutureBuilder.
+  bool isChecked = false;
+  Polyline featureToGooglePolyline(List<dynamic> coordinates) {
+    return Polyline(
+        polylineId: PolylineId(Uuid().v4()),
+        points: coordinates.map((x) => LatLng(x[1], x[0])).toList());
+  }
+
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
         //He will give future job to the rendering page.
-        future: loadAsset(
-            context), // Geo.json will fetch (loading, active(streams), done)
-        //Snapshot is a wrapper around your data with some useful properties. It provides the state of your connection.
+        future: loadAsset(context),
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.data != null) {
             String? geojson = snapshot.data;
+            Map<String, dynamic> routeMap = json.decode(geojson!);
+            Set<Polyline> polylines = {};
+            routeMap.values.forEach((element) {
+              polylines
+                  .add(featureToGooglePolyline(element["Coordinates"] as List));
+            });
             // I got the geoJson data.
             // print(geojson);
-            //This line below has an error.
-            final layers =
-                GeoJSONGoogleMapsResult.fromJson(jsonDecode(geojson!));
+            // This line below has an error.
+            // final layers =
+            //     GeoJSONGoogleMapsResult.fromJson(jsonDecode(geojson!));
 
             // final getGeojsondata = GetJsonData.fromJson(geojson);
 
-            //Need to do something in GeoJSONGoogleMapResult.
-            //Instance of 'GeoJSONGoogleMapsResult'
-            print(layers);
+            // Need to do something in GeoJSONGoogleMapResult.
+            // Instance of 'GeoJSONGoogleMapsResult'
+            // print(layers);
+            // print(geojson);
+            // print(geojson.runtimeType);
 
+            // final busRouteModel = busRouteModelFromJson(geojson);
+
+            // //List<Feature>
+            // busRouteModel.features
+            //     .forEach((element) => element.properties.routeShortName);
+
+            //print(busRouteModel.features.runtimeType);
+            // busRouteModel.features.forEach((element) => element.geometry.forEach((element2)=> element2.coordinates));
+
+            // Map<String, dynamic> map = json.decode(geojson);
             //  print(layers.markers.length);
             return SafeArea(
                 child: Scaffold(
@@ -92,7 +117,8 @@ class BusScreenState extends State<BusScreen> {
                     body: GoogleMap(
                       mapType: MapType.normal,
                       //polygons: Set.of(layers.polygons),
-                      polylines: Set<Polyline>.of(layers.polylines),
+                      //polylines: Set<Polyline>.of(layers.polylines),
+                      polylines: polylines,
                       // Here is the algorithm that I want to use it.
                       // Collecting the 'route_short_name' into the list or dictionaray(?)
                       // becuase there is a lot of redundancy in data and If the number of What I choose, then show on the map.
@@ -120,13 +146,14 @@ class BusScreenState extends State<BusScreen> {
                           child: Text('Showing Bus, Tram list'
                               'Whenever click the bus, shows on the map'),
                         ),
-                        ListTile(
-                          title: const Text('Bus 83'),
-                          onTap: () {
-                            //When Click this, bring up the Bus 83 Route.
-                            Navigator.pop(context);
-                          },
-                        ),
+                        CheckboxListTile(
+                            title: Text('Bus 83'),
+                            value: isChecked, //unchecked
+                            onChanged: (bool? value) {
+                              setState(() {
+                                isChecked = value!;
+                              });
+                            }),
                         ListTile(
                           title: const Text('Bus 39A'),
                           onTap: () {
