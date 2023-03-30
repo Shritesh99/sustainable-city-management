@@ -23,7 +23,6 @@ import 'package:sustainable_city_management/app/config/routes/app_pages.dart';
 
 import 'package:sustainable_city_management/app/features/dashboard/views/screens/login_screen.dart';
 import 'package:sustainable_city_management/app/features/dashboard/views/screens/bus_screen.dart';
-
 import 'package:sustainable_city_management/app/features/dashboard/views/screens/bin_truck_screen.dart';
 
 // binding

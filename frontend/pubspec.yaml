@@ -43,6 +43,8 @@ flutter:
   assets:
     - assets/images/raster/.
     - assets/images/vector/.
+    - assets/images/bin_truck/.
+    - assets/images/air_scale/.
     - assets/DublinBus1.geojson
   fonts:
     - family: Poppins

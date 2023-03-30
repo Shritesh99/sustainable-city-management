@@ -7,7 +7,6 @@ import 'package:get/get.dart';
 import '../../features/dashboard/views/screens/login_screen.dart';
 import '../../features/dashboard/views/screens/bus_screen.dart';
 import '../../features/dashboard/views/screens/bin_truck_screen.dart';
-import '../../features/dashboard/views/screens/bus_screen.dart';
 part 'app_routes.dart';
 
 /// contains all configuration pages
