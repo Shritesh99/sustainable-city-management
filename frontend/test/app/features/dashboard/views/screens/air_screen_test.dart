@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
-  testWidgets('bike screen ...', (tester) async {});
+  testWidgets('air screen ...', (tester) async {});
 }
