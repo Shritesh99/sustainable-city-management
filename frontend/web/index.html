@@ -36,6 +36,7 @@
     <!-- This script installs service_worker.js to provide PWA functionality to
        application. For more information, see:
        https://developers.google.com/web/fundamentals/primers/service-workers -->
+<<<<<<< Updated upstream
 
     <!-- Add your Google Maps API key here -->
     <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk"></script>
@@ -51,6 +52,17 @@
         scriptTag.src = "main.dart.js";
         scriptTag.type = "application/javascript";
         document.body.append(scriptTag);
+=======
+       
+  <!-- Add your Google Maps API key here -->
+  <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk"></script>
+  <script>
+    var serviceWorkerVersion = null;
+    var scriptLoaded = false;
+    function loadMainDartJs() {
+      if (scriptLoaded) {
+        return;
+>>>>>>> Stashed changes
       }
 
       if ("serviceWorker" in navigator) {
