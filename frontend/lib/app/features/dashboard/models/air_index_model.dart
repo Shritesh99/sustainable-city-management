@@ -1,29 +1,4 @@
-// To parse this JSON data, do
-//
-//     final airQualityModel = airQualityModelFromJson(jsonString);
-
 import 'dart:convert';
-
-AirIndexModel airIndexModelFromJson(Map<String, dynamic> json) =>
-    AirIndexModel.fromJson(json);
-
-String airIndexModelToJson(AirIndexModel data) => json.encode(data.toJson());
-
-class AirIndexModel {
-  AirIndexModel({
-    required this.aqiData,
-  });
-
-  AqiData aqiData;
-
-  factory AirIndexModel.fromJson(Map<String, dynamic> jsonMap) => AirIndexModel(
-        aqiData: AqiData.fromJson(json.decode(jsonMap["aqi_data"])),
-      );
-
-  Map<String, dynamic> toJson() => {
-        "aqi_data": aqiData.toJson(),
-      };
-}
 
 class AqiData {
   AqiData({
@@ -32,7 +7,7 @@ class AqiData {
     required this.stationName,
     required this.aqi,
     required this.measureTime,
-    this.epa,
+    required this.epa,
     this.pm25,
     this.pm10,
     this.ozone,
@@ -40,7 +15,7 @@ class AqiData {
     this.so2,
     this.co,
     required this.insertTime,
-    required this.updatedTime,
+    required this.updateTime,
     required this.latitude,
     required this.longitude,
   });
@@ -49,44 +24,44 @@ class AqiData {
   String stationId;
   String stationName;
   int aqi;
-  DateTime? measureTime;
-  String? epa;
+  DateTime measureTime;
+  String epa;
   int? pm25;
   int? pm10;
-  double? ozone;
+  int? ozone;
   int? no2;
   int? so2;
   int? co;
-  DateTime insertTime;
-  DateTime updatedTime;
+  int insertTime;
+  int updateTime;
   double latitude;
   double longitude;
 
   factory AqiData.fromJson(Map<String, dynamic> json) => AqiData(
         id: json["id"],
-        stationId: json["station_id"],
-        stationName: json["station_name"],
+        stationId: json["stationId"],
+        stationName: json["stationName"],
         aqi: json["aqi"],
-        measureTime: DateTime.parse(json["measure_time"]),
+        measureTime: DateTime.parse(json["measureTime"]),
         epa: json["epa"],
         pm25: json["pm25"],
         pm10: json["pm10"],
-        ozone: json["ozone"].toDouble(),
+        ozone: json["ozone"],
         no2: json["no2"],
         so2: json["so2"],
         co: json["co"],
-        insertTime: DateTime.parse(json["insert_time"]),
-        updatedTime: DateTime.parse(json["updated_time"]),
-        latitude: json["latitude"].toDouble(),
-        longitude: json["longitude"].toDouble(),
+        insertTime: json["insertTime"],
+        updateTime: json["updateTime"],
+        latitude: json["Latitude"].toDouble(),
+        longitude: json["Longitude"].toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
         "id": id,
-        "station_id": stationId,
-        "station_name": stationName,
+        "stationId": stationId,
+        "stationName": stationName,
         "aqi": aqi,
-        "measure_time": measureTime?.toIso8601String(),
+        "measureTime": measureTime.toIso8601String(),
         "epa": epa,
         "pm25": pm25,
         "pm10": pm10,
@@ -94,9 +69,9 @@ class AqiData {
         "no2": no2,
         "so2": so2,
         "co": co,
-        "insert_time": insertTime.toIso8601String(),
-        "updated_time": updatedTime.toIso8601String(),
-        "latitude": latitude,
-        "longitude": longitude,
+        "insertTime": insertTime,
+        "updateTime": updateTime,
+        "Latitude": latitude,
+        "Longitude": longitude,
       };
 }
