@@ -40,7 +40,7 @@ class LoginPageState extends State<RegistrationScreen> {
 
       // Send a POST request to the API with the user data
       final response = await http.post(
-        Uri.parse('https://scm-backend.rxshri99.live/auth/register'),
+        Uri.parse('https://scm-backend.rxshri99.live/gateway/register'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(_user.toJson()),
       );
@@ -111,17 +111,36 @@ class LoginPageState extends State<RegistrationScreen> {
 
   Future<void> _fetchRolesData() async {
     final response = await http
-        .get(Uri.parse('https://scm-backend.rxshri99.live/auth/roles'));
-    final responseData = json.decode(response.body);
-    if (responseData['error'] == false) {
-      setState(() {
-        _rolesData = responseData['roles_data'];
-        _selectedRole =
-            _rolesData[0]['role_name']; // Set the initial selected value
-      });
+        .get(Uri.parse('https://scm-backend.rxshri99.live/gateway/roles'));
+    if (response.body.isNotEmpty) {
+      final responseData = json.decode(response.body);
+      if (responseData['error'] == false) {
+        setState(() {
+          _rolesData = responseData['roles_data'];
+          _selectedRole =
+              _rolesData[0]['role_name']; // Set the initial selected value
+        });
+      } else {
+        _setDefaultRolesData();
+      }
     } else {
-      // Handle the error case
+      setState(() {
+        _setDefaultRolesData();
+      });
     }
+  }
+
+  void _setDefaultRolesData() {
+    setState(() {
+      _rolesData = [
+        {"role_name": "City Manager"},
+        {"role_name": "Bus Company"},
+        {"role_name": "Bike Company"},
+        {"role_name": "Bin Truck Company"}
+      ];
+      _selectedRole =
+          _rolesData[0]['role_name']; // Set the initial selected value
+    });
   }
 
   @override
