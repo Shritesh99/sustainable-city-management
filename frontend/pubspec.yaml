@@ -31,6 +31,7 @@ dependencies:
   flutter_map_geojson: ^1.0.0
 
   geojson_vi: ^2.0.7
+  flutter_secure_storage: ^8.0.0
 
 dev_dependencies:
   json_serializable: ^6.6.0
@@ -43,6 +44,8 @@ flutter:
   assets:
     - assets/images/raster/.
     - assets/images/vector/.
+    - assets/images/bin_truck/.
+    - assets/images/air_scale/.
     - assets/DublinBus1.geojson
   fonts:
     - family: Poppins
