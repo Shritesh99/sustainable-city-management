@@ -329,6 +329,7 @@ func (server *GatewayService) GetAirStation(c *fiber.Ctx) error {
 	client := pb_air.NewAirServiceClient(server.airClientConn)
 	resp, err := client.GetAirStation(context.Background(), &pb_air.AirIdRequest{StationId: stationId})
 	if err != nil {
+		server.log.Errorf("%v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
@@ -351,6 +352,7 @@ func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
 	req := pb_air.NilRequest{}
 	resp, err := client.GetDetailedAirData(context.Background(), &req)
 	if err != nil {
+		server.log.Errorf("%v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
@@ -366,7 +368,7 @@ func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
 func (server *GatewayService) GetRoles(c *fiber.Ctx) error {
 	roles, err := server.store.GetRoles(context.Background())
 	if err != nil {
-		server.log.Infof("Error fetching roles: %v", err)
+		server.log.Errorf("%v", err)
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
@@ -399,6 +401,7 @@ func (server *GatewayService) GetNoiseData(c *fiber.Ctx) error {
 	client := pb_air.NewAirServiceClient(server.airClientConn)
 	resp, err := client.GetNoiseData(context.Background(), &pb_air.NilRequest{})
 	if err != nil {
+		server.log.Errorf("%v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
@@ -420,6 +423,7 @@ func (server *GatewayService) GetBusDataByRouteId(c *fiber.Ctx) error {
 	req := pb_bus.RouteIdRequest{Id: c.Query("id")}
 	resp, err := client.GetBusDataByRouteId(context.Background(), &req)
 	if err != nil {
+		server.log.Errorf("%v", err)
 		return c.Status(fiber.StatusNoContent).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
@@ -441,6 +445,7 @@ func (server *GatewayService) GetBikes(c *fiber.Ctx) error {
 	req := pb_bike.GetBikesRequest{}
 	resp, err := client.GetBikes(context.Background(), &req)
 	if err != nil {
+		server.log.Errorf("%v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
@@ -454,15 +459,15 @@ func (server *GatewayService) GetBikes(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetAllBins(c *fiber.Ctx) error {
-	// err, done := validateUser(c, server)
-	// if done {
-	// 	return err
-	// }
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
 	client := pb_bin.NewBinServiceClient(server.binClientConn)
 	req := pb_bin.GetAllBinsRequest{}
 	resp, err := client.GetAllBins(context.Background(), &req)
 	if err != nil {
-		server.log.Errorf("Error fetching: %v", err)
+		server.log.Errorf("%v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
@@ -484,6 +489,7 @@ func (server *GatewayService) GetBinsByRegion(c *fiber.Ctx) error {
 	req := pb_bin.GetBinsByRegionRequest{Region: int32(c.QueryInt("region"))}
 	resp, err := client.GetBinsByRegion(context.Background(), &req)
 	if err != nil {
+		server.log.Errorf("%v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
