@@ -6,13 +6,14 @@ import (
 	db "github.com/Eytins/sustainable-city-management/backend/internal/db/sqlc"
 	"github.com/Eytins/sustainable-city-management/backend/internal/util"
 	"log"
+	"math/rand"
 	"os"
 	"strconv"
 	"time"
 	// "github.com/Eytins/sustainable-city-management/backend/internal/util"
 )
 
-func (server *GatewayService) CollectStationData() error {
+func (server *GatewayService) SaveStationData() error {
 	stationIds := []string{"@13372", "@5112", "@13402", "@14650", "@14649", "@14651", "@14648", "@13412", "@13378", "@13405", "@13377", "@14765", "@14771", "@13379", "@13384", "@13404", "@13376", "@13374", "@13400", "@13363"}
 	for _, v := range stationIds {
 		resp := server.CollectAirStationData(v)
@@ -222,11 +223,13 @@ func (server *GatewayService) SaveBinData() error {
 			region = 7
 		}
 
+		rand.Seed(time.Now().UnixNano())
 		arg := db.CreateBinDataParams{
 			ID:        data.Properties.BinID,
 			Latitude:  data.Geometry.Coordinates[0],
 			Longitude: data.Geometry.Coordinates[1],
 			Region:    int32(region),
+			Status:    int32(rand.Intn(2)),
 		}
 
 		_, err := server.store.CreateBinData(context.Background(), arg)
@@ -240,5 +243,24 @@ func (server *GatewayService) SaveBinData() error {
 			log.Println("Panic occurred while creating bin data param of db:", r)
 		}
 	}()
+	return nil
+}
+
+func (server *GatewayService) ChangeBinStatus() error {
+	ids, err := server.store.GetBinIds(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, id := range ids {
+		rand.Seed(time.Now().UnixNano())
+		arg := db.ChangeBinDataStatusParams{
+			ID:     id,
+			Status: int32(rand.Intn(2)),
+		}
+		err := server.store.ChangeBinDataStatus(context.Background(), arg)
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 }

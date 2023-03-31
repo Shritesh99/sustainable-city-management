@@ -14,3 +14,12 @@ FROM bin_data;
 SELECT *
 FROM bin_data
 WHERE region = $1;
+
+-- name: GetBinIds :many
+SELECT id
+FROM bin_data;
+
+-- name: ChangeBinDataStatus :exec
+UPDATE bin_data
+SET status = $2
+WHERE id = $1;
