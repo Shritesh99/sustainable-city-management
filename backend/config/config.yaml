@@ -1,6 +1,6 @@
 serviceName: gateway
 serviceType: gateway
-serviceUrl: http://gateway-microservice-service.default.svc.cluster.local
+serviceUrl: gateway-service
 Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
 development: true
 http:
@@ -8,9 +8,6 @@ http:
      development: true
      basePath: /
      debugErrorsResponse: true
-grpc:
-     port: 4000
-     development: true
 probes:
      readinessPath: /live
      livenessPath: /ready
@@ -24,28 +21,27 @@ logger:
      devMode: false
      encoder: json
 db:
-
      DB_SOURCE: postgresql://group_admin:group007@18.202.24.40:5432/masterdb?sslmode=disable
      DB_DRIVER: postgres
      AIR_TOKEN: d3f5d975618dc64e01ed3df11688671d3e61dd7f
 ConnectedServices:
-      - serviceName: AirService
-        serviceType: service
-        serviceUrl: localhost
-        healthcheckPort: :7002
-        grpcPort: :4000
-      - serviceName: BusService
-        serviceType: service
-        serviceUrl: localhost
-        healthcheckPort: :7012
-        grpcPort: :4001
-      - serviceName: BikeService
-        serviceType: service
-        serviceUrl: localhost
-        healthcheckPort: :7022
-        grpcPort: :4002
-      - serviceName: BinService
-        serviceType: service
-        serviceUrl: localhost
-        healthcheckPort: :7032
-        grpcPort: :4003
+     - serviceName: AirService
+       serviceType: service
+       serviceUrl: air-service
+       healthcheckPort: 4002
+       grpcPort: 4000
+     - serviceName: BusService
+       serviceType: service
+       serviceUrl: bus-service
+       healthcheckPort: 6002
+       grpcPort: 6000
+     - serviceName: BikeService
+       serviceType: service
+       serviceUrl: bike-service
+       healthcheckPort: 5002
+       grpcPort: 5000
+     - serviceName: BinService
+       serviceType: service
+       serviceUrl: bin-service
+       healthcheckPort: 7002
+       grpcPort: 7000
