@@ -454,14 +454,15 @@ func (server *GatewayService) GetBikes(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetAllBins(c *fiber.Ctx) error {
-	err, done := validateUser(c, server)
-	if done {
-		return err
-	}
+	// err, done := validateUser(c, server)
+	// if done {
+	// 	return err
+	// }
 	client := pb_bin.NewBinServiceClient(server.binClientConn)
 	req := pb_bin.GetAllBinsRequest{}
 	resp, err := client.GetAllBins(context.Background(), &req)
 	if err != nil {
+		server.log.Errorf("Error fetching: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
