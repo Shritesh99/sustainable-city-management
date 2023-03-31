@@ -2,7 +2,7 @@ gateway:
      Name: gateway
      Type: gateway
      Replicas: 1
-     Url: gateway-microservice-service.default.svc.cluster.local
+     Url: gateway-service
      Image: shritesh99/scm:latest
      HttpPort: 8000
      MetricsPort: 8001
@@ -12,7 +12,7 @@ air:
      Name: air
      Type: service
      Replicas: 1
-     Url: air-microservice-service.default.svc.cluster.local
+     Url: air-service
      Image: shritesh99/scm:latest
      GrpcPort: 4000
      MetricsPort: 4001
@@ -22,7 +22,7 @@ bike:
      Name: bike
      Type: service
      Replicas: 1
-     Url: bike-microservice-service.default.svc.cluster.local
+     Url: bike-service
      Image: shritesh99/scm:latest
      GrpcPort: 5000
      MetricsPort: 5001
@@ -32,7 +32,7 @@ bus:
      Name: bus
      Type: service
      Replicas: 1
-     Url: bus-microservice-service.default.svc.cluster.local
+     Url: bus-service
      Image: shritesh99/scm:latest
      GrpcPort: 6000
      MetricsPort: 6001
@@ -42,7 +42,7 @@ bin:
      Name: bin
      Type: service
      Replicas: 1
-     Url: bin-microservice-service.default.svc.cluster.local
+     Url: bin-service
      Image: shritesh99/scm:latest
      GrpcPort: 7000
      MetricsPort: 7001
