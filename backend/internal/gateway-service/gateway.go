@@ -343,16 +343,14 @@ func (server *GatewayService) GetAirStation(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
-	// err, done := validateUser(c, server)
-	// if done {
-	// 	return err
-	// }
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
 	client := pb_air.NewAirServiceClient(server.airClientConn)
 	req := pb_air.NilRequest{}
 	resp, err := client.GetDetailedAirData(context.Background(), &req)
-
 	if err != nil {
-		server.log.Infof("Error fetching GetServiceClient: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
