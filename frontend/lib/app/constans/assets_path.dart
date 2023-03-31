@@ -6,10 +6,6 @@ class Font {
 
 class ImageAnimationPath {
   // you can get free animation image from rive or lottiefiles
-
-  // Example:
-  // static const _folderPath = "assets/images/animation";
-  // static const myAnim = "$_folderPath/my_anim.json";
 }
 
 class ImageRasterPath {
