@@ -1,12 +1,10 @@
 package gateway_service
 
 import (
-	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"io"
 	"net/http"
-	"os"
 	"time"
 
 	"github.com/Eytins/sustainable-city-management/backend/internal/util"
@@ -303,26 +301,44 @@ func (server *GatewayService) CollectBusData() BUSDATA {
 	return bus
 }
 
-func (server *GatewayService) CollectPedestrianData() {
-	f, err := os.Open("../../dcc-footfall-counter-locations-14082020.csv")
-	if err != nil {
-		util.LogFatal("Read pedestrian csv file failed", err)
-	}
-
-	// TODO Collect data from csv file
-	csvReader := csv.NewReader(f)
-	data, err := csvReader.ReadAll()
-	if err != nil {
-		util.LogFatal("Parse pedestrian csv file failed", err)
-	}
-	print(data)
-
-	err = f.Close()
-	if err != nil {
-		util.LogFatal("Close pedestrian csv file failed", err)
-		return
-	}
-}
+//func (server *GatewayService) CollectPedestrianData() {
+//	f, err := os.Open("/ml/pedestrian.csv")
+//	f1, err := os.Open("/ml/dcc-footfall-counter-locations-14082020.csv")
+//	if err != nil {
+//		util.LogFatal("Read pedestrian csv file failed", err)
+//	}
+//
+//	csvReader := csv.NewReader(f)
+//	data, err := csvReader.ReadAll()
+//	locReader := csv.NewReader(f1)
+//	locations, err := locReader.ReadAll()
+//	if err != nil {
+//		util.LogFatal("Parse pedestrian csv file failed", err)
+//	}
+//
+//	var strNameMap map[string][]float64
+//	for i := 1; i < len(locations); i++ {
+//		latitude, _ := strconv.ParseFloat(locations[i][1], 64)
+//		longitude, _ := strconv.ParseFloat(locations[i][2], 64)
+//		strNameMap[locations[i][0]] = []float64{latitude, longitude}
+//	}
+//
+//	var strNames []string
+//	for i := 1; i < len(data[0]); i++ {
+//		strNames = append(strNames, data[0][i])
+//	}
+//	for i := 1; i < len(data); i++ {
+//		for j := 0; j < len(data[i]); j++ {
+//			server.store.CreatePedestrian()
+//		}
+//	}
+//
+//	err = f.Close()
+//	if err != nil {
+//		util.LogFatal("Close pedestrian csv file failed", err)
+//		return
+//	}
+//}
 
 type BIKEDATA []struct {
 	Number       int    `json:"number"`

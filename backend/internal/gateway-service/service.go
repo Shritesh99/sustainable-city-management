@@ -36,6 +36,7 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Get("/getBinsByRegion", server.GetBinsByRegion)
 
 	go CollectDataTimerTask(server, logger2)
+	//go CollectCsvTimerTask(server, logger2)
 	return server
 }
 
@@ -57,6 +58,20 @@ func CollectDataTimerTask(server *GatewayService, logger logger.Logger) {
 		if err != nil {
 			logger.Fatal("Collect bike data failed")
 		}
+		//err = server.SaveBinData()
+		//if err != nil {
+		//	logger.Fatal("Collect bin data failed")
+		//}
 		time.Sleep(1 * time.Hour)
+	}
+}
+
+func CollectCsvTimerTask(server *GatewayService, logger logger.Logger) {
+	for {
+		err := server.SavePedestrianData()
+		if err != nil {
+			logger.Fatal("Collect csv data failed")
+		}
+		time.Sleep(24 * time.Hour)
 	}
 }

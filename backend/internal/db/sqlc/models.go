@@ -47,6 +47,7 @@ type BinDatum struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 	Region    int32   `json:"region"`
+	Status    int32   `json:"status"`
 }
 
 type BusDatum struct {
@@ -77,14 +78,12 @@ type NoiseDatum struct {
 }
 
 type PedestrianDatum struct {
-	ID           int32     `json:"id"`
-	LocationName string    `json:"location_name"`
-	Total        int32     `json:"total"`
-	Longitude    float64   `json:"longitude"`
-	Latitude     float64   `json:"latitude"`
-	CounterTime  time.Time `json:"counter_time"`
-	InsertTime   time.Time `json:"insert_time"`
-	UpdateTime   time.Time `json:"update_time"`
+	ID         int32     `json:"id"`
+	StreetName string    `json:"street_name"`
+	Latitude   float64   `json:"latitude"`
+	Longitude  float64   `json:"longitude"`
+	Time       time.Time `json:"time"`
+	Amount     int32     `json:"amount"`
 }
 
 type Role struct {

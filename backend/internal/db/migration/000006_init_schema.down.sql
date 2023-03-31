@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS pedestrian_data;
+DROP TABLE IF EXISTS bike_data;

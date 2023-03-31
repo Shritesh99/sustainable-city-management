@@ -2,8 +2,9 @@
 INSERT INTO bin_data ("id",
                       "latitude",
                       "longitude",
-                      "region")
-VALUES ($1, $2, $3, $4) RETURNING *;
+                      "region",
+                      "status")
+VALUES ($1, $2, $3, $4, $5) RETURNING *;
 
 -- name: GetAllBinData :many
 SELECT *
