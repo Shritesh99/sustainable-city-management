@@ -4,17 +4,18 @@ import (
 	"context"
 	"database/sql"
 	"fmt"
-	airquality_service "github.com/Eytins/sustainable-city-management/backend/internal/airquality-service"
-	bike_service "github.com/Eytins/sustainable-city-management/backend/internal/bike-service"
-	bin_service "github.com/Eytins/sustainable-city-management/backend/internal/bin-service"
-	bus_service "github.com/Eytins/sustainable-city-management/backend/internal/bus-service"
-	"google.golang.org/grpc/credentials/insecure"
 	"net"
 	"net/http"
 	"os"
 	"os/signal"
 	"syscall"
 	"time"
+
+	airquality_service "github.com/Eytins/sustainable-city-management/backend/internal/airquality-service"
+	bike_service "github.com/Eytins/sustainable-city-management/backend/internal/bike-service"
+	bin_service "github.com/Eytins/sustainable-city-management/backend/internal/bin-service"
+	bus_service "github.com/Eytins/sustainable-city-management/backend/internal/bus-service"
+	"google.golang.org/grpc/credentials/insecure"
 
 	"github.com/Eytins/sustainable-city-management/backend/config"
 	"github.com/Eytins/sustainable-city-management/backend/internal/conf"
@@ -58,13 +59,9 @@ type service struct {
 	metricsServer     *echo.Echo
 	middlewareManager middlewares.MiddlewareManager
 	gatewayService    *gateway_service.GatewayService
-	airService        *airquality_service.AirService
 	airConn           *grpc.ClientConn
-	busService        *bus_service.BusService
 	busConn           *grpc.ClientConn
-	bikeService       *bike_service.BikeService
 	bikeConn          *grpc.ClientConn
-	binService        *bin_service.BinService
 	binConn           *grpc.ClientConn
 }
 
@@ -88,12 +85,27 @@ func (a *service) Run() error {
 		a.fiber.Use(cors.New(conf.GetCorsConf()))
 		gateway := a.fiber.Group("/gateway")
 
-		a.airConn, err = grpc.Dial(a.cfg.ConnectedServices[0].ServiceUrl+a.cfg.ConnectedServices[0].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
-		a.busConn, err = grpc.Dial(a.cfg.ConnectedServices[1].ServiceUrl+a.cfg.ConnectedServices[1].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
-		a.bikeConn, err = grpc.Dial(a.cfg.ConnectedServices[2].ServiceUrl+a.cfg.ConnectedServices[2].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
-		a.binConn, err = grpc.Dial(a.cfg.ConnectedServices[3].ServiceUrl+a.cfg.ConnectedServices[3].GrpcPort, grpc.WithTransportCredentials(insecure.NewCredentials()))
+		a.airConn, err = grpc.Dial(fmt.Sprintf("%s:%s", a.cfg.ConnectedServices[0].ServiceUrl, a.cfg.ConnectedServices[0].GrpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			a.log.Errorf("(GRPC registration error) err: %v", err)
+			cancel()
+		}
+		a.busConn, err = grpc.Dial(fmt.Sprintf("%s:%s", a.cfg.ConnectedServices[1].ServiceUrl, a.cfg.ConnectedServices[1].GrpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			a.log.Errorf("(GRPC registration error) err: %v", err)
+			cancel()
+		}
+		a.bikeConn, err = grpc.Dial(fmt.Sprintf("%s:%s", a.cfg.ConnectedServices[2].ServiceUrl, a.cfg.ConnectedServices[2].GrpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			a.log.Errorf("(GRPC registration error) err: %v", err)
+			cancel()
+		}
+		a.binConn, err = grpc.Dial(fmt.Sprintf("%s:%s", a.cfg.ConnectedServices[3].ServiceUrl, a.cfg.ConnectedServices[3].GrpcPort), grpc.WithTransportCredentials(insecure.NewCredentials()))
+		if err != nil {
+			a.log.Errorf("(GRPC registration error) err: %v", err)
+			cancel()
+		}
 		a.gatewayService = gateway_service.NewGatewayService(gateway, db.NewStore(conn), a.cfg, a.log, a.airConn, a.busConn, a.bikeConn, a.binConn)
-
 		go func() {
 			if err := a.fiber.Listen(fmt.Sprintf(":%s", a.cfg.Http.Port)); err != nil {
 				a.log.Errorf("(grpc server) err: %v", err)
@@ -117,7 +129,6 @@ func (a *service) Run() error {
 				a.log.Errorf("(Grpc server) err: %v", err)
 				cancel()
 			}
-			a.log.Infof("Grpc server listening")
 		}()
 	}
 	a.runMetrics(cancel)

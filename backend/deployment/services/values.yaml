@@ -2,8 +2,8 @@ gateway:
      Name: gateway
      Type: gateway
      Replicas: 1
-     Url: http://gateway-microservice-service.default.svc.cluster.local
-     Image: shritesh99/gateway:latest
+     Url: gateway-microservice-service.default.svc.cluster.local
+     Image: shritesh99/scm:latest
      HttpPort: 8000
      MetricsPort: 8001
      HealthcheckPort: 8002
@@ -12,8 +12,8 @@ air:
      Name: air
      Type: service
      Replicas: 1
-     Url: http://air-microservice-service.default.svc.cluster.local
-     Image: shritesh99/air:latest
+     Url: air-microservice-service.default.svc.cluster.local
+     Image: shritesh99/scm:latest
      GrpcPort: 4000
      MetricsPort: 4001
      HealthcheckPort: 4002
@@ -22,8 +22,8 @@ bike:
      Name: bike
      Type: service
      Replicas: 1
-     Url: http://bike-microservice-service.default.svc.cluster.local
-     Image: shritesh99/bike:latest
+     Url: bike-microservice-service.default.svc.cluster.local
+     Image: shritesh99/scm:latest
      GrpcPort: 5000
      MetricsPort: 5001
      HealthcheckPort: 5002
@@ -32,8 +32,8 @@ bus:
      Name: bus
      Type: service
      Replicas: 1
-     Url: http://bus-microservice-service.default.svc.cluster.local
-     Image: shritesh99/bus:latest
+     Url: bus-microservice-service.default.svc.cluster.local
+     Image: shritesh99/scm:latest
      GrpcPort: 6000
      MetricsPort: 6001
      HealthcheckPort: 6002
@@ -42,8 +42,8 @@ bin:
      Name: bin
      Type: service
      Replicas: 1
-     Url: http://bin-microservice-service.
-     Image: shritesh99/bin:latest
+     Url: bin-microservice-service.default.svc.cluster.local
+     Image: shritesh99/scm:latest
      GrpcPort: 7000
      MetricsPort: 7001
      HealthcheckPort: 7002

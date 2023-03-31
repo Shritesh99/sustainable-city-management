@@ -11,18 +11,10 @@ proto:
 
 .PHONY: docker
 docker-build:
-	docker build . -t shritesh99/air:latest
-	docker build . -t shritesh99/bin:latest
-	docker build . -t shritesh99/bus:latest
-	docker build . -t shritesh99/bike:latest
-	docker build . -t shritesh99/gateway:latest
+	docker build . -t shritesh99/scm:latest
 
 docker-upload:
-	docker push shritesh99/air:latest
-	docker push shritesh99/bin:latest
-	docker push shritesh99/bus:latest
-	docker push shritesh99/bike:latest
-	docker push shritesh99/gateway:latest
+	docker push shritesh99/scm:latest
 
 run-app:
 	go run cmd/main.go
@@ -35,8 +27,11 @@ down-local:
 	docker stop $(FILES)
 	docker rm $(FILES)
 
-# develop:
-# 	docker-compose -f docker-compose.yaml up -d --build
+develop:
+	docker-compose -f docker-compose.yaml up -d --build
+
+stop-develop:
+	docker-compose -f docker-compose.yaml down
 
 install_monitoring:
 	kubens default

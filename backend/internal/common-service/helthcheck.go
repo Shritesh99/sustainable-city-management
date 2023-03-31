@@ -35,8 +35,8 @@ func (a *service) runHealthCheck(ctx context.Context) {
 func (a *service) configureHealthCheckEndpoints(ctx context.Context, health healthcheck.Handler) {
 	// TODO: Check db service
 	for _, s := range a.cfg.ConnectedServices {
-		health.AddReadinessCheck(fmt.Sprintf("%s Health Readiness", s.ServiceName), healthcheck.HTTPGetCheck(fmt.Sprintf("%s:%s%s", s.ServiceUrl, s.HealthcheckPort, a.cfg.Probes.ReadinessPath), 500*time.Millisecond))
-		health.AddReadinessCheck(fmt.Sprintf("%s Health Liveness", s.ServiceName), healthcheck.HTTPGetCheck(fmt.Sprintf("%s:%s%s", s.ServiceUrl, s.HealthcheckPort, a.cfg.Probes.LivenessPath), 500*time.Millisecond))
+		health.AddReadinessCheck(fmt.Sprintf("%s Health Readiness", s.ServiceName), healthcheck.HTTPGetCheck(fmt.Sprintf("http://%s:%s%s", s.ServiceUrl, s.HealthcheckPort, a.cfg.Probes.ReadinessPath), 500*time.Millisecond))
+		health.AddReadinessCheck(fmt.Sprintf("%s Health Liveness", s.ServiceName), healthcheck.HTTPGetCheck(fmt.Sprintf("http://%s:%s%s", s.ServiceUrl, s.HealthcheckPort, a.cfg.Probes.LivenessPath), 500*time.Millisecond))
 	}
 }
 

@@ -1,23 +1,18 @@
 serviceName: AirService
 serviceType: service
-serviceUrl: http://gateway-microservice-service.default.svc.cluster.local
+serviceUrl: air-service
 Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
 development: true
-http:
-     port: 8000
-     development: true
-     basePath: /
-     debugErrorsResponse: true
 grpc:
      port: 4000
      development: true
 probes:
      readinessPath: /live
      livenessPath: /ready
-     port: :7002
+     port: :4002
      pprof: :5001
      prometheusPath: /metrics
-     prometheusPort: :7001
+     prometheusPort: :4001
      checkIntervalSeconds: 10
 logger:
      level: info
@@ -28,11 +23,11 @@ db:
      DB_DRIVER: postgres
      AIR_TOKEN: d3f5d975618dc64e01ed3df11688671d3e61dd7f
 ConnectedServices:
-      - serviceName: gateway-service
-        serviceType: gateway
-        serviceUrl: localhost
-        healthcheckPort: :8002
-        httpPort: :8000
+     - serviceName: gateway-service
+       serviceType: gateway
+       serviceUrl: gateway-service
+       healthcheckPort: 8002
+       httpPort: 8000
 #      - serviceName: { { .Values.bike.Name } }
 #        serviceType: { { .Values.bike.Type } }
 #        serviceUrl: { { .Values.bike.Url } }

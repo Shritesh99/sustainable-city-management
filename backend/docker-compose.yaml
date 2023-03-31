@@ -5,14 +5,14 @@ services:
           build:
                context: .
                dockerfile: Dockerfile
-          container_name: gateway-service
+          container_name: gateway
           restart: always
           ports:
                - "8000:8000"
                - "8001:8001"
                - "8002:8002"
           environment:
-               CONFIG_PATH: /config/gateway-config.yaml
+               CONFIG_PATH: /config/config.yaml
           depends_on:
                - grafana
                - node_exporter
@@ -27,14 +27,14 @@ services:
           build:
                context: .
                dockerfile: Dockerfile
-          container_name: air-service
+          container_name: air
           restart: always
           ports:
                - "4000:4000"
                - "4001:4001"
                - "4002:4002"
           environment:
-               CONFIG_PATH: /config/air-config.yaml
+               CONFIG_PATH: /config/config_air.yaml
           depends_on:
                - grafana
                - node_exporter
@@ -45,14 +45,14 @@ services:
           build:
                context: .
                dockerfile: Dockerfile
-          container_name: bin-service
+          container_name: bin
           restart: always
           ports:
                - "7000:7000"
                - "7001:7001"
                - "7002:7002"
           environment:
-               CONFIG_PATH: /config/bin-config.yaml
+               CONFIG_PATH: /config/config_bin.yaml
           depends_on:
                - grafana
                - node_exporter
@@ -63,14 +63,14 @@ services:
           build:
                context: .
                dockerfile: Dockerfile
-          container_name: bike-service
+          container_name: bike
           restart: always
           ports:
                - "5000:5000"
                - "5001:5001"
                - "5002:5002"
           environment:
-               CONFIG_PATH: /config/bike-config.yaml
+               CONFIG_PATH: /config/config_bike.yaml
           depends_on:
                - grafana
                - node_exporter
@@ -81,14 +81,14 @@ services:
           build:
                context: .
                dockerfile: Dockerfile
-          container_name: air-service
+          container_name: bus
           restart: always
           ports:
                - "6000:6000"
                - "6001:6001"
                - "6002:6002"
           environment:
-               CONFIG_PATH: /config/bus-config.yaml
+               CONFIG_PATH: /config/config_bus.yaml
           depends_on:
                - grafana
                - node_exporter
@@ -103,7 +103,7 @@ services:
           command:
                - --config.file=/etc/prometheus/prometheus.yml
           volumes:
-               - ./monitoring/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+               - ./monitoring/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
           networks: ["scm"]
 
      node_exporter:

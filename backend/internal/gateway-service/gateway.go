@@ -4,14 +4,15 @@ import (
 	"context"
 	_ "encoding/json"
 	"fmt"
+	_ "net/http"
+	"strings"
+	"time"
+
 	pb_air "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
 	pb_bike "github.com/Eytins/sustainable-city-management/backend/pb/bike/bike-pd"
 	pb_bin "github.com/Eytins/sustainable-city-management/backend/pb/bin/bin-pd"
 	pb_bus "github.com/Eytins/sustainable-city-management/backend/pb/bus/bus-pd"
 	"golang.org/x/crypto/bcrypt"
-	_ "net/http"
-	"strings"
-	"time"
 
 	db "github.com/Eytins/sustainable-city-management/backend/internal/db/sqlc"
 	"github.com/Eytins/sustainable-city-management/backend/internal/util"
@@ -342,14 +343,16 @@ func (server *GatewayService) GetAirStation(c *fiber.Ctx) error {
 }
 
 func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
-	err, done := validateUser(c, server)
-	if done {
-		return err
-	}
+	// err, done := validateUser(c, server)
+	// if done {
+	// 	return err
+	// }
 	client := pb_air.NewAirServiceClient(server.airClientConn)
 	req := pb_air.NilRequest{}
 	resp, err := client.GetDetailedAirData(context.Background(), &req)
+
 	if err != nil {
+		server.log.Infof("Error fetching GetServiceClient: %v", err)
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
 			"error": err,
 			"msg":   "Data not found",
