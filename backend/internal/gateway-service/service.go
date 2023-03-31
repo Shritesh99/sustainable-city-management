@@ -6,6 +6,9 @@ import (
 	"github.com/Eytins/sustainable-city-management/backend/pkg/logger"
 	"github.com/gofiber/fiber/v2"
 	"google.golang.org/grpc"
+	"os/exec"
+	"path/filepath"
+	"runtime"
 	"time"
 )
 
@@ -36,7 +39,8 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Get("/getBinsByRegion", server.GetBinsByRegion)
 
 	go CollectDataTimerTask(server, logger2)
-	//go CollectCsvTimerTask(server, logger2)
+	//go InitCollectCsvTimerTask(server, logger2)
+	//go UpdateCsvTimerTask(server, logger2)
 	return server
 }
 
@@ -70,12 +74,30 @@ func CollectDataTimerTask(server *GatewayService, logger logger.Logger) {
 	}
 }
 
-func CollectCsvTimerTask(server *GatewayService, logger logger.Logger) {
+func InitCollectCsvTimerTask(server *GatewayService, logger logger.Logger) {
 	for {
 		err := server.SavePedestrianData()
 		if err != nil {
 			logger.Fatal("Collect csv data failed")
 		}
 		time.Sleep(24 * time.Hour)
+	}
+}
+
+func UpdateCsvTimerTask(server *GatewayService, logger logger.Logger) {
+	for {
+		// Predict pedestrian data for next day
+		_, path, _, _ := runtime.Caller(0)
+		pyPath := filepath.Join(path, "../../ml/ase_ml.py")
+		cmd := exec.Command("python", pyPath)
+		_, err := cmd.Output()
+		time.Sleep(12 * time.Hour)
+
+		// Update pedestrian data
+		err = server.UpdatePedestrianData()
+		if err != nil {
+			logger.Fatal("Update csv data failed")
+		}
+		time.Sleep(12 * time.Hour)
 	}
 }

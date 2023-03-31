@@ -11,17 +11,15 @@ import (
 )
 
 const createPedestrian = `-- name: CreatePedestrian :one
-INSERT INTO pedestrian_data (id,
-                             street_name,
+INSERT INTO pedestrian_data (street_name,
                              latitude,
                              longitude,
                              time,
                              amount)
-VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, street_name, latitude, longitude, time, amount
+VALUES ($1, $2, $3, $4, $5) RETURNING id, street_name, latitude, longitude, time, amount
 `
 
 type CreatePedestrianParams struct {
-	ID         int32     `json:"id"`
 	StreetName string    `json:"street_name"`
 	Latitude   float64   `json:"latitude"`
 	Longitude  float64   `json:"longitude"`
@@ -31,7 +29,6 @@ type CreatePedestrianParams struct {
 
 func (q *Queries) CreatePedestrian(ctx context.Context, arg CreatePedestrianParams) (PedestrianDatum, error) {
 	row := q.db.QueryRowContext(ctx, createPedestrian,
-		arg.ID,
 		arg.StreetName,
 		arg.Latitude,
 		arg.Longitude,
@@ -59,6 +56,66 @@ WHERE id = $1
 func (q *Queries) DeletePedestrian(ctx context.Context, id int32) error {
 	_, err := q.db.ExecContext(ctx, deletePedestrian, id)
 	return err
+}
+
+const getFirstPedestrianIdsOfOneDay = `-- name: GetFirstPedestrianIdsOfOneDay :many
+SELECT id
+FROM pedestrian_data
+ORDER BY id ASC
+LIMIT 552
+`
+
+func (q *Queries) GetFirstPedestrianIdsOfOneDay(ctx context.Context) ([]int32, error) {
+	rows, err := q.db.QueryContext(ctx, getFirstPedestrianIdsOfOneDay)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var id int32
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getLastPedestrianIdsOfOneDay = `-- name: GetLastPedestrianIdsOfOneDay :many
+SELECT id
+FROM pedestrian_data
+ORDER BY id DESC
+LIMIT 552
+`
+
+func (q *Queries) GetLastPedestrianIdsOfOneDay(ctx context.Context) ([]int32, error) {
+	rows, err := q.db.QueryContext(ctx, getLastPedestrianIdsOfOneDay)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []int32
+	for rows.Next() {
+		var id int32
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
 }
 
 const getPedestrianByCurrentTime = `-- name: GetPedestrianByCurrentTime :many
