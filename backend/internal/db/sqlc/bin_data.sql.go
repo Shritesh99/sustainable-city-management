@@ -9,6 +9,22 @@ import (
 	"context"
 )
 
+const changeBinDataStatus = `-- name: ChangeBinDataStatus :exec
+UPDATE bin_data
+SET status = $2
+WHERE id = $1
+`
+
+type ChangeBinDataStatusParams struct {
+	ID     string `json:"id"`
+	Status int32  `json:"status"`
+}
+
+func (q *Queries) ChangeBinDataStatus(ctx context.Context, arg ChangeBinDataStatusParams) error {
+	_, err := q.db.ExecContext(ctx, changeBinDataStatus, arg.ID, arg.Status)
+	return err
+}
+
 const createBinData = `-- name: CreateBinData :one
 INSERT INTO bin_data ("id",
                       "latitude",
@@ -104,6 +120,34 @@ func (q *Queries) GetBinDataByRegion(ctx context.Context, region int32) ([]BinDa
 			return nil, err
 		}
 		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const getBinIds = `-- name: GetBinIds :many
+SELECT id
+FROM bin_data
+`
+
+func (q *Queries) GetBinIds(ctx context.Context) ([]string, error) {
+	rows, err := q.db.QueryContext(ctx, getBinIds)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []string
+	for rows.Next() {
+		var id string
+		if err := rows.Scan(&id); err != nil {
+			return nil, err
+		}
+		items = append(items, id)
 	}
 	if err := rows.Close(); err != nil {
 		return nil, err
