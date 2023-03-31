@@ -27,4 +27,5 @@ message Bin {
   float latitude = 2;
   float longitude = 3;
   int32 region = 4;
+  int32 status = 5;
 }

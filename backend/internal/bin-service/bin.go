@@ -19,6 +19,7 @@ func (server *BinService) GetAllBins(ctx context.Context, in *pb.GetAllBinsReque
 			Latitude:  float32(each.Latitude),
 			Longitude: float32(each.Longitude),
 			Region:    each.Region,
+			Status:    each.Status,
 		})
 	}
 	return &pb.GetAllBinsResponse{Bins: res}, err
@@ -37,6 +38,7 @@ func (server *BinService) GetBinsByRegion(ctx context.Context, in *pb.GetBinsByR
 			Latitude:  float32(each.Latitude),
 			Longitude: float32(each.Longitude),
 			Region:    each.Region,
+			Status:    each.Status,
 		})
 	}
 	return &pb.GetBinsByRegionResponse{Bins: res}, err

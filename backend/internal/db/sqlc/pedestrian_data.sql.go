@@ -11,46 +11,41 @@ import (
 )
 
 const createPedestrian = `-- name: CreatePedestrian :one
-INSERT INTO pedestrian_data (location_name,
-                             total,
-                             longitude,
+INSERT INTO pedestrian_data (id,
+                             street_name,
                              latitude,
-                             counter_time,
-                             insert_time,
-                             update_time)
-VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING id, location_name, total, longitude, latitude, counter_time, insert_time, update_time
+                             longitude,
+                             time,
+                             amount)
+VALUES ($1, $2, $3, $4, $5, $6) RETURNING id, street_name, latitude, longitude, time, amount
 `
 
 type CreatePedestrianParams struct {
-	LocationName string    `json:"location_name"`
-	Total        int32     `json:"total"`
-	Longitude    float64   `json:"longitude"`
-	Latitude     float64   `json:"latitude"`
-	CounterTime  time.Time `json:"counter_time"`
-	InsertTime   time.Time `json:"insert_time"`
-	UpdateTime   time.Time `json:"update_time"`
+	ID         int32     `json:"id"`
+	StreetName string    `json:"street_name"`
+	Latitude   float64   `json:"latitude"`
+	Longitude  float64   `json:"longitude"`
+	Time       time.Time `json:"time"`
+	Amount     int32     `json:"amount"`
 }
 
 func (q *Queries) CreatePedestrian(ctx context.Context, arg CreatePedestrianParams) (PedestrianDatum, error) {
 	row := q.db.QueryRowContext(ctx, createPedestrian,
-		arg.LocationName,
-		arg.Total,
-		arg.Longitude,
+		arg.ID,
+		arg.StreetName,
 		arg.Latitude,
-		arg.CounterTime,
-		arg.InsertTime,
-		arg.UpdateTime,
+		arg.Longitude,
+		arg.Time,
+		arg.Amount,
 	)
 	var i PedestrianDatum
 	err := row.Scan(
 		&i.ID,
-		&i.LocationName,
-		&i.Total,
-		&i.Longitude,
+		&i.StreetName,
 		&i.Latitude,
-		&i.CounterTime,
-		&i.InsertTime,
-		&i.UpdateTime,
+		&i.Longitude,
+		&i.Time,
+		&i.Amount,
 	)
 	return i, err
 }
@@ -67,13 +62,13 @@ func (q *Queries) DeletePedestrian(ctx context.Context, id int32) error {
 }
 
 const getPedestrianByCurrentTime = `-- name: GetPedestrianByCurrentTime :many
-SELECT id, location_name, total, longitude, latitude, counter_time, insert_time, update_time
+SELECT id, street_name, latitude, longitude, time, amount
 FROM pedestrian_data
-WHERE current_time = $1
+WHERE time = $1
 `
 
-func (q *Queries) GetPedestrianByCurrentTime(ctx context.Context, dollar_1 interface{}) ([]PedestrianDatum, error) {
-	rows, err := q.db.QueryContext(ctx, getPedestrianByCurrentTime, dollar_1)
+func (q *Queries) GetPedestrianByCurrentTime(ctx context.Context, time time.Time) ([]PedestrianDatum, error) {
+	rows, err := q.db.QueryContext(ctx, getPedestrianByCurrentTime, time)
 	if err != nil {
 		return nil, err
 	}
@@ -83,13 +78,11 @@ func (q *Queries) GetPedestrianByCurrentTime(ctx context.Context, dollar_1 inter
 		var i PedestrianDatum
 		if err := rows.Scan(
 			&i.ID,
-			&i.LocationName,
-			&i.Total,
-			&i.Longitude,
+			&i.StreetName,
 			&i.Latitude,
-			&i.CounterTime,
-			&i.InsertTime,
-			&i.UpdateTime,
+			&i.Longitude,
+			&i.Time,
+			&i.Amount,
 		); err != nil {
 			return nil, err
 		}

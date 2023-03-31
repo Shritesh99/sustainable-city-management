@@ -13,8 +13,9 @@ const createBinData = `-- name: CreateBinData :one
 INSERT INTO bin_data ("id",
                       "latitude",
                       "longitude",
-                      "region")
-VALUES ($1, $2, $3, $4) RETURNING id, latitude, longitude, region
+                      "region",
+                      "status")
+VALUES ($1, $2, $3, $4, $5) RETURNING id, latitude, longitude, region, status
 `
 
 type CreateBinDataParams struct {
@@ -22,6 +23,7 @@ type CreateBinDataParams struct {
 	Latitude  float64 `json:"latitude"`
 	Longitude float64 `json:"longitude"`
 	Region    int32   `json:"region"`
+	Status    int32   `json:"status"`
 }
 
 func (q *Queries) CreateBinData(ctx context.Context, arg CreateBinDataParams) (BinDatum, error) {
@@ -30,6 +32,7 @@ func (q *Queries) CreateBinData(ctx context.Context, arg CreateBinDataParams) (B
 		arg.Latitude,
 		arg.Longitude,
 		arg.Region,
+		arg.Status,
 	)
 	var i BinDatum
 	err := row.Scan(
@@ -37,12 +40,13 @@ func (q *Queries) CreateBinData(ctx context.Context, arg CreateBinDataParams) (B
 		&i.Latitude,
 		&i.Longitude,
 		&i.Region,
+		&i.Status,
 	)
 	return i, err
 }
 
 const getAllBinData = `-- name: GetAllBinData :many
-SELECT id, latitude, longitude, region
+SELECT id, latitude, longitude, region, status
 FROM bin_data
 `
 
@@ -60,6 +64,7 @@ func (q *Queries) GetAllBinData(ctx context.Context) ([]BinDatum, error) {
 			&i.Latitude,
 			&i.Longitude,
 			&i.Region,
+			&i.Status,
 		); err != nil {
 			return nil, err
 		}
@@ -75,7 +80,7 @@ func (q *Queries) GetAllBinData(ctx context.Context) ([]BinDatum, error) {
 }
 
 const getBinDataByRegion = `-- name: GetBinDataByRegion :many
-SELECT id, latitude, longitude, region
+SELECT id, latitude, longitude, region, status
 FROM bin_data
 WHERE region = $1
 `
@@ -94,6 +99,7 @@ func (q *Queries) GetBinDataByRegion(ctx context.Context, region int32) ([]BinDa
 			&i.Latitude,
 			&i.Longitude,
 			&i.Region,
+			&i.Status,
 		); err != nil {
 			return nil, err
 		}

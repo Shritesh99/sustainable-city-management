@@ -1,7 +1,9 @@
-CREATE TABLE "bin_data"
+CREATE TABLE "pedestrian_data"
 (
-    "id"        varchar PRIMARY KEY,
-    "latitude"  float not null,
-    "longitude" float not null,
-    "region"    int   not null
+    "id"          serial PRIMARY KEY,
+    "street_name" varchar   not null,
+    "latitude"    float     not null,
+    "longitude"   float     not null,
+    "time"        timestamp not null,
+    "amount"      int       not null
 );

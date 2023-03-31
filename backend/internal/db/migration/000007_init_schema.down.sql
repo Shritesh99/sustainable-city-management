@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS bike_data;
+DROP TABLE IF EXISTS bin_data;

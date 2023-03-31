@@ -1,1 +1,1 @@
-DROP TABLE IF EXISTS bin_data;
+DROP TABLE IF EXISTS pedestrian_data;

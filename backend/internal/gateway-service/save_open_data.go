@@ -2,8 +2,12 @@ package gateway_service
 
 import (
 	"context"
+	"encoding/csv"
 	db "github.com/Eytins/sustainable-city-management/backend/internal/db/sqlc"
+	"github.com/Eytins/sustainable-city-management/backend/internal/util"
 	"log"
+	"os"
+	"strconv"
 	"time"
 	// "github.com/Eytins/sustainable-city-management/backend/internal/util"
 )
@@ -99,6 +103,67 @@ func (server *GatewayService) SaveBusData() error {
 }
 
 func (server *GatewayService) SavePedestrianData() error {
+	f, err := os.Open("/Users/eytins/Documents/TrinityS2/sustainable-city-management/backend/internal/gateway-service/ml/pedestrian.csv")
+	if err != nil {
+		util.LogFatal("Read pedestrian csv file failed ", err)
+		return err
+	}
+	f1, err := os.Open("/Users/eytins/Documents/TrinityS2/sustainable-city-management/backend/internal/gateway-service/ml/dcc-footfall-counter-locations-14082020.csv")
+	if err != nil {
+		util.LogFatal("Read location csv file failed", err)
+		return err
+	}
+
+	csvReader := csv.NewReader(f)
+	data, err := csvReader.ReadAll()
+	locReader := csv.NewReader(f1)
+	locations, err := locReader.ReadAll()
+	if err != nil {
+		util.LogFatal("Parse pedestrian csv file failed", err)
+		return err
+	}
+
+	strNameMap := make(map[string][]float64)
+	for i := 1; i < len(locations); i++ {
+		latitude, _ := strconv.ParseFloat(locations[i][1], 64)
+		longitude, _ := strconv.ParseFloat(locations[i][2], 64)
+		strNameMap[locations[i][0]] = []float64{latitude, longitude}
+	}
+
+	var strNames []string
+	strNames = append(strNames, "")
+	for i := 1; i < len(data[0]); i++ {
+		strNames = append(strNames, data[0][i])
+	}
+	for i := 1; i < len(data); i++ {
+		for j := 1; j < len(data[i]); j++ {
+			stamp, err := time.Parse("2006-01-02 15:04:05", data[i][0])
+			if err != nil {
+				return err
+			}
+			amount, err := strconv.Atoi(data[i][j])
+
+			arg := db.CreatePedestrianParams{
+				ID:         0,
+				StreetName: strNames[j],
+				Latitude:   strNameMap[strNames[j]][0],
+				Longitude:  strNameMap[strNames[j]][1],
+				Time:       stamp,
+				Amount:     int32(amount),
+			}
+			_, err = server.store.CreatePedestrian(context.Background(), arg)
+			if err != nil {
+				return err
+			}
+		}
+	}
+
+	err = f.Close()
+	if err != nil {
+		util.LogFatal("Close pedestrian csv file failed", err)
+		return err
+	}
+
 	return nil
 }
 
