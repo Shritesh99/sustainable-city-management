@@ -47,7 +47,7 @@ class LoginScreen extends StatelessWidget {
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Email',
-                        hintStyle: TextStyle(color: Colors.purple))),
+                        hintStyle: TextStyle(color: Colors.grey))),
               ),
             ),
           ),
@@ -73,7 +73,7 @@ class LoginScreen extends StatelessWidget {
                     decoration: InputDecoration(
                         border: InputBorder.none,
                         hintText: 'Password',
-                        hintStyle: TextStyle(color: Colors.purple))),
+                        hintStyle: TextStyle(color: Colors.grey))),
               ),
             ),
           ),
@@ -103,11 +103,23 @@ class LoginScreen extends StatelessWidget {
                   _emailController.text = "";
                   _passwordController.text = "";
 
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text(result.msg),
-                  ));
+                  showDialog(
+                      barrierDismissible: false,
+                      context: context,
+                      builder: (context) => AlertDialog(
+                            backgroundColor: Colors.white,
+                            title: Text("Login Failed",
+                                style: TextStyle(color: Colors.deepPurple)),
+                            content: Text(
+                              result.msg,
+                              style: TextStyle(color: Colors.black),
+                            ),
+                          )).then((val) {});
+                  await Future.delayed(Duration(seconds: 4));
+                  Navigator.of(context).pop(true);
+                } else {
+                  Get.toNamed(Routes.dashboard);
                 }
-                Get.toNamed(Routes.dashboard);
               }
             },
           ),
