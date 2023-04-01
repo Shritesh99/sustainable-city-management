@@ -3,6 +3,7 @@ import 'package:sustainable_city_management/app/dashboard/models/user.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+// import 'package:get/get.dart';
 
 class RegistrationScreen extends StatefulWidget {
   const RegistrationScreen({super.key});
@@ -58,8 +59,8 @@ class LoginPageState extends State<RegistrationScreen> {
                   TextButton(
                     onPressed: () {
                       // Navigate back to the login page
-                      // Navigator.of(context).push(MaterialPageRoute(
-                      //     builder: (context) => const LoginPage()));
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => LoginScreen()));
                     },
                     child: const Text('OK'),
                   ),
@@ -110,9 +111,9 @@ class LoginPageState extends State<RegistrationScreen> {
   }
 
   Future<void> _fetchRolesData() async {
-    final response = await http
-        .get(Uri.parse('https://scm-backend.rxshri99.live/gateway/roles'));
-    if (response.body.isNotEmpty) {
+    try {
+      final response = await http
+          .get(Uri.parse('https://scm-backend.rxshri99.live/gateway/getRoles'));
       final responseData = json.decode(response.body);
       if (responseData['error'] == false) {
         setState(() {
@@ -123,33 +124,45 @@ class LoginPageState extends State<RegistrationScreen> {
       } else {
         _setDefaultRolesData();
       }
-    } else {
-      setState(() {
-        _setDefaultRolesData();
-      });
+    } catch (e) {
+      _setDefaultRolesData();
     }
   }
 
   void _setDefaultRolesData() {
     setState(() {
       _rolesData = [
-        {"role_name": "City Manager"},
-        {"role_name": "Bus Company"},
-        {"role_name": "Bike Company"},
-        {"role_name": "Bin Truck Company"}
+        {
+          "role_id": 0,
+          "role_name": "City Manager",
+          "auths": [
+            "AirQuality",
+            "NoiseInformation",
+            "BusMap",
+            "PedestrianHeatmap",
+            "BinTrucksMap"
+          ]
+        }
       ];
       _selectedRole =
           _rolesData[0]['role_name']; // Set the initial selected value
     });
   }
 
+  int? getRoleIdForRoleName(String? roleName) {
+    for (var roleData in _rolesData) {
+      if (roleData['role_name'] == roleName) {
+        return roleData['role_id'];
+      }
+    }
+    return null;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      backgroundColor: Colors.blueGrey,
       appBar: AppBar(
-        backgroundColor: Colors.blueGrey[900],
         title: const Text('Sign up'),
       ),
       body: Form(
@@ -164,20 +177,22 @@ class LoginPageState extends State<RegistrationScreen> {
             ),
             // First Name
             TextFormField(
+              style: const TextStyle(color: Colors.purple),
               autofocus: false,
               decoration: InputDecoration(
                 hintText: 'First Name',
+                hintStyle: const TextStyle(color: Colors.grey),
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 1),
+                  // borderSide: const BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                fillColor: Colors.amber,
+                fillColor: Colors.white,
                 filled: true,
               ),
               onSaved: (value) => _user.firstName = value,
@@ -185,20 +200,22 @@ class LoginPageState extends State<RegistrationScreen> {
             const SizedBox(height: 16),
             // Last Name
             TextFormField(
+              style: const TextStyle(color: Colors.purple),
               autofocus: false,
               decoration: InputDecoration(
                 hintText: 'Last Name',
+                hintStyle: const TextStyle(color: Colors.grey),
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 1),
+                  // borderSide: const BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(color: Colors.amber),
+                  borderSide: const BorderSide(color: Colors.white),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                fillColor: Colors.amber,
+                fillColor: Colors.white,
                 filled: true,
               ),
               onSaved: (value) => _user.lastName = value,
@@ -206,21 +223,23 @@ class LoginPageState extends State<RegistrationScreen> {
             const SizedBox(height: 16),
             // Email
             TextFormField(
+              style: const TextStyle(color: Colors.purple),
               autofocus: false,
               keyboardType: TextInputType.emailAddress,
               decoration: InputDecoration(
                 hintText: 'youremail@email.com',
+                hintStyle: const TextStyle(color: Colors.grey),
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 1),
+                  // borderSide: const BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                fillColor: Colors.amber,
+                fillColor: Colors.white,
                 filled: true,
               ),
               onSaved: (value) => _user.username = value,
@@ -228,22 +247,24 @@ class LoginPageState extends State<RegistrationScreen> {
             const SizedBox(height: 16),
             // Password
             TextFormField(
+              style: const TextStyle(color: Colors.purple),
               autofocus: false,
               obscureText: true,
               controller: _passwordController,
               decoration: InputDecoration(
                 hintText: 'Password',
+                hintStyle: const TextStyle(color: Colors.grey),
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                 enabledBorder: OutlineInputBorder(
-                  borderSide: const BorderSide(width: 1),
+                  // borderSide: const BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 focusedBorder: OutlineInputBorder(
                   borderSide: const BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                fillColor: Colors.amber,
+                fillColor: Colors.white,
                 filled: true,
               ),
               onSaved: (value) => _user.password = value,
@@ -251,11 +272,13 @@ class LoginPageState extends State<RegistrationScreen> {
             const SizedBox(height: 16),
             // Repeat Password
             TextFormField(
+              style: const TextStyle(color: Colors.purple),
               autofocus: false,
               obscureText: true,
               controller: _repeatPasswordController,
               decoration: InputDecoration(
                 hintText: 'Repeat Password',
+                hintStyle: const TextStyle(color: Colors.grey),
                 contentPadding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
                 enabledBorder: OutlineInputBorder(
@@ -266,7 +289,7 @@ class LoginPageState extends State<RegistrationScreen> {
                   borderSide: const BorderSide(width: 1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                fillColor: Colors.amber,
+                fillColor: Colors.white,
                 filled: true,
               ),
               validator: (value) {
@@ -296,27 +319,26 @@ class LoginPageState extends State<RegistrationScreen> {
                   child: Text(roleData['role_name']),
                 );
               }).toList(),
-              onSaved: (value) => _user.username = _selectedRole,
+              onSaved: (value) => _user.roleId = getRoleIdForRoleName(value),
             ),
             const SizedBox(height: 24),
             // Sign Up Button
             ElevatedButton(
-              onPressed: () {
-                Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => LoginScreen()));
-              },
+              onPressed: _submitForm,
               style: ElevatedButton.styleFrom(
                 padding:
                     const EdgeInsets.symmetric(horizontal: 36, vertical: 18),
-                backgroundColor: Colors.amber,
+                backgroundColor: Colors.white,
                 shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(16)),
+                    borderRadius: BorderRadius.circular(8)),
                 elevation: 0,
                 shadowColor: Colors.transparent,
               ),
-              child: TextButton(
-                onPressed: _submitForm,
-                child: const Text('Sign up'),
+              child: const Text(
+                'Sign up',
+                style: TextStyle(
+                  color: Colors.purple,
+                ),
               ),
             ),
           ],
