@@ -3,6 +3,7 @@ package airquality_service
 import (
 	"context"
 	pb "github.com/Eytins/sustainable-city-management/backend/pb/air-quality/air-pd"
+	"time"
 )
 
 func (server *AirService) GetAirStation(ctx context.Context, in *pb.AirIdRequest) (*pb.GetAirStationResponse, error) {
@@ -79,6 +80,31 @@ func (server *AirService) GetNoiseData(ctx context.Context, in *pb.NilRequest) (
 	}
 	return &pb.GetNoiseDataResponse{
 		NoiseData: res,
+	}, err
+}
+
+func (server *AirService) GetPedestrianDataByTime(ctx context.Context, in *pb.TimeRequest) (*pb.GetPedestrianDataResponse, error) {
+	reqTime := in.GetTime()
+	// Convert timestamp to time.Time
+	t := time.Unix(reqTime, 0)
+	data, err := server.store.GetPedestrianByTime(ctx, t)
+	if err != nil {
+		server.log.Infof("Error fetching Pedestrian data: %v", err)
+		return &pb.GetPedestrianDataResponse{}, err
+	}
+	var res []*pb.InsideGetPedestrianDataResponse
+	for _, each := range data {
+		res = append(res, &pb.InsideGetPedestrianDataResponse{
+			Id:         each.ID,
+			StreetName: each.StreetName,
+			Latitude:   float32(each.Latitude),
+			Longitude:  float32(each.Longitude),
+			Time:       each.Time.Unix(),
+			Amount:     each.Amount,
+		})
+	}
+	return &pb.GetPedestrianDataResponse{
+		PedestrianData: res,
 	}, err
 }
 

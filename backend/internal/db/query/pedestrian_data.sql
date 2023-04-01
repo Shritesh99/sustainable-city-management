@@ -1,13 +1,12 @@
 -- name: CreatePedestrian :one
-INSERT INTO pedestrian_data (id,
-                             street_name,
+INSERT INTO pedestrian_data (street_name,
                              latitude,
                              longitude,
                              time,
                              amount)
-VALUES ($1, $2, $3, $4, $5, $6) RETURNING *;
+VALUES ($1, $2, $3, $4, $5) RETURNING *;
 
--- name: GetPedestrianByCurrentTime :many
+-- name: GetPedestrianByTime :many
 SELECT *
 FROM pedestrian_data
 WHERE time = $1;
@@ -16,3 +15,9 @@ WHERE time = $1;
 DELETE
 FROM pedestrian_data
 WHERE id = $1;
+
+-- name: GetFirstPedestrianIdsOfOneDay :many
+SELECT id
+FROM pedestrian_data
+ORDER BY id ASC
+LIMIT 552;

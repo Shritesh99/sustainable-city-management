@@ -6,6 +6,6 @@ package.json
 .github/
 .vscode/
 .expo/
-/backend/internal/gateway-service/ml/pedestrian.csv
-/backend/internal/gateway-service/ml/dcc-footfall-counter-locations-14082020.csv
+#/backend/internal/ml/pedestrian.csv
+#/backend/internal/ml/dcc-footfall-counter-locations-14082020.csv
 /backend/cmd/main_test.go

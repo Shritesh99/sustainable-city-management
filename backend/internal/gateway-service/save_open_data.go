@@ -8,6 +8,8 @@ import (
 	"log"
 	"math/rand"
 	"os"
+	"path/filepath"
+	"runtime"
 	"strconv"
 	"time"
 	// "github.com/Eytins/sustainable-city-management/backend/internal/util"
@@ -104,12 +106,17 @@ func (server *GatewayService) SaveBusData() error {
 }
 
 func (server *GatewayService) SavePedestrianData() error {
-	f, err := os.Open("/Users/eytins/Documents/TrinityS2/sustainable-city-management/backend/internal/gateway-service/ml/pedestrian.csv")
+	return savePedestrianDataToDb(server, 72)
+}
+
+func savePedestrianDataToDb(server *GatewayService, hrs int) error {
+	_, path, _, _ := runtime.Caller(0)
+	f, err := os.Open(filepath.Join(path, "../../ml/pedestrian.csv"))
 	if err != nil {
 		util.LogFatal("Read pedestrian csv file failed ", err)
 		return err
 	}
-	f1, err := os.Open("/Users/eytins/Documents/TrinityS2/sustainable-city-management/backend/internal/gateway-service/ml/dcc-footfall-counter-locations-14082020.csv")
+	f1, err := os.Open(filepath.Join(path, "../../ml/dcc-footfall-counter-locations-14082020.csv"))
 	if err != nil {
 		util.LogFatal("Read location csv file failed", err)
 		return err
@@ -136,7 +143,7 @@ func (server *GatewayService) SavePedestrianData() error {
 	for i := 1; i < len(data[0]); i++ {
 		strNames = append(strNames, data[0][i])
 	}
-	for i := 1; i < len(data); i++ {
+	for i := len(data) - hrs; i < len(data); i++ {
 		for j := 1; j < len(data[i]); j++ {
 			stamp, err := time.Parse("2006-01-02 15:04:05", data[i][0])
 			if err != nil {
@@ -145,7 +152,6 @@ func (server *GatewayService) SavePedestrianData() error {
 			amount, err := strconv.Atoi(data[i][j])
 
 			arg := db.CreatePedestrianParams{
-				ID:         0,
 				StreetName: strNames[j],
 				Latitude:   strNameMap[strNames[j]][0],
 				Longitude:  strNameMap[strNames[j]][1],
@@ -154,6 +160,7 @@ func (server *GatewayService) SavePedestrianData() error {
 			}
 			_, err = server.store.CreatePedestrian(context.Background(), arg)
 			if err != nil {
+				util.LogFatal("Create pedestrian data param of db failed: ", err)
 				return err
 			}
 		}
@@ -263,4 +270,21 @@ func (server *GatewayService) ChangeBinStatus() error {
 		}
 	}
 	return nil
+}
+
+func (server *GatewayService) UpdatePedestrianData() error {
+	// Delete 552
+	ids, err := server.store.GetFirstPedestrianIdsOfOneDay(context.Background())
+	if err != nil {
+		return err
+	}
+	for _, id := range ids {
+		err := server.store.DeletePedestrian(context.Background(), id)
+		if err != nil {
+			return err
+		}
+	}
+
+	// Insert 552
+	return savePedestrianDataToDb(server, 24)
 }

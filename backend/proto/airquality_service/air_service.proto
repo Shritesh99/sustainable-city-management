@@ -6,6 +6,7 @@ service AirService {
   rpc GetAirStation (AirIdRequest) returns (GetAirStationResponse) {}
   rpc GetDetailedAirData (NilRequest) returns (GetDetailedAirDataResponse) {}
   rpc GetNoiseData (NilRequest) returns (GetNoiseDataResponse) {}
+  rpc GetPedestrianDataByTime (TimeRequest) returns (GetPedestrianDataResponse) {}
 }
 
 message NilRequest {
@@ -61,4 +62,21 @@ message InsideGetNoiseDataResponse {
   int32 currentRating = 7;
   float dailyAvg = 8;
   float hourlyAvg = 9;
+}
+
+message TimeRequest {
+  int64 time = 1;
+}
+
+message GetPedestrianDataResponse {
+  repeated InsideGetPedestrianDataResponse pedestrianData = 1;
+}
+
+message InsideGetPedestrianDataResponse {
+  int32 id = 1;
+  string streetName = 2;
+  float latitude = 3;
+  float longitude = 4;
+  int64 time = 5;
+  int32 amount = 6;
 }
