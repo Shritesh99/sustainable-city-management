@@ -10,7 +10,12 @@ Original file is located at
 import pandas as pd
 import numpy as np
 from statsmodels.tsa.api import VAR
-df = pd.read_csv('pedestrian.csv', parse_dates=['Time'])
+# Get current path
+import os
+
+path = os.getcwd()
+
+df = pd.read_csv(path + '/internal/ml/pedestrian.csv', parse_dates=['Time'])
 df_original = df
 
 df = df.set_index('Time')
@@ -28,4 +33,4 @@ forecast_df = pd.DataFrame(forecast, index=forecast_index, columns=df.columns)
 forecast_df.reset_index(drop=False, inplace=True)
 forecast_df = forecast_df.rename(columns={'index': 'Time'})
 merged_df = pd.concat([df_original, forecast_df], axis=0)
-merged_df.to_csv("pedestrian.csv", index=False)
+merged_df.to_csv(path + '/internal/ml/pedestrian.csv', index=False)

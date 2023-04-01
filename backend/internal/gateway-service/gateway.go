@@ -495,3 +495,24 @@ func (server *GatewayService) GetBinsByRegion(c *fiber.Ctx) error {
 		"msg":      "success",
 	})
 }
+
+func (server *GatewayService) GetPedestrianDataByTime(c *fiber.Ctx) error {
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
+	client := pb_air.NewAirServiceClient(server.airClientConn)
+	req := pb_air.TimeRequest{Time: int64(c.QueryInt("time"))}
+	resp, err := client.GetPedestrianDataByTime(context.Background(), &req)
+	if err != nil {
+		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
+			"error": err.Error(),
+			"msg":   "Data not found",
+		})
+	}
+	return c.JSON(fiber.Map{
+		"pedestrian_data": resp,
+		"error":           false,
+		"msg":             "success",
+	})
+}

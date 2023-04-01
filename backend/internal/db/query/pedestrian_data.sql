@@ -6,7 +6,7 @@ INSERT INTO pedestrian_data (street_name,
                              amount)
 VALUES ($1, $2, $3, $4, $5) RETURNING *;
 
--- name: GetPedestrianByCurrentTime :many
+-- name: GetPedestrianByTime :many
 SELECT *
 FROM pedestrian_data
 WHERE time = $1;

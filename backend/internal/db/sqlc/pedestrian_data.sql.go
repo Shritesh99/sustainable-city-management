@@ -88,44 +88,14 @@ func (q *Queries) GetFirstPedestrianIdsOfOneDay(ctx context.Context) ([]int32, e
 	return items, nil
 }
 
-const getLastPedestrianIdsOfOneDay = `-- name: GetLastPedestrianIdsOfOneDay :many
-SELECT id
-FROM pedestrian_data
-ORDER BY id DESC
-LIMIT 552
-`
-
-func (q *Queries) GetLastPedestrianIdsOfOneDay(ctx context.Context) ([]int32, error) {
-	rows, err := q.db.QueryContext(ctx, getLastPedestrianIdsOfOneDay)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-	var items []int32
-	for rows.Next() {
-		var id int32
-		if err := rows.Scan(&id); err != nil {
-			return nil, err
-		}
-		items = append(items, id)
-	}
-	if err := rows.Close(); err != nil {
-		return nil, err
-	}
-	if err := rows.Err(); err != nil {
-		return nil, err
-	}
-	return items, nil
-}
-
-const getPedestrianByCurrentTime = `-- name: GetPedestrianByCurrentTime :many
+const getPedestrianByTime = `-- name: GetPedestrianByTime :many
 SELECT id, street_name, latitude, longitude, time, amount
 FROM pedestrian_data
 WHERE time = $1
 `
 
-func (q *Queries) GetPedestrianByCurrentTime(ctx context.Context, time time.Time) ([]PedestrianDatum, error) {
-	rows, err := q.db.QueryContext(ctx, getPedestrianByCurrentTime, time)
+func (q *Queries) GetPedestrianByTime(ctx context.Context, time time.Time) ([]PedestrianDatum, error) {
+	rows, err := q.db.QueryContext(ctx, getPedestrianByTime, time)
 	if err != nil {
 		return nil, err
 	}

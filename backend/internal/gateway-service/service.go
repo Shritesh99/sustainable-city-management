@@ -37,6 +37,7 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Get("/getBikes", server.GetBikes)
 	router.Get("/getAllBins", server.GetAllBins)
 	router.Get("/getBinsByRegion", server.GetBinsByRegion)
+	router.Get("/getPedestrianByTime", server.GetPedestrianDataByTime)
 
 	go CollectDataTimerTask(server, logger2)
 	//go InitCollectCsvTimerTask(server, logger2)
@@ -85,19 +86,33 @@ func InitCollectCsvTimerTask(server *GatewayService, logger logger.Logger) {
 }
 
 func UpdateCsvTimerTask(server *GatewayService, logger logger.Logger) {
+	// Get current time
+	now := time.Now()
+	// Get next day time
+	nextDay := now.Add(24 * time.Hour)
+	// Get next day zero time
+	nextDayZero := time.Date(nextDay.Year(), nextDay.Month(), nextDay.Day(), 0, 0, 0, 0, nextDay.Location())
+	// Get next day zero time duration
+	nextDayZeroDuration := nextDayZero.Sub(now)
+	// Sleep for next day zero time duration
+	time.Sleep(nextDayZeroDuration)
 	for {
 		// Predict pedestrian data for next day
 		_, path, _, _ := runtime.Caller(0)
+		venvPath := filepath.Join(path, "../../ml/venv/bin/activate")
 		pyPath := filepath.Join(path, "../../ml/ase_ml.py")
-		cmd := exec.Command("python", pyPath)
+		cmd := exec.Command("bash", "-c", "source "+venvPath+" && python3 "+pyPath)
+		//cmd := exec.Command("python3", pyPath)
 		_, err := cmd.Output()
-		time.Sleep(12 * time.Hour)
+		if err != nil {
+			logger.Fatal("Predict csv data failed: ", err)
+		}
 
 		// Update pedestrian data
 		err = server.UpdatePedestrianData()
 		if err != nil {
 			logger.Fatal("Update csv data failed")
 		}
-		time.Sleep(12 * time.Hour)
+		time.Sleep(24 * time.Hour)
 	}
 }
