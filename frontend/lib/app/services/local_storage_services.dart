@@ -13,18 +13,6 @@ class LocalStorageServices {
 
   final FlutterSecureStorage storage = FlutterSecureStorage();
 
-  // Future<void> initStorage() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   if (prefs.getBool('first_run') ?? true) {
-  //     await FlutterSecureStorage().deleteAll();
-
-  //     prefs.setBool('first_run', false);
-  //   }
-  // }
-
-  // to save data in local, you can use SharedPreferences for simple data
-  // or Sqflite for more complex data
-
   Future<void> write(String key, String value) async {
     await storage.write(key: key, value: value);
   }

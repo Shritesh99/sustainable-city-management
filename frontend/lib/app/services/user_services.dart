@@ -4,8 +4,11 @@ import '../constans/app_constants.dart';
 import '../dashboard/models/login_model.dart';
 import '../dashboard/models/roles_model.dart';
 import 'local_storage_services.dart';
+import 'package:sustainable_city_management/app/network/dio_client.dart';
+import 'package:sustainable_city_management/app/dashboard/models/error_model.dart';
 
 final LocalStorageServices localStorageServices = LocalStorageServices();
+final dioClient = DioClient().dio;
 
 // User Account APIs
 class UserServices {
@@ -20,16 +23,24 @@ class UserServices {
   Future<LoginModel?> login(String username, String password) async {
     var reqData = {'username': username, 'password': password};
     LoginModel? loginResp = null;
-    Dio dio = new Dio();
-    dio.options.headers['content-Type'] = 'application/json';
 
     try {
-      Response rsp;
-      rsp = await dio.post(ApiPath.login, data: reqData);
-      print(rsp.data);
+      Response rsp = await dioClient.post(ApiPath.login, data: reqData);
       loginResp = LoginModel.fromJson(rsp.data);
     } on DioError catch (e) {
-      debugPrint('DioError: failed to login $e');
+      // debugPrint('DioError: failed to login $e');
+      Response? errorRsp = e.response;
+      var errorModel = ErrorModel.fromJson(errorRsp!.data);
+      loginResp = LoginModel(
+          token: "",
+          email: "",
+          error: errorModel.error,
+          expires: -1,
+          firstName: "",
+          lastName: "",
+          msg: errorModel.msg,
+          roleId: -1,
+          userId: -1);
     } catch (e) {
       debugPrint('Error: failed to login $e');
     }
@@ -48,16 +59,10 @@ class UserServices {
 
   Future<void> logout() async {
     var reqData = {'username': localStorageServices.read("username")};
-    Dio dio = new Dio();
-    dio.options.headers['content-Type'] = 'application/json';
-    var token = await getToken();
-    if (token != null) {
-      dio.options.headers['Token'] = token;
-      Response rsp;
-      rsp = await dio.post(ApiPath.logout, data: reqData);
-      print(rsp.data);
-      await localStorageServices.delete("user");
-    }
+    Response rsp;
+    rsp = await dioClient.post(ApiPath.logout, data: reqData);
+    print(rsp.data);
+    await localStorageServices.delete("user");
   }
 
   // get roles from API
@@ -65,8 +70,7 @@ class UserServices {
     List<RolesDatum> rolesList = <RolesDatum>[];
     var uri = Uri.parse(ApiPath.getRoles);
     try {
-      Response rsp;
-      rsp = await Dio().getUri(uri);
+      Response rsp = await dioClient.getUri(uri);
       var rolesResp = RolesModel.fromJson(rsp.data);
       rolesList = rolesResp.rolesData;
     } on DioError catch (e) {
@@ -79,14 +83,14 @@ class UserServices {
 
   //get user auth from local storage
   Future<List<String>?> getAuths() async {
-    var auths = await LocalStorageServices().read("auths");
+    var auths = await localStorageServices.read("auths");
     if (auths == null) return null;
     return auths.split(',');
   }
 
   //get user profile from local storage
   Future<LoginModel?> getUserProfile() async {
-    var profileStr = await LocalStorageServices().read("user");
+    var profileStr = await localStorageServices.read("user");
     if (profileStr == null) return null;
     LoginModel profile = loginModelFromJson(profileStr);
     return profile;
@@ -94,7 +98,7 @@ class UserServices {
 
   //get user role from local storage
   Future<RolesDatum?> getRole() async {
-    var roleStr = await LocalStorageServices().read("role");
+    var roleStr = await localStorageServices.read("role");
     if (roleStr == null) return null;
     RolesDatum role = rolesDatumFromJson(roleStr);
     return role;
@@ -102,8 +106,8 @@ class UserServices {
 
   //get token from from local storage
   Future<String?> getToken() async {
-    var token = await LocalStorageServices().read("Token");
-    var expires = await LocalStorageServices().read("expires");
+    var token = await localStorageServices.read("Token");
+    var expires = await localStorageServices.read("expires");
     var now = DateTime.now().millisecondsSinceEpoch / 1000;
     if (expires == null || (double.parse(expires) < now)) {
       await localStorageServices.deleteAll();
