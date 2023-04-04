@@ -15,10 +15,17 @@ WORKDIR /dist
 
 RUN cp /build/app .
 
-FROM alpine:latest
-RUN apk --no-cache add ca-certificates
+FROM ubuntu:latest
+RUN apt-get update && apt-get install -y \
+    ca-certificates \
+    bash
 
 COPY . .
+
+RUN apt-get update && apt-get install -y python3 python3-pip
+
+RUN cd internal/ml && pip3 install -r requirements.txt
+
 COPY --from=builder /dist/app /
 
 ENTRYPOINT ["/app"]
