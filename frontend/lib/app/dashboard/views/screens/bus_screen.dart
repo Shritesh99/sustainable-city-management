@@ -8,6 +8,8 @@ import 'package:uuid/uuid.dart';
 import 'package:sustainable_city_management/google_maps_flutter_geojson.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bus_route_model.dart';
 
+import 'package:collection/iterable_zip.dart';
+
 class BusScreen extends StatefulWidget {
   const BusScreen({Key? key}) : super(key: key);
 
@@ -16,7 +18,7 @@ class BusScreen extends StatefulWidget {
 }
 
 Future<String> loadAsset(BuildContext context) async {
-  return await DefaultAssetBundle.of(context).loadString('/test.json');
+  return await DefaultAssetBundle.of(context).loadString('/Test1.geojson');
   // .loadString('/DublinBus1.geojson'); //This is for the one line. testing.
   //.loadString('/DublinBus1.geojson'); // This is the original one.
 }
@@ -39,28 +41,14 @@ class BusScreenState extends State<BusScreen> {
   //     ],
   //     width: 5);
 
-  static const Marker homeMarker = Marker(
-    markerId: MarkerId('_homeMarker'),
-    infoWindow: InfoWindow(title: 'Home'),
-    icon: BitmapDescriptor.defaultMarker,
-    position: LatLng(-6.4199855, 53.2978967),
-    //LatLng(-6.4202783, 53.2976017),
-  );
-// class GetJsonData {
-//   String agency_name;
-//   String route_short_name;
+  // static const Marker homeMarker = Marker(
+  //   markerId: MarkerId('_homeMarker'),
+  //   infoWindow: InfoWindow(title: 'Home'),
+  //   icon: BitmapDescriptor.defaultMarker,
+  //   position: LatLng(-6.4199855, 53.2978967),
+  //   //LatLng(-6.4202783, 53.2976017),
+  // );
 
-//   GetJsonData.fromJson(Map geojson)
-//       : agency_name = json['agency_name'],
-//         route_short_name = json['route_short_name'];
-
-//   Map toJson() {
-//     return {'agency_name': agency_name, 'route_short_name': route_short_name};
-//   }
-// }
-// FutureBuilder : Let's say you want to fetch some data from the backend on page launch and show a loader until data comes.
-// FutureBuilder : Give the async task in futre of FutureBuilder.
-  bool isChecked = false;
   Polyline featureToGooglePolyline(List<dynamic> coordinates) {
     return Polyline(
         polylineId: PolylineId(Uuid().v4()),
@@ -75,37 +63,70 @@ class BusScreenState extends State<BusScreen> {
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.data != null) {
             String? geojson = snapshot.data;
-            Map<String, dynamic> routeMap = json.decode(geojson!);
-            Set<Polyline> polylines = {};
-            routeMap.values.forEach((element) {
-              polylines
-                  .add(featureToGooglePolyline(element["Coordinates"] as List));
-            });
+            // Map<String, dynamic> routeMap = json.decode(geojson!);
+            // Set<Polyline> polylines = {};
+            // routeMap.values.forEach((element) {
+            //   polylines
+            //       .add(featureToGooglePolyline(element["Coordinates"] as List));
+            // });
+
             // I got the geoJson data.
-            // print(geojson);
+            //print(geojson);
+
             // This line below has an error.
-            // final layers =
-            //     GeoJSONGoogleMapsResult.fromJson(jsonDecode(geojson!));
+            final layers =
+                GeoJSONGoogleMapsResult.fromJson(jsonDecode(geojson!));
 
-            // final getGeojsondata = GetJsonData.fromJson(geojson);
+            //final getGeojsondata = GetJsonData.fromJson(geojson);
 
-            // Need to do something in GeoJSONGoogleMapResult.
-            // Instance of 'GeoJSONGoogleMapsResult'
-            // print(layers);
-            // print(geojson);
-            // print(geojson.runtimeType);
+            final busRouteModel = busRouteModelFromJson(geojson);
+            //print(layers);
 
-            // final busRouteModel = busRouteModelFromJson(geojson);
+            List<String> NewList = [];
+            // for (int i = 0; i < busRouteModel.features.length; i++) {
+            //   print(busRouteModel.features[0].properties.routeShortName);
+            // }
 
-            // //List<Feature>
+            List<Feature> features = busRouteModel.features.toSet().toList();
+            // for (int i = 0; i < features.length; i++) {
+            //   print(features[i].properties.routeShortName);
+            //   print(features[i].geometry.coordinates);
+            // }
+
+            final uniqueString = features.toSet().toList();
+
+            List routeShortNameList = [];
+            List routeCoordinatesList = [];
+
+            for (int i = 0; i < uniqueString.length; i++) {
+              //print(uniqueString[i].properties.routeShortName);
+              routeShortNameList.add(uniqueString[i].properties.routeShortName);
+              routeCoordinatesList.add(uniqueString[i].geometry.coordinates);
+            }
+
+            final UniqueStrings = routeShortNameList.toSet().toList();
+
+            final UniqueCoordinatesList = routeCoordinatesList.toSet().toList();
+
+            IterableZip([UniqueStrings, UniqueCoordinatesList])
+                .map((valuePair) => "${valuePair[0]}, ${valuePair[1]}");
+
+            print(UniqueStrings);
+            print(UniqueCoordinatesList);
+
+            bool isChecked = false;
+            // print(features[1].properties.routeShortName);
+            // print(features[1].geometry.coordinates);
+
+            //List<Feature>
             // busRouteModel.features
             //     .forEach((element) => element.properties.routeShortName);
 
             //print(busRouteModel.features.runtimeType);
-            // busRouteModel.features.forEach((element) => element.geometry.forEach((element2)=> element2.coordinates));
+            //busRouteModel.features.forEach((element) => element.geometry);
 
-            // Map<String, dynamic> map = json.decode(geojson);
-            //  print(layers.markers.length);
+            //Map<String, dynamic> map = json.decode(geojson);
+            //print(layers.markers.length);
             return SafeArea(
                 child: Scaffold(
                     backgroundColor: Colors.transparent,
@@ -117,21 +138,8 @@ class BusScreenState extends State<BusScreen> {
                     body: GoogleMap(
                       mapType: MapType.normal,
                       //polygons: Set.of(layers.polygons),
-                      //polylines: Set<Polyline>.of(layers.polylines),
-                      polylines: polylines,
-                      // Here is the algorithm that I want to use it.
-                      // Collecting the 'route_short_name' into the list or dictionaray(?)
-                      // becuase there is a lot of redundancy in data and If the number of What I choose, then show on the map.
-                      //
-                      // How to using a Property in here?
+                      polylines: Set<Polyline>.of(layers.polylines),
 
-                      // Property: Set.of(layers.route_short_name),
-
-                      // markers: Set.of(layers.markers),
-
-                      markers: {
-                        homeMarker,
-                      },
                       initialCameraPosition: _kGooglePlex,
                       onMapCreated: (GoogleMapController controller) {
                         _controller.complete(controller);
@@ -146,20 +154,18 @@ class BusScreenState extends State<BusScreen> {
                           child: Text('Showing Bus, Tram list'
                               'Whenever click the bus, shows on the map'),
                         ),
-                        CheckboxListTile(
-                            title: Text('Bus 83'),
-                            value: isChecked, //unchecked
-                            onChanged: (bool? value) {
-                              setState(() {
-                                isChecked = value!;
-                              });
-                            }),
-                        ListTile(
-                          title: const Text('Bus 39A'),
-                          onTap: () {
-                            Navigator.pop(context);
-                          },
-                        ),
+                        Column(
+                          children: List.generate(
+                              UniqueStrings.length,
+                              (index) => CheckboxListTile(
+                                  title: Text(UniqueStrings[index]),
+                                  value: isChecked, //unchecked
+                                  onChanged: (bool? value) {
+                                    setState(() {
+                                      isChecked = value!;
+                                    });
+                                  })),
+                        )
                       ]),
                     )));
           } else {
