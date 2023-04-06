@@ -39,7 +39,7 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Get("/getBinsByRegion", server.GetBinsByRegion)
 	router.Get("/getPedestrianByTime", server.GetPedestrianDataByTime)
 
-	//go CollectDataTimerTask(server, logger2)
+	go CollectDataTimerTask(server, logger2)
 	//go InitCollectCsvTimerTask(server, logger2)
 	//go UpdateCsvTimerTask(server, logger2)
 	return server
