@@ -1,14 +1,16 @@
 part of network;
 
 class DioInterceptor extends Interceptor {
-  final services = LocalStorageServices();
+  final services = UserServices();
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
-    var token = services.read("Token");
-    options.headers['Token'];
+  void onRequest(
+      RequestOptions options, RequestInterceptorHandler handler) async {
+    var token = await services.getToken();
+    options.headers['Token'] = token;
     options.headers['Content-Type'] = 'application/json';
     debugPrint('Dio: the request url are: ${options.uri}');
+    debugPrint('Dio: the request headers are: ${options.headers}');
     super.onRequest(options, handler);
   }
 

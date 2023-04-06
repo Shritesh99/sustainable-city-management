@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sustainable_city_management/app/constans/localstorage_constants.dart';
 import '../constans/app_constants.dart';
 import '../dashboard/models/login_model.dart';
 import '../dashboard/models/roles_model.dart';
@@ -28,7 +29,6 @@ class UserServices {
       Response rsp = await dioClient.post(ApiPath.login, data: reqData);
       loginResp = LoginModel.fromJson(rsp.data);
     } on DioError catch (e) {
-      // debugPrint('DioError: failed to login $e');
       Response? errorRsp = e.response;
       var errorModel = ErrorModel.fromJson(errorRsp!.data);
       loginResp = LoginModel(
@@ -48,20 +48,27 @@ class UserServices {
       List<RolesDatum> rolesList = await getRolesFromApi();
       for (var role in rolesList) {
         if (role.roleId == loginResp.roleId) {
-          await localStorageServices.write("role", rolesDatumToJson(role));
-          await localStorageServices.write("auths", role.auths.join(","));
+          await localStorageServices.write(
+              LocalStorageKey.ROLE, rolesDatumToJson(role));
+          await localStorageServices.write(
+              LocalStorageKey.AUTHS, role.auths.join(","));
         }
       }
-      localStorageServices.write("user", loginModelToJson(loginResp));
+      localStorageServices.write(
+          LocalStorageKey.USER_INFO, loginModelToJson(loginResp));
     }
     return loginResp;
   }
 
   Future<void> logout() async {
-    var reqData = {'username': localStorageServices.read("username")};
-    Response rsp;
-    rsp = await dioClient.post(ApiPath.logout, data: reqData);
-    print(rsp.data);
+    var userInfo = await localStorageServices.read(LocalStorageKey.USER_INFO);
+    if (userInfo != null) {
+      LoginModel userModel = loginModelFromJson(userInfo);
+      var reqData = {'username': userModel.email};
+      Response rsp;
+      rsp = await dioClient.post(ApiPath.logout, data: reqData);
+      print(rsp.data);
+    }
     await localStorageServices.delete("user");
   }
 
@@ -83,14 +90,14 @@ class UserServices {
 
   //get user auth from local storage
   Future<List<String>?> getAuths() async {
-    var auths = await localStorageServices.read("auths");
+    var auths = await localStorageServices.read(LocalStorageKey.AUTHS);
     if (auths == null) return null;
     return auths.split(',');
   }
 
   //get user profile from local storage
   Future<LoginModel?> getUserProfile() async {
-    var profileStr = await localStorageServices.read("user");
+    var profileStr = await localStorageServices.read(LocalStorageKey.USER_INFO);
     if (profileStr == null) return null;
     LoginModel profile = loginModelFromJson(profileStr);
     return profile;
@@ -98,7 +105,7 @@ class UserServices {
 
   //get user role from local storage
   Future<RolesDatum?> getRole() async {
-    var roleStr = await localStorageServices.read("role");
+    var roleStr = await localStorageServices.read(LocalStorageKey.ROLE);
     if (roleStr == null) return null;
     RolesDatum role = rolesDatumFromJson(roleStr);
     return role;
@@ -106,12 +113,19 @@ class UserServices {
 
   //get token from from local storage
   Future<String?> getToken() async {
-    var token = await localStorageServices.read("Token");
-    var expires = await localStorageServices.read("expires");
-    var now = DateTime.now().millisecondsSinceEpoch / 1000;
-    if (expires == null || (double.parse(expires) < now)) {
-      await localStorageServices.deleteAll();
-      return null;
+    var userInfo = await localStorageServices.read(LocalStorageKey.USER_INFO);
+    var token;
+    var expires;
+
+    if (userInfo != null) {
+      LoginModel userModel = loginModelFromJson(userInfo);
+      token = userModel.token;
+      expires = userModel.expires;
+      var now = DateTime.now().millisecondsSinceEpoch / 1000;
+      if (expires == null || (expires < now)) {
+        await localStorageServices.deleteAll();
+        return null;
+      }
     }
     return token;
   }

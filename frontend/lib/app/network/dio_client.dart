@@ -1,7 +1,7 @@
 library network;
 
 import 'package:dio/dio.dart';
-import 'package:sustainable_city_management/app/services/local_storage_services.dart';
+import 'package:sustainable_city_management/app/services/user_services.dart';
 import 'package:flutter/foundation.dart';
 part './dio_interceptor.dart';
 
