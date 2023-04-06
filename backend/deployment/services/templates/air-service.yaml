@@ -33,6 +33,8 @@ spec:
           volumeMounts:
             - name: config
               mountPath: "/air-service"
+            - name: data
+              mountPath: "/data"
       restartPolicy: Always
       terminationGracePeriodSeconds: {{ .Values.service.TerminationGracePeriodSeconds }}
       volumes:
@@ -42,10 +44,12 @@ spec:
             items:
               - key: air-config.yaml
                 path: air-config.yaml
+        - name: data
+          persistentVolumeClaim:
+            claimName: {{ .Values.ml_cronjob_pedestrian.PVC }}-pvc
   selector:
     matchLabels:
       app: {{ .Values.air.Name }}
-
 ---
 
 apiVersion: v1

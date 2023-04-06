@@ -15,9 +15,14 @@ import os
 
 path = os.getcwd()
 
-df = pd.read_csv(path + '/internal/ml/pedestrian.csv', parse_dates=['Time'])
-df_original = df
+file_path = None
+if os.path.exists(path+'data/pedestrian.csv'):
+    file_path = path+'data/pedestrian.csv'
+else:
+    file_path = path+'pedestrian.csv'
 
+df = pd.read_csv(file_path, parse_dates=['Time'])
+df_original = df    
 df = df.set_index('Time')
 data = df.iloc[:, :]
 forecast_index = pd.date_range(start=df.index[-1], periods=25, freq='H')
@@ -33,4 +38,4 @@ forecast_df = pd.DataFrame(forecast, index=forecast_index, columns=df.columns)
 forecast_df.reset_index(drop=False, inplace=True)
 forecast_df = forecast_df.rename(columns={'index': 'Time'})
 merged_df = pd.concat([df_original, forecast_df], axis=0)
-merged_df.to_csv(path + '/internal/ml/pedestrian.csv', index=False)
+merged_df.to_csv(path+'data/pedestrian.csv', index=False)

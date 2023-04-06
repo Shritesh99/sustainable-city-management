@@ -1,0 +1,36 @@
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+     name: {{ .Values.ml_cronjob_pedestrian.Name }}
+spec:
+     schedule: "0 4 * * *"
+     jobTemplate:
+          spec:
+               template:
+                    spec:
+                         containers:
+                              - name: {{ .Values.ml_cronjob_pedestrian.Name }}
+                                image: {{ .Values.ml_cronjob_pedestrian.Image }}
+                                volumeMounts:
+                                     - name: data
+                                       mountPath: "/data"
+                         volumes:
+                              - name: data
+                                persistentVolumeClaim:
+                                     claimName: {{ .Values.ml_cronjob_pedestrian.PVC }}-pvc
+                         restartPolicy: OnFailure
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+     name: {{ .Values.ml_cronjob_air.Name }}
+spec:
+     schedule: "0 * * * *"
+     jobTemplate:
+          spec:
+               template:
+                    spec:
+                         containers:
+                              - name: {{ .Values.ml_cronjob_air.Name }}
+                                image: {{ .Values.ml_cronjob_air.Image }}
+                         restartPolicy: OnFailure

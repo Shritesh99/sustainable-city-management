@@ -12,9 +12,13 @@ proto:
 .PHONY: docker
 docker-build:
 	docker build . -t shritesh99/scm:latest
+	docker build -f ml/pedestrian/Dockerfile . -t shritesh99/scm-ml-pedestrian:latest
+	docker build -f ml/air/Dockerfile . -t shritesh99/scm-ml-air:latest
 
 docker-upload:
 	docker push shritesh99/scm:latest
+	docker push shritesh99/scm-ml-air:latest
+	docker push shritesh99/scm-ml-pedestrian:latest
 
 run-app:
 	go run cmd/main.go
@@ -50,6 +54,10 @@ install_certi:
 install_cretificate:
 	kubens cert-manager
 	kubectl apply -f deployment/certificate_issuer.yaml
+
+install_pvc:
+	kubens default
+	kubectl apply -f deployment/pvc.yaml	
 
 install_ingress:
 	kubens ingress-nginx

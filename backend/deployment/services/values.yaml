@@ -78,6 +78,15 @@ http:
 
 prometheusPath: /metrics
 
+ml_cronjob_pedestrian:
+     PVC: ml-cronjob
+     Name: ml-cronjob-pedestian
+     Image: shritesh99/scm-ml-pedestrian:latest
+
+ml_cronjob_air:
+     Name: ml-cronjob-air
+     Image: shritesh99/scm-ml-air:latest
+
 Honeybadger_API_KEY: hbp_bJUOVJUnJVjpirxdj6T9EZ3s4Pxech1eVRpL
 email: shritesh.sj99@sj@gmail.com
 db:
