@@ -5,7 +5,6 @@ import (
 	"encoding/csv"
 	db "github.com/Eytins/sustainable-city-management/backend/internal/db/sqlc"
 	"github.com/Eytins/sustainable-city-management/backend/internal/util"
-	"log"
 	"math/rand"
 	"os"
 	"path/filepath"
@@ -16,12 +15,15 @@ import (
 )
 
 func (server *GatewayService) SaveStationData() error {
-	stationIds := []string{"@13372", "@5112", "@13402", "@14650", "@14649", "@14651", "@14648", "@13412", "@13378", "@13405", "@13377", "@14765", "@14771", "@13379", "@13384", "@13404", "@13376", "@13374", "@13400", "@13363"}
+	stationIds := server.CollectAirStationIds()
 	for _, v := range stationIds {
 		resp := server.CollectAirStationData(v)
+		if resp.Data.Attributions == nil {
+			continue
+		}
 		arg := db.CreateAirDataParams{
 			StationID:   v,
-			StationName: string(resp.Data.City.Name),
+			StationName: resp.Data.City.Name,
 			Aqi:         float64(resp.Data.Aqi),
 			MeasureTime: resp.Data.Time.S,
 			Epa:         resp.Data.Attributions[0].Name,
@@ -39,13 +41,13 @@ func (server *GatewayService) SaveStationData() error {
 
 		_, err := server.store.CreateAirData(context.Background(), arg)
 		if err != nil {
-			log.Fatal(err)
+			server.log.Fatal(err)
 		}
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			log.Printf("Recovered from panic: %v\n", r)
-			log.Println("Panic occurred while creating air data param of db:", r)
+			server.log.Printf("Recovered from panic: %v\n", r)
+			server.log.Fatal("Panic occurred while creating air data param of db:", r)
 		}
 	}()
 	return nil
@@ -68,13 +70,13 @@ func (server *GatewayService) SaveNoiseData() error {
 
 		_, err := server.store.CreateNoiseData(context.Background(), arg)
 		if err != nil {
-			log.Fatal(err)
+			server.log.Fatal(err)
 		}
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			log.Printf("Recovered from panic: %v\n", r)
-			log.Println("Panic occurred while creating noise data param of db:", r)
+			server.log.Printf("Recovered from panic: %v\n", r)
+			server.log.Fatal("Panic occurred while creating noise data param of db:", r)
 		}
 	}()
 	return nil
@@ -93,13 +95,13 @@ func (server *GatewayService) SaveBusData() error {
 
 		_, err := server.store.CreateBusData(context.Background(), arg)
 		if err != nil {
-			log.Fatal(err)
+			server.log.Fatal(err)
 		}
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			log.Printf("Recovered from panic: %v\n", r)
-			log.Println("Panic occurred while creating bus data param of db:", r)
+			server.log.Printf("Recovered from panic: %v\n", r)
+			server.log.Fatal("Panic occurred while creating bus data param of db:", r)
 		}
 	}()
 	return nil
@@ -195,13 +197,13 @@ func (server *GatewayService) SaveBikeData() error {
 
 		_, err := server.store.CreateBikeData(context.Background(), arg)
 		if err != nil {
-			log.Fatal(err)
+			server.log.Fatal(err)
 		}
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			log.Printf("Recovered from panic: %v\n", r)
-			log.Println("Panic occurred while creating bike data param of db:", r)
+			server.log.Printf("Recovered from panic: %v\n", r)
+			server.log.Fatal("Panic occurred while creating bike data param of db:", r)
 		}
 	}()
 	return nil
@@ -241,13 +243,13 @@ func (server *GatewayService) SaveBinData() error {
 
 		_, err := server.store.CreateBinData(context.Background(), arg)
 		if err != nil {
-			log.Fatal(err)
+			server.log.Fatal(err)
 		}
 	}
 	defer func() {
 		if r := recover(); r != nil {
-			log.Printf("Recovered from panic: %v\n", r)
-			log.Println("Panic occurred while creating bin data param of db:", r)
+			server.log.Printf("Recovered from panic: %v\n", r)
+			server.log.Fatal("Panic occurred while creating bin data param of db:", r)
 		}
 	}()
 	return nil

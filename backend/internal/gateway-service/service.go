@@ -39,7 +39,7 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Get("/getBinsByRegion", server.GetBinsByRegion)
 	router.Get("/getPedestrianByTime", server.GetPedestrianDataByTime)
 
-	//go CollectDataTimerTask(server, logger2)
+	go CollectDataTimerTask(server, logger2)
 	//go InitCollectCsvTimerTask(server, logger2)
 	//go UpdateCsvTimerTask(server, logger2)
 	return server
@@ -51,27 +51,27 @@ func CollectDataTimerTask(server *GatewayService, logger logger.Logger) {
 		if err != nil {
 			logger.Fatal("Collect air station data failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 		err = server.SaveNoiseData()
 		if err != nil {
 			logger.Fatal("Collect noise data failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 		err = server.SaveBusData()
 		if err != nil {
 			logger.Fatal("Collect bus data failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 		err = server.SaveBikeData()
 		if err != nil {
 			logger.Fatal("Collect bike data failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 		err = server.ChangeBinStatus()
 		if err != nil {
 			logger.Fatal("Change bin status failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 	}
 }
 
@@ -99,9 +99,9 @@ func UpdateCsvTimerTask(server *GatewayService, logger logger.Logger) {
 	for {
 		// Predict pedestrian data for next day
 		_, path, _, _ := runtime.Caller(0)
-		venvPath := filepath.Join(path, "../../ml/venv/bin/activate")
+		//venvPath := filepath.Join(path, "../../ml/venv/bin/activate")
 		pyPath := filepath.Join(path, "../../ml/ase_ml.py")
-		cmd := exec.Command("bash", "-c", "source "+venvPath+" && python3 "+pyPath)
+		cmd := exec.Command("python " + pyPath)
 		//cmd := exec.Command("python3", pyPath)
 		_, err := cmd.Output()
 		if err != nil {
