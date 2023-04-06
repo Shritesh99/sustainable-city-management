@@ -5,10 +5,48 @@ import (
 	"fmt"
 	"io"
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/Eytins/sustainable-city-management/backend/internal/util"
 )
+
+type STATIONIDS struct {
+	Status string `json:"status"`
+	Data   []struct {
+		Lat     float64 `json:"lat"`
+		Lon     float64 `json:"lon"`
+		Uid     int     `json:"uid"`
+		Aqi     string  `json:"aqi"`
+		Station struct {
+			Name string    `json:"name"`
+			Time time.Time `json:"time"`
+		} `json:"station"`
+	} `json:"data"`
+}
+
+func (server *GatewayService) CollectAirStationIds() []string {
+	resp, err := http.Get("https://api.waqi.info/v2/map/bounds?latlng=53.18061072703691,-6.541516888469041,53.63075570447332,-6.044739424917903&networks=all&token=" + server.cfg.DB.AIR_TOKEN)
+	if err != nil {
+		server.log.Fatal("Collect air station ids failed")
+	}
+	var stationIds STATIONIDS
+	err = json.NewDecoder(resp.Body).Decode(&stationIds)
+	if err != nil {
+		server.log.Fatal("Collect air station ids failed")
+	}
+	var res []string
+	for _, station := range stationIds.Data {
+		res = append(res, "@"+strconv.Itoa(station.Uid))
+	}
+	defer func(Body io.ReadCloser) {
+		err := Body.Close()
+		if err != nil {
+			server.log.Fatal("Collect air station ids failed")
+		}
+	}(resp.Body)
+	return res
+}
 
 type AQIDATA struct {
 	Status string `json:"status"`

@@ -41,7 +41,7 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 
 	go CollectDataTimerTask(server, logger2)
 	//go InitCollectCsvTimerTask(server, logger2)
-	go UpdateCsvTimerTask(server, logger2)
+	//go UpdateCsvTimerTask(server, logger2)
 	return server
 }
 
@@ -51,27 +51,27 @@ func CollectDataTimerTask(server *GatewayService, logger logger.Logger) {
 		if err != nil {
 			logger.Fatal("Collect air station data failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 		err = server.SaveNoiseData()
 		if err != nil {
 			logger.Fatal("Collect noise data failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 		err = server.SaveBusData()
 		if err != nil {
 			logger.Fatal("Collect bus data failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 		err = server.SaveBikeData()
 		if err != nil {
 			logger.Fatal("Collect bike data failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 		err = server.ChangeBinStatus()
 		if err != nil {
 			logger.Fatal("Change bin status failed")
 		}
-		time.Sleep(15 * time.Minute)
+		time.Sleep(12 * time.Minute)
 	}
 }
 

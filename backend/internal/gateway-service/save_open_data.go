@@ -16,12 +16,15 @@ import (
 )
 
 func (server *GatewayService) SaveStationData() error {
-	stationIds := []string{"@13372", "@5112", "@13402", "@14650", "@14649", "@14651", "@14648", "@13412", "@13378", "@13405", "@13377", "@14765", "@14771", "@13379", "@13384", "@13404", "@13376", "@13374", "@13400", "@13363"}
+	stationIds := server.CollectAirStationIds()
 	for _, v := range stationIds {
 		resp := server.CollectAirStationData(v)
+		if resp.Data.Attributions == nil {
+			continue
+		}
 		arg := db.CreateAirDataParams{
 			StationID:   v,
-			StationName: string(resp.Data.City.Name),
+			StationName: resp.Data.City.Name,
 			Aqi:         float64(resp.Data.Aqi),
 			MeasureTime: resp.Data.Time.S,
 			Epa:         resp.Data.Attributions[0].Name,
