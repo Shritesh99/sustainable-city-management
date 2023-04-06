@@ -68,11 +68,7 @@ func validateUser(c *fiber.Ctx, server *GatewayService) (error, bool) {
 	tknStr := c.GetReqHeaders()["Token"]
 	var authorization = server.Authenticate(tknStr)
 	if !authorization {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Invalid Token",
-			"user":  nil,
-		}), true
+		return util.ErrorResponse400(c, fiber.StatusInternalServerError, "Invalid Token"), true
 	}
 	return nil, false
 }
@@ -93,10 +89,7 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 	loginInfo, err := server.store.GetLoginDetail(context.Background(), argCheck.Email)
 
 	if loginInfo.Email == req.Username {
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   "This email has been registered!",
-		})
+		return util.ErrorResponse400(c, fiber.StatusInternalServerError, "Email already registered")
 	}
 
 	arg := db.CreateUserParams{
@@ -107,10 +100,7 @@ func (server *GatewayService) Register(c *fiber.Ctx) error {
 	user, err := server.store.CreateUser(context.Background(), arg)
 	if err != nil {
 		fmt.Printf("[CreateUser] %s\n", err)
-		return c.Status(fiber.StatusFailedDependency).JSON(fiber.Map{
-			"error": true,
-			"msg":   "User could not be created",
-		})
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 
 	argLogin := db.CreateLoginDetailParams{
@@ -148,18 +138,12 @@ func (server *GatewayService) Login(c *fiber.Ctx) error {
 	loginDetails, err := server.store.GetLoginDetail(context.Background(), arg.Email)
 	if err != nil {
 		server.log.Infof("Email not registered %v", err)
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": true,
-			"msg":   "This email is not registered! Please check your email id or Register your email",
-		})
+		return util.ErrorResponse400(c, fiber.StatusInternalServerError, "Email not registered")
 	}
 
 	err = bcrypt.CompareHashAndPassword([]byte(loginDetails.Password), []byte(req.Password))
 	if err != nil {
-		return c.Status(fiber.StatusUnauthorized).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Incorrect Password",
-		})
+		return util.ErrorResponse400(c, fiber.StatusInternalServerError, "Incorrect Password")
 	}
 
 	expirationTime := time.Now().Add(5 * time.Hour)
@@ -174,10 +158,7 @@ func (server *GatewayService) Login(c *fiber.Ctx) error {
 	tokenString, err := token.SignedString(jwtKey)
 	if err != nil {
 		server.log.Infof("Error while creating token : %v", err)
-		return c.Status(fiber.StatusFailedDependency).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Error while creating token",
-		})
+		return util.ErrorResponse400(c, fiber.StatusInternalServerError, "Error while creating token")
 	}
 	userInfo, err := server.store.GetUser(context.Background(), loginDetails.UserID)
 	return c.JSON(fiber.Map{
@@ -212,19 +193,13 @@ func (server *GatewayService) GetProfile(c *fiber.Ctx) error {
 	loginDetails, err := server.store.GetLoginDetail(context.Background(), arg.Email)
 	if err != nil {
 		server.log.Infof("Email not found: %v", err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   "This email is not registered! Please check your email id or Register your email",
-		})
+		return util.ErrorResponse400(c, fiber.StatusInternalServerError, "Email not found")
 	}
 
 	userInfo, err := server.store.GetUser(context.Background(), loginDetails.UserID)
 	if err != nil {
 		server.log.Infof("User not found: %v", err)
-		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
-			"error": true,
-			"msg":   "User not found",
-		})
+		return util.ErrorResponse400(c, fiber.StatusInternalServerError, "User not found")
 	}
 	return c.JSON(fiber.Map{
 		"error":     false,
@@ -286,17 +261,12 @@ func (server *GatewayService) validateUser(c *fiber.Ctx) error {
 	loginDetails, err := server.store.GetLoginDetail(context.Background(), arg.Email)
 	if err != nil {
 		server.log.Infof("Email not registered: %v", err)
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": true,
-			"msg":   "This email is not registered! Please check your email id or Register your email",
-		})
+		return util.ErrorResponse400(c, fiber.StatusInternalServerError, "Email not registered")
 	}
 
 	if loginDetails.Password != arg.Password {
-		return c.Status(fiber.StatusOK).JSON(fiber.Map{
-			"error": true,
-			"msg":   "Incorrect Password",
-		})
+		server.log.Infof("Incorrect Password: %v", err)
+		return util.ErrorResponse400(c, fiber.StatusInternalServerError, "Incorrect Password")
 	}
 	return c.JSON(fiber.Map{
 		"error":        false,
@@ -329,11 +299,7 @@ func (server *GatewayService) GetAirStation(c *fiber.Ctx) error {
 	client := pb_air.NewAirServiceClient(server.airClientConn)
 	resp, err := client.GetAirStation(context.Background(), &pb_air.AirIdRequest{StationId: stationId})
 	if err != nil {
-		server.log.Errorf("%v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err,
-			"msg":   "Data not found",
-		})
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 
 	return c.JSON(fiber.Map{
@@ -352,11 +318,8 @@ func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
 	req := pb_air.NilRequest{}
 	resp, err := client.GetDetailedAirData(context.Background(), &req)
 	if err != nil {
-		server.log.Errorf("%v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err,
-			"msg":   "Data not found",
-		})
+		server.log.Infof("Error fetching GetServiceClient: %v", err)
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(fiber.Map{
 		"aqi_data": resp,
@@ -368,11 +331,8 @@ func (server *GatewayService) GetDetailedAirData(c *fiber.Ctx) error {
 func (server *GatewayService) GetRoles(c *fiber.Ctx) error {
 	roles, err := server.store.GetRoles(context.Background())
 	if err != nil {
-		server.log.Errorf("%v", err)
-		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{
-			"error": err,
-			"msg":   "Data not found",
-		})
+		server.log.Infof("Error fetching roles: %v", err)
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 
 	var res []RoleStruct
@@ -401,11 +361,7 @@ func (server *GatewayService) GetNoiseData(c *fiber.Ctx) error {
 	client := pb_air.NewAirServiceClient(server.airClientConn)
 	resp, err := client.GetNoiseData(context.Background(), &pb_air.NilRequest{})
 	if err != nil {
-		server.log.Errorf("%v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err,
-			"msg":   "Data not found",
-		})
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(fiber.Map{
 		"noise_data": resp,
@@ -423,11 +379,7 @@ func (server *GatewayService) GetBusDataByRouteId(c *fiber.Ctx) error {
 	req := pb_bus.RouteIdRequest{Id: c.Query("id")}
 	resp, err := client.GetBusDataByRouteId(context.Background(), &req)
 	if err != nil {
-		server.log.Errorf("%v", err)
-		return c.Status(fiber.StatusNoContent).JSON(fiber.Map{
-			"error": err,
-			"msg":   "Data not found",
-		})
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(fiber.Map{
 		"bus_data": resp,
@@ -445,11 +397,7 @@ func (server *GatewayService) GetBikes(c *fiber.Ctx) error {
 	req := pb_bike.GetBikesRequest{}
 	resp, err := client.GetBikes(context.Background(), &req)
 	if err != nil {
-		server.log.Errorf("%v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err,
-			"msg":   "Data not found",
-		})
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(fiber.Map{
 		"bike_data": resp,
@@ -467,11 +415,7 @@ func (server *GatewayService) GetAllBins(c *fiber.Ctx) error {
 	req := pb_bin.GetAllBinsRequest{}
 	resp, err := client.GetAllBins(context.Background(), &req)
 	if err != nil {
-		server.log.Errorf("%v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err,
-			"msg":   "Data not found",
-		})
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(fiber.Map{
 		"bin_data": resp,
@@ -489,11 +433,7 @@ func (server *GatewayService) GetBinsByRegion(c *fiber.Ctx) error {
 	req := pb_bin.GetBinsByRegionRequest{Region: int32(c.QueryInt("region"))}
 	resp, err := client.GetBinsByRegion(context.Background(), &req)
 	if err != nil {
-		server.log.Errorf("%v", err)
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err,
-			"msg":   "Data not found",
-		})
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(fiber.Map{
 		"bin_data": resp,
@@ -511,10 +451,8 @@ func (server *GatewayService) GetPedestrianDataByTime(c *fiber.Ctx) error {
 	req := pb_air.TimeRequest{Time: int64(c.QueryInt("time"))}
 	resp, err := client.GetPedestrianDataByTime(context.Background(), &req)
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{
-			"error": err.Error(),
-			"msg":   "Data not found",
-		})
+		server.log.Errorf("%v", err)
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(fiber.Map{
 		"pedestrian_data": resp,
