@@ -41,7 +41,7 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 
 	go CollectDataTimerTask(server, logger2)
 	//go InitCollectCsvTimerTask(server, logger2)
-	//go UpdateCsvTimerTask(server, logger2)
+	go UpdateCsvTimerTask(server, logger2)
 	return server
 }
 
@@ -99,9 +99,9 @@ func UpdateCsvTimerTask(server *GatewayService, logger logger.Logger) {
 	for {
 		// Predict pedestrian data for next day
 		_, path, _, _ := runtime.Caller(0)
-		venvPath := filepath.Join(path, "../../ml/venv/bin/activate")
+		//venvPath := filepath.Join(path, "../../ml/venv/bin/activate")
 		pyPath := filepath.Join(path, "../../ml/ase_ml.py")
-		cmd := exec.Command("bash", "-c", "source "+venvPath+" && python3 "+pyPath)
+		cmd := exec.Command("python " + pyPath)
 		//cmd := exec.Command("python3", pyPath)
 		_, err := cmd.Output()
 		if err != nil {
