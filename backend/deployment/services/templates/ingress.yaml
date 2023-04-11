@@ -17,20 +17,20 @@ spec:
         - host: scm-backend.rxshri99.live
           http:
             paths:
-                - path: /
-                  pathType: Prefix
-                  backend:
-                    service:
-                        name: {{ .Values.gateway.Name }}-service
-                        port:
-                            name: http
                 - path: /status
                   pathType: Prefix
                   backend:
                     service:
                         name: {{ .Values.gateway.Name }}-service
                         port:
-                            name: healthcheck            
+                            name: healthcheck
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: {{ .Values.gateway.Name }}-service
+                        port:
+                            name: http          
         - host: scm-prometheus.rxshri99.live
           http:
             paths:
