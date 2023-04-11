@@ -34,7 +34,7 @@ spec:
             - name: config
               mountPath: "/air-service"
             - name: data
-              mountPath: "/data"
+              mountPath: "/internal/ml"
       restartPolicy: Always
       terminationGracePeriodSeconds: {{ .Values.service.TerminationGracePeriodSeconds }}
       volumes:
