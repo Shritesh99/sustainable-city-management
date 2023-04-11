@@ -5,11 +5,11 @@ metadata:
     annotations:
         kubernetes.io/ingress.class: nginx
         cert-manager.io/cluster-issuer: letsencrypt-prod
-        nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
     tls:
     - hosts:
       - scm-backend.rxshri99.live
+      - scm-status.rxshri99.live
       - scm-prometheus.rxshri99.live
       - scm-grafana.rxshri99.live
       secretName: scm-tls
@@ -17,13 +17,6 @@ spec:
         - host: scm-backend.rxshri99.live
           http:
             paths:
-                - path: /status
-                  pathType: Prefix
-                  backend:
-                    service:
-                        name: {{ .Values.gateway.Name }}-service
-                        port:
-                            name: healthcheck
                 - path: /
                   pathType: Prefix
                   backend:
@@ -31,6 +24,16 @@ spec:
                         name: {{ .Values.gateway.Name }}-service
                         port:
                             name: http          
+        - host: scm-status.rxshri99.live
+          http:
+            paths:
+                - path: /
+                  pathType: Prefix
+                  backend:
+                    service:
+                        name: {{ .Values.gateway.Name }}-service
+                        port:
+                            name: healthcheck
         - host: scm-prometheus.rxshri99.live
           http:
             paths:
