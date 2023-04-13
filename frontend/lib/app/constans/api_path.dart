@@ -3,10 +3,11 @@ part of app_constants;
 /// all endpoint api
 class ApiPath {
   static const _BASE_URL = "https://scm-backend.rxshri99.live";
-  static const _LOCALHOST = "http://127.0.0.1";
+  static const _LOCALHOST = "http://127.0.0.1:8000";
 
   static const login = "$_BASE_URL/gateway/login";
   static const logout = "$_BASE_URL/gateway/logout";
+  static const register = "$_BASE_URL/gateway/register";
   static const getRoles = "$_BASE_URL/gateway/getRoles";
 
   static const bike =
