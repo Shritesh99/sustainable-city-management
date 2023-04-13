@@ -27,6 +27,20 @@ type AqiDatum struct {
 	Longitude   float64   `json:"longitude"`
 }
 
+type AqiForecast struct {
+	StationID    string    `json:"station_id"`
+	ForecastTime time.Time `json:"forecast_time"`
+	Aqi          float64   `json:"aqi"`
+	Pm25         float64   `json:"pm25"`
+	Pm10         float64   `json:"pm10"`
+	Ozone        float64   `json:"ozone"`
+	No2          float64   `json:"no2"`
+	So2          float64   `json:"so2"`
+	Co           float64   `json:"co"`
+	Latitude     float64   `json:"latitude"`
+	Longitude    float64   `json:"longitude"`
+}
+
 type BikeDatum struct {
 	ID              int32     `json:"id"`
 	ContractName    string    `json:"contract_name"`

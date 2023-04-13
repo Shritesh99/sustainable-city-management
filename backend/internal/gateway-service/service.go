@@ -38,6 +38,7 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	router.Get("/getAllBins", server.GetAllBins)
 	router.Get("/getBinsByRegion", server.GetBinsByRegion)
 	router.Get("/getPedestrianByTime", server.GetPedestrianDataByTime)
+	router.Get("/getPredictedAirData", server.GetPredictedAirData)
 
 	go CollectDataTimerTask(server, logger2)
 	//go InitCollectCsvTimerTask(server, logger2)
