@@ -51,9 +51,11 @@ bin:
 service:
      LivenessProbePath: /live
      ReadinessProbePath: /ready
-     InitialDelaySeconds: 60
+     InitialDelaySeconds: 15
+     GatewayInitialDelaySeconds: 60
      PeriodSeconds: 60
      TerminationGracePeriodSeconds: 600
+     FailureThreshold: 3
 
 logging:
      level: info

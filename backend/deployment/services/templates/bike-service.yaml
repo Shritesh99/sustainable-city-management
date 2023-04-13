@@ -27,6 +27,22 @@ spec:
             - containerPort: {{.Values.bike.HealthcheckPort }}
               name: healthcheck
               hostPort: {{.Values.bike.HealthcheckPort }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.service.LivenessProbePath }}
+              port: {{ .Values.bike.HealthcheckPort }}
+            initialDelaySeconds: {{ .Values.service.InitialDelaySeconds }}
+            periodSeconds: {{ .Values.service.PeriodSeconds }}
+            timeoutSeconds: {{ .Values.service.PeriodSeconds }}
+            failureThreshold: {{ .Values.service.FailureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.service.ReadinessProbePath }}
+              port: {{ .Values.bike.HealthcheckPort }}
+            initialDelaySeconds: {{ .Values.service.InitialDelaySeconds }}
+            periodSeconds: {{ .Values.service.PeriodSeconds }}
+            timeoutSeconds: {{ .Values.service.PeriodSeconds }}
+            failureThreshold: {{ .Values.service.FailureThreshold }}
           env:
             - name: CONFIG_PATH
               value: "/bike-service/bike-config.yaml"

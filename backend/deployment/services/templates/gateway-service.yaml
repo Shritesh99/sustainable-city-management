@@ -30,6 +30,22 @@ spec:
           volumeMounts:
             - name: config
               mountPath: "/gateway-service"
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.service.LivenessProbePath }}
+              port: {{ .Values.gateway.HealthcheckPort }}
+            initialDelaySeconds: {{ .Values.service.GatewayInitialDelaySeconds }}
+            periodSeconds: {{ .Values.service.PeriodSeconds }}
+            timeoutSeconds: {{ .Values.service.PeriodSeconds }}
+            failureThreshold: {{ .Values.service.FailureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.service.ReadinessProbePath }}
+              port: {{ .Values.gateway.HealthcheckPort }}
+            initialDelaySeconds: {{ .Values.service.GatewayInitialDelaySeconds }}
+            periodSeconds: {{ .Values.service.PeriodSeconds }}
+            timeoutSeconds: {{ .Values.service.PeriodSeconds }}
+            failureThreshold: {{ .Values.service.FailureThreshold }}
       restartPolicy: Always
       terminationGracePeriodSeconds: {{ .Values.service.TerminationGracePeriodSeconds }}
       volumes:

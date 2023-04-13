@@ -27,6 +27,22 @@ spec:
             - containerPort: {{.Values.air.HealthcheckPort }}
               name: healthcheck
               hostPort: {{.Values.air.HealthcheckPort }}
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.service.LivenessProbePath }}
+              port: {{ .Values.air.HealthcheckPort }}
+            initialDelaySeconds: {{ .Values.service.InitialDelaySeconds }}
+            periodSeconds: {{ .Values.service.PeriodSeconds }}
+            timeoutSeconds: {{ .Values.service.PeriodSeconds }}
+            failureThreshold: {{ .Values.service.FailureThreshold }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.service.ReadinessProbePath }}
+              port: {{ .Values.air.HealthcheckPort }}
+            initialDelaySeconds: {{ .Values.service.InitialDelaySeconds }}
+            periodSeconds: {{ .Values.service.PeriodSeconds }}
+            timeoutSeconds: {{ .Values.service.PeriodSeconds }}
+            failureThreshold: {{ .Values.service.FailureThreshold }}
           env:
             - name: CONFIG_PATH
               value: "/air-service/air-config.yaml"
