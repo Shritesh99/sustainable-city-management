@@ -43,6 +43,7 @@ func NewGatewayService(router fiber.Router, store *db.SQLStore, cfg *config.Conf
 	go CollectDataTimerTask(server, logger2)
 	//go InitCollectCsvTimerTask(server, logger2)
 	//go UpdateCsvTimerTask(server, logger2)
+	//go UpdateAirDataTimerTask(server, logger2)
 	return server
 }
 
@@ -115,5 +116,27 @@ func UpdateCsvTimerTask(server *GatewayService, logger logger.Logger) {
 			logger.Fatal("Update csv data failed")
 		}
 		time.Sleep(24 * time.Hour)
+	}
+}
+
+func UpdateAirDataTimerTask(server *GatewayService, logger logger.Logger) {
+	for {
+		// Predict pedestrian data for next day
+		_, path, _, _ := runtime.Caller(0)
+		//venvPath := filepath.Join(path, "../../ml/venv/bin/activate")
+		pyPath := filepath.Join(path, "../../ml/air.py")
+		cmd := exec.Command("python " + pyPath)
+		//cmd := exec.Command("python3", pyPath)
+		_, err := cmd.Output()
+		if err != nil {
+			logger.Fatal("Predict csv data failed: ", err)
+		}
+
+		// Update pedestrian data
+		err = server.UpdatePedestrianData()
+		if err != nil {
+			logger.Fatal("Update csv data failed")
+		}
+		time.Sleep(1 * time.Hour)
 	}
 }
