@@ -26,6 +26,7 @@ type AirServiceClient interface {
 	GetDetailedAirData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetDetailedAirDataResponse, error)
 	GetNoiseData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetNoiseDataResponse, error)
 	GetPedestrianDataByTime(ctx context.Context, in *TimeRequest, opts ...grpc.CallOption) (*GetPedestrianDataResponse, error)
+	GetPredictedAirData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetPredictedAirDataResponse, error)
 }
 
 type airServiceClient struct {
@@ -72,6 +73,15 @@ func (c *airServiceClient) GetPedestrianDataByTime(ctx context.Context, in *Time
 	return out, nil
 }
 
+func (c *airServiceClient) GetPredictedAirData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetPredictedAirDataResponse, error) {
+	out := new(GetPredictedAirDataResponse)
+	err := c.cc.Invoke(ctx, "/AirService/GetPredictedAirData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AirServiceServer is the server API for AirService service.
 // All implementations must embed UnimplementedAirServiceServer
 // for forward compatibility
@@ -80,6 +90,7 @@ type AirServiceServer interface {
 	GetDetailedAirData(context.Context, *NilRequest) (*GetDetailedAirDataResponse, error)
 	GetNoiseData(context.Context, *NilRequest) (*GetNoiseDataResponse, error)
 	GetPedestrianDataByTime(context.Context, *TimeRequest) (*GetPedestrianDataResponse, error)
+	GetPredictedAirData(context.Context, *NilRequest) (*GetPredictedAirDataResponse, error)
 	mustEmbedUnimplementedAirServiceServer()
 }
 
@@ -98,6 +109,9 @@ func (UnimplementedAirServiceServer) GetNoiseData(context.Context, *NilRequest) 
 }
 func (UnimplementedAirServiceServer) GetPedestrianDataByTime(context.Context, *TimeRequest) (*GetPedestrianDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPedestrianDataByTime not implemented")
+}
+func (UnimplementedAirServiceServer) GetPredictedAirData(context.Context, *NilRequest) (*GetPredictedAirDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPredictedAirData not implemented")
 }
 func (UnimplementedAirServiceServer) mustEmbedUnimplementedAirServiceServer() {}
 
@@ -184,6 +198,24 @@ func _AirService_GetPedestrianDataByTime_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AirService_GetPredictedAirData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NilRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AirServiceServer).GetPredictedAirData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/AirService/GetPredictedAirData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AirServiceServer).GetPredictedAirData(ctx, req.(*NilRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AirService_ServiceDesc is the grpc.ServiceDesc for AirService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -206,6 +238,10 @@ var AirService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPedestrianDataByTime",
 			Handler:    _AirService_GetPedestrianDataByTime_Handler,
+		},
+		{
+			MethodName: "GetPredictedAirData",
+			Handler:    _AirService_GetPredictedAirData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

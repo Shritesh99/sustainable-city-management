@@ -460,3 +460,22 @@ func (server *GatewayService) GetPedestrianDataByTime(c *fiber.Ctx) error {
 		"msg":             "success",
 	})
 }
+
+func (server *GatewayService) GetPredictedAirData(c *fiber.Ctx) error {
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
+	client := pb_air.NewAirServiceClient(server.airClientConn)
+	req := pb_air.NilRequest{}
+	resp, err := client.GetPredictedAirData(context.Background(), &req)
+	if err != nil {
+		server.log.Errorf("%v", err)
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
+	}
+	return c.JSON(fiber.Map{
+		"predicted_data": resp,
+		"error":          false,
+		"msg":            "success",
+	})
+}

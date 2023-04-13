@@ -108,4 +108,31 @@ func (server *AirService) GetPedestrianDataByTime(ctx context.Context, in *pb.Ti
 	}, err
 }
 
+func (server *AirService) GetPredictedAirData(ctx context.Context, in *pb.NilRequest) (*pb.GetPredictedAirDataResponse, error) {
+	data, err := server.store.GetForecastAirData(ctx)
+	if err != nil {
+		server.log.Infof("Error fetching Predicted Air data: %v", err)
+		return &pb.GetPredictedAirDataResponse{}, err
+	}
+	var res []*pb.InsideGetPredictedAirDataResponse
+	for _, each := range data {
+		res = append(res, &pb.InsideGetPredictedAirDataResponse{
+			StationID:    each.StationID,
+			ForecastTime: each.ForecastTime.Unix(),
+			Aqi:          float32(each.Aqi),
+			Pm25:         float32(each.Pm25),
+			Pm10:         float32(each.Pm10),
+			Ozone:        float32(each.Ozone),
+			No2:          float32(each.No2),
+			So2:          float32(each.So2),
+			Co:           float32(each.Co),
+			Latitude:     float32(each.Latitude),
+			Longitude:    float32(each.Longitude),
+		})
+	}
+	return &pb.GetPredictedAirDataResponse{
+		PredictedAirData: res,
+	}, err
+}
+
 // lauda lasson functions

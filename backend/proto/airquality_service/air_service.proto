@@ -7,6 +7,7 @@ service AirService {
   rpc GetDetailedAirData (NilRequest) returns (GetDetailedAirDataResponse) {}
   rpc GetNoiseData (NilRequest) returns (GetNoiseDataResponse) {}
   rpc GetPedestrianDataByTime (TimeRequest) returns (GetPedestrianDataResponse) {}
+  rpc GetPredictedAirData (NilRequest) returns (GetPredictedAirDataResponse) {}
 }
 
 message NilRequest {
@@ -79,4 +80,22 @@ message InsideGetPedestrianDataResponse {
   float longitude = 4;
   int64 time = 5;
   int32 amount = 6;
+}
+
+message GetPredictedAirDataResponse {
+  repeated InsideGetPredictedAirDataResponse predictedAirData = 1;
+}
+
+message InsideGetPredictedAirDataResponse {
+  string stationID = 1;
+  int64 forecastTime = 2;
+  float aqi = 3;
+  float pm25 = 4;
+  float pm10 = 5;
+  float ozone = 6;
+  float no2 = 7;
+  float so2 = 8;
+  float co = 9;
+  float latitude = 10;
+  float longitude = 11;
 }
