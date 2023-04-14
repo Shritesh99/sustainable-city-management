@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bike_station_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
-import 'package:sustainable_city_management/app/services/bike_services.dart';
 import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
+import 'package:sustainable_city_management/app/services/bike_services.dart';
 
-class BikeScreen extends StatelessWidget {
-  const BikeScreen({super.key});
+class SecondPage extends StatelessWidget {
+  const SecondPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -157,11 +157,11 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
+      title: "Second Page",
       // appBar: AppBar(
       //   title: const Text('Dublinbikes'),
       //   backgroundColor: const Color.fromRGBO(29, 22, 70, 1),
       // ),
-      title: "Dublinbikes",
       body: Stack(
         children: <Widget>[
           GoogleMap(

@@ -5,6 +5,8 @@ import 'package:sustainable_city_management/app/dashboard/views/screens/air_scre
 import 'package:sustainable_city_management/app/dashboard/views/screens/bike_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/login_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/bin_truck_screen.dart';
+import 'package:sustainable_city_management/app/dashboard/views/screens/new_dashboard.dart';
+import 'package:sustainable_city_management/app/shared_components/split_view.dart';
 
 part 'app_routes.dart';
 
@@ -22,7 +24,8 @@ class AppPages {
   static final routes = [
     GetPage(
       name: _Paths.dashboard,
-      page: () => const DashboardScreen(),
+      // page: () => const DashboardScreen(),
+      page: () => NewDashboardScreen(),
     ),
     GetPage(name: _Paths.login, page: () => LoginScreen()),
     GetPage(
