@@ -1,22 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:sustainable_city_management/app/constans/app_constants.dart';
-
-class ProfileCardData {
-  final ImageProvider photo;
-  final String name;
-  final String email;
-  final String role;
-
-  const ProfileCardData({
-    required this.photo,
-    required this.name,
-    required this.email,
-    required this.role,
-  });
-}
+import 'package:sustainable_city_management/app/dashboard/models/profile_model.dart';
 
 class ProfileCard extends StatelessWidget {
   const ProfileCard({
@@ -123,7 +109,10 @@ class _SubtitleText extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       data,
-      style: TextStyle(fontSize: 11, color: kFontColorPallets[2]),
+      style: TextStyle(
+          fontSize: 11,
+          fontWeight: FontWeight.w400,
+          color: kFontColorPallets[1]),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
     );

@@ -1,93 +1,76 @@
 import 'app/config/routes/app_pages.dart';
-import 'app/config/themes/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'app/services/user_services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'app/shared_components/app_menu.dart';
-import 'app/shared_components/split_view.dart';
-
-import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:get/get.dart';
 import 'package:flex_color_scheme/flex_color_scheme.dart';
 
 void main() {
-  runApp(const ProviderScope(child: MyApp()));
+  runApp(const MyApp());
 }
 
-final tokenProvider = FutureProvider<String?>((ref) async {
-  return await UserServices().loadToken();
-});
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
 
-class InitialRouteHandler extends ConsumerWidget {
-  const InitialRouteHandler({
-    Key? key,
-  }) : super(key: key);
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ref.watch(tokenProvider).when(
-          data: (String? token) {
-            if (token != null) {
-              Get.offNamed(AppPages.dashboard);
-            } else {
-              Get.offNamed(AppPages.login);
-            }
-            return const SizedBox();
-          },
-          loading: () => const Center(child: CircularProgressIndicator()),
-          error: (error, stackTrace) => Center(child: Text('Error: $error')),
-        );
+  Widget build(BuildContext context) {
+    return _MyApp();
   }
 }
 
-class MyApp extends ConsumerWidget {
-  const MyApp({
-    Key? key,
-  }) : super(key: key);
+class _MyApp extends StatefulWidget {
+  @override
+  _MyAppState createState() => _MyAppState();
+}
+
+class _MyAppState extends State<_MyApp> {
+  bool isLogin = false;
+
+  final userServices = UserServices();
+
+  void checkLogin() async {
+    await userServices.loadToken().then((token) => setState(() {
+          if (token != '') isLogin = true;
+        }));
+  }
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return GetMaterialApp(
-      debugShowCheckedModeBanner: false,
-      title: 'Sustainable City Management',
-      // theme: AppTheme.basic,
+  void initState() {
+    checkLogin();
+    super.initState();
+  }
 
-      theme: FlexThemeData.light(
-        scheme: FlexScheme.tealM3,
-        surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
-        blendLevel: 7,
-        subThemesData: const FlexSubThemesData(
-          blendOnLevel: 10,
-          blendOnColors: false,
-          useM2StyleDividerInM3: true,
+  @override
+  Widget build(BuildContext context) {
+    return ProviderScope(
+      child: GetMaterialApp(
+        debugShowCheckedModeBanner: false,
+        title: 'Sustainable City Management',
+        theme: FlexThemeData.light(
+          colors: const FlexSchemeColor(
+            primary: Color(0xff00296b),
+            primaryContainer: Color(0xffa0c2ed),
+            secondary: Color(0xffd26900),
+            secondaryContainer: Color(0xffffd270),
+            tertiary: Color(0xff5c5c95),
+            tertiaryContainer: Color(0xffc8dbf8),
+            appBarColor: Color(0xffc8dcf8),
+            error: null,
+          ),
+          surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
+          blendLevel: 7,
+          subThemesData: const FlexSubThemesData(
+            blendOnLevel: 10,
+            blendOnColors: false,
+            useM2StyleDividerInM3: true,
+          ),
+          visualDensity: FlexColorScheme.comfortablePlatformDensity,
+          useMaterial3: true,
+          swapLegacyOnMaterial3: true,
         ),
-        visualDensity: FlexColorScheme.comfortablePlatformDensity,
-        useMaterial3: true,
-        swapLegacyOnMaterial3: true,
-        // To use the playground font, add GoogleFonts package and uncomment
-        // fontFamily: GoogleFonts.notoSans().fontFamily,
+        getPages: AppPages.routes,
+        initialRoute: isLogin ? AppPages.dashboard : AppPages.login,
       ),
-      darkTheme: FlexThemeData.dark(
-        scheme: FlexScheme.tealM3,
-        surfaceMode: FlexSurfaceMode.levelSurfacesLowScaffold,
-        blendLevel: 13,
-        subThemesData: const FlexSubThemesData(
-          blendOnLevel: 20,
-          useM2StyleDividerInM3: true,
-        ),
-        visualDensity: FlexColorScheme.comfortablePlatformDensity,
-        useMaterial3: true,
-        swapLegacyOnMaterial3: true,
-        // To use the Playground font, add GoogleFonts package and uncomment
-        // fontFamily: GoogleFonts.notoSans().fontFamily,
-      ),
-
-      // Use dark or light theme based on system setting.
-      themeMode: ThemeMode.system,
-
-      getPages: AppPages.routes,
-      home: const InitialRouteHandler(),
     );
   }
 }

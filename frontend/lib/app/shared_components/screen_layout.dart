@@ -12,8 +12,8 @@ class SplitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const int breakpoint = 600;
-    const double menuWidth = 240;
+    const int breakpoint = 650;
+    const double menuWidth = 300;
 
     final screenWidth = MediaQuery.of(context).size.width;
     if (screenWidth >= breakpoint) {
@@ -24,7 +24,7 @@ class SplitView extends StatelessWidget {
             width: menuWidth,
             child: menu,
           ),
-          Container(width: 0.5, color: Colors.black),
+          Container(width: 0.5, color: Colors.grey[350]),
           Expanded(child: content),
         ],
       );

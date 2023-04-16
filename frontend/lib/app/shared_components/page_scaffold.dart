@@ -24,7 +24,7 @@ class PageScaffold extends StatelessWidget {
         // 3. add a non-null leading argument if we have a drawer
         leading: hasDrawer
             ? IconButton(
-                icon: Icon(Icons.menu),
+                icon: const Icon(Icons.menu),
                 // 4. open the drawer if we have one
                 onPressed:
                     hasDrawer ? () => ancestorScaffold!.openDrawer() : null,
@@ -32,7 +32,9 @@ class PageScaffold extends StatelessWidget {
             : null,
         title: Text(title),
         actions: actions,
+        toolbarHeight: 78,
         automaticallyImplyLeading: false,
+        shape: Border(bottom: BorderSide(color: Colors.grey[350]!, width: 0.5)),
       ),
       body: body,
       floatingActionButton: floatingActionButton,

@@ -1,11 +1,10 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:sustainable_city_management/app/config/routes/app_pages.dart';
 import 'package:sustainable_city_management/app/constans/app_constants.dart';
 import 'package:sustainable_city_management/app/constans/auth_constants.dart';
+import 'package:sustainable_city_management/app/dashboard/models/profile_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/air_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/bike_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/bin_truck_screen.dart';
@@ -16,10 +15,10 @@ import 'package:sustainable_city_management/app/shared_components/selection_butt
 
 // a map of ("page name", WidgetBuilder) pairs
 final _availablePages = <String, WidgetBuilder>{
-  'AirScreen': (_) => const AirScreen(),
-  'BikeScreen': (_) => const BikeScreen(),
-  'BinTruckScreen': (_) => const BinTruckScreen(),
-  'BusScreen': (_) => const BusScreen(),
+  MenuLable.air: (_) => const AirScreen(),
+  MenuLable.bike: (_) => const BikeScreen(),
+  MenuLable.binTruck: (_) => const BinTruckScreen(),
+  MenuLable.bus: (_) => const BusScreen(),
 };
 
 // make this a `StateProvider` so we can change its value
@@ -71,7 +70,7 @@ class AppMenu extends ConsumerWidget {
                       child: Column(
                         children: [
                           Padding(
-                            padding: const EdgeInsets.all(kSpacing / 2),
+                            padding: const EdgeInsets.all(5),
                             child: ProfileCard(
                               data: data,
                             ),
@@ -172,29 +171,3 @@ class AppMenu extends ConsumerWidget {
         );
   }
 }
-
-// class PageListTile extends StatelessWidget {
-//   const PageListTile({
-//     Key? key,
-//     this.selectedPageName,
-//     required this.pageName,
-//     this.onPressed,
-//   }) : super(key: key);
-//   final String? selectedPageName;
-//   final String pageName;
-//   final VoidCallback? onPressed;
-//   @override
-//   Widget build(BuildContext context) {
-//     return ListTile(
-//       // show a check icon if the page is currently selected
-//       // note: we use Opacity to ensure that all tiles have a leading widget
-//       // and all the titles are left-aligned
-//       leading: Opacity(
-//         opacity: selectedPageName == pageName ? 1.0 : 0.0,
-//         child: Icon(Icons.check),
-//       ),
-//       title: Text(pageName),
-//       onTap: onPressed,
-//     );
-//   }
-// }

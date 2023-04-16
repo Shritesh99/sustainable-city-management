@@ -1,8 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:sustainable_city_management/app/constans/localstorage_constants.dart';
-import 'package:sustainable_city_management/app/shared_components/profile_card.dart';
+import 'package:sustainable_city_management/app/dashboard/models/profile_model.dart';
 import '../constans/app_constants.dart';
 import '../dashboard/models/login_model.dart';
 import '../dashboard/models/roles_model.dart';
@@ -92,24 +91,13 @@ class UserServices {
     return rolesList;
   }
 
-  //get user auth from local storage
-  Future<List<String>?> getAuths() async {
-    var auths = await localStorageServices.read(LocalStorageKey.AUTHS);
-    return auths.split(',');
-  }
-
+  //load user auth from local storage
   Future<List<String>> loadAuths() async {
     var auths = await localStorageServices.read(LocalStorageKey.AUTHS);
     return auths.split(',');
   }
 
-  //get user profile from local storage
-  Future<LoginModel?> getUserProfile() async {
-    var profileStr = await localStorageServices.read(LocalStorageKey.USER_INFO);
-    LoginModel profile = loginModelFromJson(profileStr);
-    return profile;
-  }
-
+  //load user profile from local storage
   Future<ProfileCardData> loadProfileCardData() async {
     var profileStr = await localStorageServices.read(LocalStorageKey.USER_INFO);
     var roleStr = await localStorageServices.read(LocalStorageKey.ROLE);
