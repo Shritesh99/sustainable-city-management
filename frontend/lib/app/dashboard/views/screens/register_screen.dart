@@ -3,6 +3,7 @@ import 'package:sustainable_city_management/app/dashboard/models/user.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:sustainable_city_management/app/constans/app_constants.dart';
 // import 'package:get/get.dart';
 
 class RegistrationScreen extends StatefulWidget {
@@ -41,7 +42,7 @@ class LoginPageState extends State<RegistrationScreen> {
 
       // Send a POST request to the API with the user data
       final response = await http.post(
-        Uri.parse('https://scm-backend.rxshri99.live/gateway/register'),
+        Uri.parse(ApiPath.register),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(_user.toJson()),
       );
@@ -112,8 +113,7 @@ class LoginPageState extends State<RegistrationScreen> {
 
   Future<void> _fetchRolesData() async {
     try {
-      final response = await http
-          .get(Uri.parse('https://scm-backend.rxshri99.live/gateway/getRoles'));
+      final response = await http.get(Uri.parse(ApiPath.getRoles));
       final responseData = json.decode(response.body);
       if (responseData['error'] == false) {
         setState(() {

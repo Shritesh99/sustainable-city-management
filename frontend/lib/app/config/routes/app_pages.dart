@@ -25,7 +25,7 @@ class AppPages {
     GetPage(
       name: _Paths.dashboard,
       // page: () => const DashboardScreen(),
-      page: () => NewDashboardScreen(),
+      page: () => const NewDashboardScreen(),
     ),
     GetPage(name: _Paths.login, page: () => LoginScreen()),
     GetPage(

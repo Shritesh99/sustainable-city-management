@@ -24,6 +24,7 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
   final double _zoom = 15.0;
   List<BikeStationModel> bikeStations = <BikeStationModel>[];
   final Set<Marker> _markers = {};
+  BikeServices bikeService = BikeServices();
 
   CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
@@ -41,7 +42,6 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
   }
 
   void getBikeStation() async {
-    BikeServices bikeService = BikeServices();
     await bikeService.listBikeStation().then((value) => setState(() {
           bikeStations = value;
         }));

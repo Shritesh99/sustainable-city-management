@@ -43,7 +43,6 @@ class ProfileCard extends StatelessWidget {
                 Row(
                   children: [
                     _SubtitleText(data.role),
-                    // _ReleaseTimeText()
                   ],
                 )
               ],
@@ -127,29 +126,6 @@ class _SubtitleText extends StatelessWidget {
       style: TextStyle(fontSize: 11, color: kFontColorPallets[2]),
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-    );
-  }
-}
-
-class _ReleaseTimeText extends StatelessWidget {
-  const _ReleaseTimeText(this.date, {Key? key}) : super(key: key);
-
-  final DateTime date;
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      decoration: BoxDecoration(
-        color: kNotifColor,
-        borderRadius: BorderRadius.circular(10),
-      ),
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2.5),
-      child: Text(
-        DateFormat.yMMMd().format(date),
-        style: const TextStyle(fontSize: 9, color: Colors.white),
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-      ),
     );
   }
 }

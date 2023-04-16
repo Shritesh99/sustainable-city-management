@@ -1,12 +1,10 @@
-import 'dart:convert';
-
 class AqiData {
   AqiData({
     required this.id,
     required this.stationId,
     required this.stationName,
     required this.aqi,
-    required this.measureTime,
+    this.measureTime,
     required this.epa,
     this.pm25,
     this.pm10,
@@ -14,8 +12,8 @@ class AqiData {
     this.no2,
     this.so2,
     this.co,
-    required this.insertTime,
-    required this.updateTime,
+    this.insertTime,
+    this.updateTime,
     required this.latitude,
     required this.longitude,
   });
@@ -24,18 +22,30 @@ class AqiData {
   String stationId;
   String stationName;
   int aqi;
-  DateTime measureTime;
+  DateTime? measureTime;
   String epa;
   int? pm25;
   int? pm10;
-  int? ozone;
-  int? no2;
-  int? so2;
-  int? co;
-  int insertTime;
-  int updateTime;
+  double? ozone;
+  double? no2;
+  double? so2;
+  double? co;
+  int? insertTime;
+  int? updateTime;
   double latitude;
   double longitude;
+
+  String getIndices() {
+    StringBuffer buf = StringBuffer();
+    buf.write("Pollutants: ");
+    buf.write(pm25 == null ? "" : "pm25: $pm25 ");
+    buf.write(pm10 == null ? "" : "pm10: $pm10 ");
+    buf.write(ozone == null ? "" : "ozone: $ozone ");
+    buf.write(no2 == null ? "" : "no2: $no2 ");
+    buf.write(so2 == null ? "" : "so2: $so2 ");
+    buf.write(co == null ? "" : "co: $co");
+    return buf.toString();
+  }
 
   factory AqiData.fromJson(Map<String, dynamic> json) => AqiData(
         id: json["id"],
@@ -61,7 +71,7 @@ class AqiData {
         "stationId": stationId,
         "stationName": stationName,
         "aqi": aqi,
-        "measureTime": measureTime.toIso8601String(),
+        "measureTime": measureTime?.toIso8601String(),
         "epa": epa,
         "pm25": pm25,
         "pm10": pm10,

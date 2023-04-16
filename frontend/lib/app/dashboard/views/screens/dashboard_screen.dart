@@ -10,7 +10,7 @@ import 'package:sustainable_city_management/app/shared_components/chatting_card.
 
 import 'package:sustainable_city_management/app/shared_components/responsive_builder.dart';
 
-import 'package:sustainable_city_management/app/shared_components/project_card.dart';
+import 'package:sustainable_city_management/app/shared_components/profile_card.dart';
 import 'package:sustainable_city_management/app/shared_components/selection_button.dart';
 import 'package:sustainable_city_management/app/shared_components/today_text.dart';
 

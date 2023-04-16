@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 import 'package:sustainable_city_management/app/constans/app_constants.dart';
+import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
 
 class BinTruckScreen extends StatefulWidget {
   const BinTruckScreen({Key? key}) : super(key: key);
@@ -65,7 +66,8 @@ class BinTruckScreenState extends State<BinTruckScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    return PageScaffold(
+      title: "Bin Truck",
       body: GoogleMap(
         mapType: MapType.normal,
         // onTap: (LatLng latLng) {
