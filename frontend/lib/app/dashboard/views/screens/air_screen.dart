@@ -6,6 +6,7 @@ import 'package:sustainable_city_management/app/dashboard/models/air_index_model
 import 'package:sustainable_city_management/app/dashboard/models/air_station_model.dart';
 import 'package:sustainable_city_management/app/services/air_services.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
+import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
 import 'package:sustainable_city_management/app/shared_components/text_card.dart';
 
 class AirScreen extends StatelessWidget {
@@ -218,11 +219,8 @@ class _AirMapScreenState extends State<_AirMapScreen> {
   @override
   Widget build(BuildContext context) {
     // addMarker();
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Air Quality'),
-        backgroundColor: const Color.fromRGBO(29, 22, 70, 1),
-      ),
+    return PageScaffold(
+      title: 'Air Quality',
       body: Stack(
         children: <Widget>[
           GoogleMap(

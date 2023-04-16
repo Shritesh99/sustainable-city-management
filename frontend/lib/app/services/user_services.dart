@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:sustainable_city_management/app/constans/localstorage_constants.dart';
+import 'package:sustainable_city_management/app/dashboard/models/profile_model.dart';
 import '../constans/app_constants.dart';
 import '../dashboard/models/login_model.dart';
 import '../dashboard/models/roles_model.dart';
@@ -24,10 +25,12 @@ class UserServices {
   Future<LoginModel?> login(String username, String password) async {
     var reqData = {'username': username, 'password': password};
     LoginModel? loginResp = null;
+    debugPrint("login reqData: $reqData");
 
     try {
       Response rsp = await dioClient.post(ApiPath.login, data: reqData);
       loginResp = LoginModel.fromJson(rsp.data);
+      debugPrint("login rsp: $rsp");
     } on DioError catch (e) {
       Response? errorRsp = e.response;
       var errorModel = ErrorModel.fromJson(errorRsp!.data);
@@ -62,7 +65,7 @@ class UserServices {
 
   Future<void> logout() async {
     var userInfo = await localStorageServices.read(LocalStorageKey.USER_INFO);
-    if (userInfo != null) {
+    if (userInfo != '') {
       LoginModel userModel = loginModelFromJson(userInfo);
       var reqData = {'username': userModel.email};
       Response rsp;
@@ -88,36 +91,47 @@ class UserServices {
     return rolesList;
   }
 
-  //get user auth from local storage
-  Future<List<String>?> getAuths() async {
+  //load user auth from local storage
+  Future<List<String>> loadAuths() async {
     var auths = await localStorageServices.read(LocalStorageKey.AUTHS);
-    if (auths == null) return null;
     return auths.split(',');
   }
 
-  //get user profile from local storage
-  Future<LoginModel?> getUserProfile() async {
+  //load user profile from local storage
+  Future<ProfileCardData> loadProfileCardData() async {
     var profileStr = await localStorageServices.read(LocalStorageKey.USER_INFO);
-    if (profileStr == null) return null;
-    LoginModel profile = loginModelFromJson(profileStr);
-    return profile;
+    var roleStr = await localStorageServices.read(LocalStorageKey.ROLE);
+
+    RolesDatum role = rolesDatumFromJson(roleStr);
+    LoginModel userProfile = loginModelFromJson(profileStr);
+
+    String username = '${userProfile.firstName}, ${userProfile.lastName}';
+    String roleName = role.roleName;
+    String email = userProfile.email;
+
+    debugPrint("username: $username, roleName: $roleName, email: $email");
+
+    return ProfileCardData(
+        photo: const AssetImage(ImageRasterPath.avatarDefault),
+        name: username,
+        email: email,
+        role: roleName);
   }
 
   //get user role from local storage
   Future<RolesDatum?> getRole() async {
     var roleStr = await localStorageServices.read(LocalStorageKey.ROLE);
-    if (roleStr == null) return null;
     RolesDatum role = rolesDatumFromJson(roleStr);
     return role;
   }
 
   //get token from from local storage
-  Future<String?> getToken() async {
+  Future<String?> loadToken() async {
     var userInfo = await localStorageServices.read(LocalStorageKey.USER_INFO);
     var token;
     var expires;
 
-    if (userInfo != null) {
+    if (userInfo != '') {
       LoginModel userModel = loginModelFromJson(userInfo);
       token = userModel.token;
       expires = userModel.expires;

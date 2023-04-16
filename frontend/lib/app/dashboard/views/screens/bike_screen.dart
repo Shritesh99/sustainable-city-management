@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bike_station_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/services/bike_services.dart';
+import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
 
 class BikeScreen extends StatelessWidget {
   const BikeScreen({super.key});
@@ -155,11 +156,12 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Dublinbikes'),
-        backgroundColor: const Color.fromRGBO(29, 22, 70, 1),
-      ),
+    return PageScaffold(
+      // appBar: AppBar(
+      //   title: const Text('Dublinbikes'),
+      //   backgroundColor: const Color.fromRGBO(29, 22, 70, 1),
+      // ),
+      title: "Dublinbikes",
       body: Stack(
         children: <Widget>[
           GoogleMap(

@@ -6,7 +6,7 @@ class DioInterceptor extends Interceptor {
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    var token = await services.getToken();
+    var token = await services.loadToken();
     options.headers['Token'] = token;
     options.headers['Content-Type'] = 'application/json';
     debugPrint('Dio: the request url are: ${options.uri}');

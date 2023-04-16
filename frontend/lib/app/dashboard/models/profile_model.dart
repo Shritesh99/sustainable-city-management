@@ -1,12 +1,12 @@
-part of dashboard;
+import 'package:flutter/material.dart';
 
-class _Profile {
+class ProfileCardData {
   final ImageProvider photo;
   final String name;
   final String email;
   final String role;
 
-  const _Profile({
+  const ProfileCardData({
     required this.photo,
     required this.name,
     required this.email,

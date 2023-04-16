@@ -17,8 +17,8 @@ class LocalStorageServices {
     await storage.write(key: key, value: value);
   }
 
-  Future<String?> read(String key) async {
-    var value = await storage.read(key: key);
+  Future<String> read(String key) async {
+    var value = await storage.read(key: key) ?? '';
     return value;
   }
 

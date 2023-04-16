@@ -33,21 +33,20 @@ class LoginScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
-                border: Border.all(
-                  color: Colors.white,
-                ),
+                // color: Colors.grey[200],
+                // border: Border.all(
+                //   color: Colors.white,
+                // ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
                 padding: const EdgeInsets.only(left: 20.0),
                 child: TextField(
-                    style: TextStyle(color: Colors.purple),
                     controller: _emailController,
                     decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Email',
-                        hintStyle: TextStyle(color: Colors.grey))),
+                      border: InputBorder.none,
+                      hintText: 'Email',
+                    )),
               ),
             ),
           ),
@@ -58,22 +57,21 @@ class LoginScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(horizontal: 25.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
-                border: Border.all(
-                  color: Colors.white,
-                ),
+                // color: Colors.grey[200],
+                // border: Border.all(
+                //   color: Colors.white,
+                // ),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Padding(
                 padding: const EdgeInsets.only(left: 20.0),
                 child: TextField(
-                    style: TextStyle(color: Colors.purple),
                     controller: _passwordController,
                     obscureText: true,
                     decoration: InputDecoration(
-                        border: InputBorder.none,
-                        hintText: 'Password',
-                        hintStyle: TextStyle(color: Colors.grey))),
+                      border: InputBorder.none,
+                      hintText: 'Password',
+                    )),
               ),
             ),
           ),
@@ -107,17 +105,28 @@ class LoginScreen extends StatelessWidget {
                       barrierDismissible: false,
                       context: context,
                       builder: (context) => AlertDialog(
-                            backgroundColor: Colors.white,
-                            title: Text("Login Failed",
-                                style: TextStyle(color: Colors.deepPurple)),
+                            title: Text(
+                              "Login Failed",
+                            ),
                             content: Text(
                               result.msg,
                               style: TextStyle(color: Colors.black),
                             ),
                           )).then((val) {});
-                  await Future.delayed(Duration(seconds: 4));
+                  await Future.delayed(Duration(seconds: 2));
                   Navigator.of(context).pop(true);
                 } else {
+                  showDialog(
+                    context: context,
+                    builder: (context) {
+                      return const Center(
+                        child: CircularProgressIndicator(),
+                      );
+                    },
+                  );
+
+                  await Future.delayed(Duration(seconds: 2));
+                  Navigator.pop(context);
                   Get.toNamed(Routes.dashboard);
                 }
               }

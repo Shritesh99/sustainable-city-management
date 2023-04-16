@@ -5,6 +5,8 @@ import 'package:sustainable_city_management/app/dashboard/views/screens/air_scre
 import 'package:sustainable_city_management/app/dashboard/views/screens/bike_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/login_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/bin_truck_screen.dart';
+import 'package:sustainable_city_management/app/dashboard/views/screens/dashboard_screen.dart';
+import 'package:sustainable_city_management/app/shared_components/screen_layout.dart';
 
 part 'app_routes.dart';
 
