@@ -18,14 +18,14 @@ void main() {
     // Check if the Password TextField is present
     expect(find.byType(TextField).last, findsOneWidget);
 
-    // Check if the "Create Account?" text is present
-    expect(find.text('Create Account?'), findsOneWidget);
+    // Check if the "SignUp?" text is present
+    expect(find.text('SignUp?'), findsOneWidget);
 
     // Check if the Login button is present
     expect(find.text('Login'), findsOneWidget);
 
     // Test navigation to RegistrationScreen
-    await tester.tap(find.text('Create Account?'));
+    await tester.tap(find.text('SignUp?'));
     await tester.pumpAndSettle();
 
     expect(find.byType(RegistrationScreen), findsOneWidget);

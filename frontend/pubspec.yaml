@@ -52,7 +52,6 @@ flutter:
     - assets/images/bin_truck/.
     - assets/images/air_scale/.
     - assets/DublinBus1.geojson
-    - assets/coin.json
     - assets/wave.json
   fonts:
     - family: Poppins
