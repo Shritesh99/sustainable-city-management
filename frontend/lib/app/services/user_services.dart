@@ -1,8 +1,9 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:sustainable_city_management/app/constans/localstorage_constants.dart';
+import 'package:sustainable_city_management/app/constants/localstorage_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/profile_model.dart';
-import '../constans/app_constants.dart';
+import 'package:sustainable_city_management/app/dashboard/models/user.dart';
+import '../constants/app_constants.dart';
 import '../dashboard/models/login_model.dart';
 import '../dashboard/models/roles_model.dart';
 import 'local_storage_services.dart';
@@ -20,6 +21,23 @@ class UserServices {
     return _userServices;
   }
   UserServices._internal();
+
+  // register
+  Future<ErrorModel> register(User user) async {
+    var reqData = user.toJson();
+
+    debugPrint("register reqData: $reqData");
+    ErrorModel registerResp = ErrorModel(error: true, msg: "An error occurred");
+    try {
+      Response rsp = await dioClient.post(ApiPath.register, data: reqData);
+      registerResp = ErrorModel.fromJson(rsp.data);
+      debugPrint("register rsp: $rsp");
+    } on DioError catch (e) {
+      debugPrint('Error: failed to register $e');
+    }
+
+    return registerResp;
+  }
 
   // login
   Future<LoginModel?> login(String username, String password) async {

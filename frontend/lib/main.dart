@@ -1,3 +1,6 @@
+import 'package:google_fonts/google_fonts.dart';
+import 'package:sustainable_city_management/app/controller/ui_controller.dart';
+
 import 'app/config/routes/app_pages.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -37,6 +40,7 @@ class _MyAppState extends State<_MyApp> {
   @override
   void initState() {
     checkLogin();
+    Get.put(UIController());
     super.initState();
   }
 
@@ -67,6 +71,7 @@ class _MyAppState extends State<_MyApp> {
           visualDensity: FlexColorScheme.comfortablePlatformDensity,
           useMaterial3: true,
           swapLegacyOnMaterial3: true,
+          fontFamily: GoogleFonts.ubuntuCondensed().fontFamily,
         ),
         getPages: AppPages.routes,
         initialRoute: isLogin ? AppPages.dashboard : AppPages.login,

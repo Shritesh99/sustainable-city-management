@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:percent_indicator/percent_indicator.dart';
-import 'package:sustainable_city_management/app/constans/app_constants.dart';
+import 'package:sustainable_city_management/app/constants/app_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/profile_model.dart';
 
 class ProfileCard extends StatelessWidget {

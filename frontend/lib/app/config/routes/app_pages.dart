@@ -3,9 +3,11 @@ import 'package:sustainable_city_management/app/dashboard/views/screens/dashboar
 import 'package:sustainable_city_management/app/dashboard/views/screens/bus_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/air_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/bike_screen.dart';
-import 'package:sustainable_city_management/app/dashboard/views/screens/login_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/bin_truck_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/dashboard_screen.dart';
+import 'package:sustainable_city_management/app/dashboard/views/screens/login_screen.dart';
+import 'package:sustainable_city_management/app/dashboard/views/screens/signup_screen.dart';
+import 'package:sustainable_city_management/app/dashboard/views/screens/register_screen.dart';
 import 'package:sustainable_city_management/app/shared_components/screen_layout.dart';
 
 part 'app_routes.dart';
@@ -26,7 +28,8 @@ class AppPages {
       name: _Paths.dashboard,
       page: () => const DashboardScreen(),
     ),
-    GetPage(name: _Paths.login, page: () => LoginScreen()),
+    GetPage(name: _Paths.login, page: () => const LoginScreen()),
+    GetPage(name: _Paths.register, page: () => const SignUpView()),
     GetPage(
       name: _Paths.bike,
       page: () => const BikeScreen(),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sustainable_city_management/app/constants/app_constants.dart';
 
 class SplitView extends StatelessWidget {
   const SplitView({
@@ -12,11 +13,10 @@ class SplitView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const int breakpoint = 650;
     const double menuWidth = 300;
 
     final screenWidth = MediaQuery.of(context).size.width;
-    if (screenWidth >= breakpoint) {
+    if (screenWidth >= LargeScreenWidth) {
       // wide screen: menu on the left, content on the right
       return Row(
         children: [

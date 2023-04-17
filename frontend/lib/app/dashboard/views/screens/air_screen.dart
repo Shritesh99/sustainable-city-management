@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sustainable_city_management/app/constans/aqi_level_constants.dart';
+import 'package:sustainable_city_management/app/constants/aqi_level_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/air_index_model.dart';
 import 'package:sustainable_city_management/app/dashboard/models/air_station_model.dart';
 import 'package:sustainable_city_management/app/services/air_services.dart';

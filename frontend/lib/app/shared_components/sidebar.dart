@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:get/get.dart';
 import 'package:sustainable_city_management/app/config/routes/app_pages.dart';
-import 'package:sustainable_city_management/app/constans/auth_constants.dart';
+import 'package:sustainable_city_management/app/constants/auth_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/profile_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/air_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/bike_screen.dart';

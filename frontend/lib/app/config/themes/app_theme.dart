@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:sustainable_city_management/app/constans/app_constants.dart';
+import 'package:sustainable_city_management/app/constants/app_constants.dart';
 
 /// all custom application theme
 class AppTheme {
