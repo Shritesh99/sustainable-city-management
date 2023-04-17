@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:sustainable_city_management/app/dashboard/views/screens/register_screen.dart';
+import 'package:get/get.dart';
+import 'package:sustainable_city_management/app/controller/ui_controller.dart';
+import 'package:sustainable_city_management/app/dashboard/views/screens/signup_screen.dart';
 
 void main() {
   testWidgets(
       'RegistrationScreen renders form correctly and fields are displayed correctly',
       (WidgetTester tester) async {
+    Get.lazyPut(() => UIController());
     // Build the RegistrationScreen widget
-    await tester.pumpWidget(const MaterialApp(home: RegistrationScreen()));
-
+    await tester.pumpWidget(const MaterialApp(home: SignUpScreen()));
+    await tester.pumpAndSettle();
     // Verify that the form is rendered
     expect(find.byType(Form), findsOneWidget);
 
@@ -30,9 +33,9 @@ void main() {
         find.widgetWithText(TextFormField, 'Repeat Password'), findsOneWidget);
 
     // Verify that the Role dropdown is rendered
-    expect(find.text('Role'), findsOneWidget);
+    expect(find.text('Select Your Role'), findsOneWidget);
 
     // Verify that the Sign Up button is rendered
-    expect(find.widgetWithText(ElevatedButton, 'Sign up'), findsOneWidget);
+    expect(find.widgetWithText(ElevatedButton, 'Sign Up'), findsOneWidget);
   });
 }

@@ -74,16 +74,6 @@ class _LoginScreenState extends State<LoginScreen> {
             ),
           ),
         ),
-
-        // Expanded(
-        //   child: Image.asset(
-        //     ImageRasterPath.coverImg,
-        //     height: size.height * 0.2,
-        //     width: double.infinity,
-        //     fit: BoxFit.fill,
-        //   ),
-        // ),
-
         SizedBox(width: size.width * 0.06),
         Expanded(
           flex: 5,

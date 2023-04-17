@@ -37,8 +37,10 @@ dependencies:
   lottie: ^2.3.2
   google_fonts: ^4.0.3
   awesome_dialog: ^3.0.2
-  
+
 dev_dependencies:
+  test: ^1.21.7
+  mockito: ^5.4.0
   json_serializable: ^6.6.0
   build_runner: ^2.3.3
   flutter_test:
