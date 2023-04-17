@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bike_station_model.dart';
 import 'package:flutter/foundation.dart';
-import '../constans/app_constants.dart';
+import '../constants/app_constants.dart';
 
 class BikeServices {
   static final BikeServices _bikeServices = BikeServices._internal();

@@ -3,7 +3,7 @@ import 'package:sustainable_city_management/app/dashboard/models/user.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/login_screen.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:sustainable_city_management/app/constans/app_constants.dart';
+import 'package:sustainable_city_management/app/constants/app_constants.dart';
 // import 'package:get/get.dart';
 
 class RegistrationScreen extends StatefulWidget {

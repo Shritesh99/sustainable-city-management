@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
-import 'package:sustainable_city_management/app/constans/app_constants.dart';
+import 'package:sustainable_city_management/app/constants/app_constants.dart';
 import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
 
 class BinTruckScreen extends StatefulWidget {

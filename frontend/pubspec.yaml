@@ -34,6 +34,9 @@ dependencies:
   flutter_secure_storage: ^8.0.0
   flutter_riverpod: ^2.3.3
   flex_color_scheme: ^7.0.1
+  lottie: ^2.3.2
+  google_fonts: ^4.0.3
+  awesome_dialog: ^3.0.2
   
 dev_dependencies:
   json_serializable: ^6.6.0
@@ -49,6 +52,8 @@ flutter:
     - assets/images/bin_truck/.
     - assets/images/air_scale/.
     - assets/DublinBus1.geojson
+    - assets/coin.json
+    - assets/wave.json
   fonts:
     - family: Poppins
       fonts:
