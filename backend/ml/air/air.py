@@ -4,6 +4,11 @@ import numpy as np
 import pandas as pd
 import psycopg2
 from statsmodels.tsa.arima.model import ARIMA
+import os
+import time
+
+os.environ['TZ'] = 'Europe/London'
+time.tzset()
 
 conn = psycopg2.connect(
     database='masterdb',
