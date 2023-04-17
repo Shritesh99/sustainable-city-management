@@ -10,14 +10,14 @@ import 'package:sustainable_city_management/app/services/user_services.dart';
 import 'package:sustainable_city_management/app/shared_components/custom_dialog.dart';
 // import 'package:get/get.dart';
 
-class SignUpView extends StatefulWidget {
-  const SignUpView({Key? key}) : super(key: key);
+class SignUpScreen extends StatefulWidget {
+  const SignUpScreen({Key? key}) : super(key: key);
 
   @override
-  State<SignUpView> createState() => _SignUpViewState();
+  State<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignUpViewState extends State<SignUpView> {
+class _SignUpScreenState extends State<SignUpScreen> {
   TextEditingController firstNameController = TextEditingController();
   TextEditingController lastNameController = TextEditingController();
   TextEditingController emailController = TextEditingController();
@@ -475,7 +475,7 @@ class _SignUpViewState extends State<SignUpView> {
           }
         },
         child: Text(
-          'Sign up',
+          'Sign Up',
           style: kLoginButtonStyle(),
         ),
       ),
