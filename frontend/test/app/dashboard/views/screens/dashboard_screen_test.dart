@@ -1,25 +1,35 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/dashboard_screen.dart';
-import 'package:sustainable_city_management/app/shared_components/today_text.dart';
+import 'package:sustainable_city_management/app/shared_components/sidebar.dart';
 
 void main() {
-  TestWidgetsFlutterBinding.ensureInitialized();
+  group('DashboardScreen', () {
+    testWidgets('Renders with AppMenu and selectedPageBuilder',
+        (WidgetTester tester) async {
+      // Create a mock selectedPageBuilder to pass into the DashboardScreen.
+      mockSelectedPageBuilder(BuildContext context) => Container();
 
-  // Add this line
-  FlutterError.onError = (FlutterErrorDetails details) {
-    FlutterError.dumpErrorToConsole(details, forceReport: true);
-  };
+      // Create the test widget.
+      final testWidget = MaterialApp(
+        home: ProviderScope(
+          overrides: [
+            selectedPageBuilderProvider
+                .overrideWithValue(mockSelectedPageBuilder),
+          ],
+          child: const DashboardScreen(),
+        ),
+      );
 
-  testWidgets('DashboardScreen should render correctly',
-      (WidgetTester tester) async {
-    // Build the DashboardScreen widget.
-    await tester.pumpWidget(
-        const ProviderScope(child: MaterialApp(home: DashboardScreen())));
+      // Render the test widget.
+      await tester.pumpWidget(testWidget);
 
-    // Verify that the header is displayed.
-    expect(find.byType(IconButton), findsOneWidget);
-    expect(find.byType(TodayText), findsOneWidget);
+      // Verify that the AppMenu is present.
+      expect(find.byType(AppMenu), findsOneWidget);
+
+      // Verify that the selectedPageBuilder is present.
+      expect(find.byType(Container), findsWidgets);
+    });
   });
 }

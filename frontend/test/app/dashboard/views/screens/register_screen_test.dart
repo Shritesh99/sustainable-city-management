@@ -3,7 +3,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/register_screen.dart';
 
 void main() {
-  testWidgets('RegistrationScreen renders form and its fields correctly',
+  testWidgets(
+      'RegistrationScreen renders form correctly and fields are displayed correctly',
       (WidgetTester tester) async {
     // Build the RegistrationScreen widget
     await tester.pumpWidget(const MaterialApp(home: RegistrationScreen()));
