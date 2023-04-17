@@ -1,17 +1,25 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 // import 'package:shared_preferences/shared_preferences.dart';
 
-/// contains all service to get data from local
+/// Contains all services to get data from local storage
 class LocalStorageServices {
   static final LocalStorageServices _localStorageServices =
       LocalStorageServices._internal();
 
-  factory LocalStorageServices() {
+  factory LocalStorageServices({FlutterSecureStorage? storage}) {
+    _localStorageServices._setStorage(storage);
     return _localStorageServices;
   }
+
   LocalStorageServices._internal();
 
-  final FlutterSecureStorage storage = FlutterSecureStorage();
+  FlutterSecureStorage? _storage;
+
+  FlutterSecureStorage get storage => _storage!;
+
+  void _setStorage(FlutterSecureStorage? storage) {
+    _storage ??= storage ?? const FlutterSecureStorage();
+  }
 
   Future<void> write(String key, String value) async {
     await storage.write(key: key, value: value);
