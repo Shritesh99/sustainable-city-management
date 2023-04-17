@@ -36,7 +36,7 @@ for name, station in stations:
     cursor = conn.cursor()
     cursor.execute(
         "INSERT INTO aqi_forecast (station_id,forecast_time,aqi,pm25,pm10,ozone,no2,so2,co,latitude,longitude,station_name) Values (%s,%s,0,0,0,0,0,0,0,0,0,%s)",
-        (str(name),str(datetime.datetime.now()),station['station_name']))
+        (str(name),str(datetime.datetime.now()),str(station['station_name'][1])))
     conn.commit()
     #AQI
     aqi = station['aqi'].values
