@@ -25,7 +25,6 @@ dependencies:
   toast: ^0.2.9
   google_maps_flutter: ^2.2.5
   flutter_polyline_points: ^1.0.0
- 
 
   #google_maps_flutter_web: ^0.4.0+3
   google_maps_flutter_web: ^0.3.2+2

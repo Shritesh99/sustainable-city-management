@@ -61,8 +61,8 @@ class AqiData {
         co: json["co"],
         insertTime: json["insertTime"],
         updateTime: json["updateTime"],
-        latitude: json["Latitude"].toDouble(),
-        longitude: json["Longitude"].toDouble(),
+        latitude: json["latitude"].toDouble(),
+        longitude: json["longitude"].toDouble(),
       );
 
   Map<String, dynamic> toJson() => {

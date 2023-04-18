@@ -2,7 +2,6 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:http/http.dart' as http;
 import '../constants/app_constants.dart';
 import 'package:sustainable_city_management/app/network/dio_client.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
@@ -26,15 +25,25 @@ class BinTruckServices {
 
   Future<String> getRouteCoordinates() async {
     // String url =
-    //     "https://maps.googleapis.com/maps/api/directions/json?origin=53.338046,-6.266340&destination=53.348046,-6.266340 &key=AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk";
+    //     "https://maps.googleapis.com/maps/api/directions/json?origin=53.338046,-6.266340&destination=53.348046,-6.266340&key=AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk";
     // http.Response response = await http.get(Uri.parse(url));
     // debugPrint(url);
     // debugPrint("what????");
     // Map values = convert.jsonDecode(response.body);
     // return values["routes"][0]["overview_polyline"]["points"];
+
     String url =
-        "https://maps.googleapis.com/maps/api/directions/json?origin=53.338046,-6.266340&destination=53.348046,-6.266340 &key=AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk";
-    Response response = await dio.get(url);
+        "https://maps.googleapis.com/maps/api/directions/json?origin=53.338046,-6.266340&destination=53.348046,-6.266340&key=AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk";
+    // var parsedUrl = Uri.parse(url);
+    // Response response = await dio.get();
+    Response response = await dio.get(
+      'https://maps.googleapis.com/maps/api/directions/json',
+      queryParameters: {
+        'origin': '53.338046,-6.266340',
+        'destination': '53.348046,-6.266340',
+        'key': 'AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk'
+      },
+    );
     var data = response.data;
     return data;
 

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_polyline_points/flutter_polyline_points.dart';
+import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/popup_menu.dart';
 import 'package:sustainable_city_management/app/services/bin_truck_services.dart';
 import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
 
@@ -23,7 +26,7 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
   final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
   final double _zoom = 15.0;
   List<BinPositionModel> binPositons = <BinPositionModel>[];
-  final Set<Marker> _markers = {};
+  Set<Marker> _markers = {};
   BinTruckServices binTruckService = BinTruckServices();
 
   final CustomInfoWindowController _customInfoWindowController =
@@ -32,8 +35,8 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
   @override
   void initState() {
     super.initState();
-    getBinPositons();
-    // getTruckRoute();
+    // getBinPositons();
+    getTruckRoute();
   }
 
   @override
@@ -51,10 +54,11 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
       width: 5);
 
   void getTruckRoute() async {
-    String points = "";
+    var points = "";
     await binTruckService.getRouteCoordinates().then((value) => setState(() {
           points = value;
         }));
+    print("hi");
   }
 
   void getBinPositons() async {
@@ -70,10 +74,12 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
         .then((value) => setState(() {
               binPositons = value;
             }));
+
     addMarkers();
   }
 
   void addMarkers() {
+    List<Marker> markerList = [];
     for (var bp in binPositons) {
       String state = "unknow";
       if (bp.status == 0) {
@@ -81,13 +87,16 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
       } else if (bp.status == 1) {
         state = "full";
       }
-      _markers.add(Marker(
+      markerList.add(Marker(
         markerId: MarkerId(bp.id.toString()),
-        position: LatLng(bp.longitude, bp.latitude),
+        position: LatLng(bp.latitude, bp.longitude),
         icon: BitmapDescriptor.defaultMarker,
         infoWindow: InfoWindow(snippet: 'Bin $state.'),
       ));
     }
+    setState(() {
+      _markers = markerList.toSet();
+    });
   }
 
   @override
@@ -116,39 +125,25 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
               zoom: _zoom,
             ),
           ),
-          Drawer(
-            width: 100,
-            child: ListView(
-              // Important: Remove any padding from the ListView.
-              padding: EdgeInsets.zero,
-              children: [
-                const DrawerHeader(
-                  decoration: BoxDecoration(
-                    color: Colors.blue,
-                  ),
-                  child: Text('Drawer Header'),
-                ),
-                ListTile(
-                  title: const Text('Item 1'),
-                  onTap: () {
-                    // Update the state of the app
-                    // ...
-                    // Then close the drawer
-                    Navigator.pop(context);
-                  },
-                ),
-                ListTile(
-                  title: const Text('Item 2'),
-                  onTap: () {
-                    // Update the state of the app
-                    // ...
-                    // Then close the drawer
-                    Navigator.pop(context);
-                  },
-                ),
-              ],
-            ),
-          ),
+          Positioned(
+              top: 16,
+              right: 16,
+              child: OffsetPopupMenuButton<int>(
+                itemList: List.generate(
+                    7,
+                    (index) => PopupMenuItem(
+                          value: index + 1,
+                          child: Text(
+                            "Region ${index + 1}",
+                            style: const TextStyle(
+                                color: Colors.black,
+                                fontWeight: FontWeight.w700),
+                          ),
+                          onTap: () {
+                            getRegionBinPositons(index + 1);
+                          },
+                        )),
+              )),
           CustomInfoWindow(
             (top, left, width, height) => null,
             controller: _customInfoWindowController,
