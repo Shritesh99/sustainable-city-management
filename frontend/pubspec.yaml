@@ -25,10 +25,12 @@ dependencies:
   toast: ^0.2.9
   google_maps_flutter: ^2.2.5
   flutter_polyline_points: ^1.0.0
+  google_maps_flutter_heatmap: ^0.1.1
 
   #google_maps_flutter_web: ^0.4.0+3
   google_maps_flutter_web: ^0.3.2+2
   flutter_map_geojson: ^1.0.0
+  flutter_map: ^3.0.0
 
   geojson_vi: ^2.0.7
   flutter_secure_storage: ^8.0.0

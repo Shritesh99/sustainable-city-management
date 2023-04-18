@@ -15,8 +15,10 @@ class ApiPath {
       "https://api.jcdecaux.com/vls/v3/stations?apiKey=frifk0jbxfefqqniqez09tw4jvk37wyf823b5j1i&contract=dublin";
 
   static const airStation = "$_BASE_URL/gateway/getDetailedAirData";
-
+  static const airStationPredict = "$_BASE_URL/gateway/getPredictedAirStations";
   static const airIndex = "$_BASE_URL/gateway/getAirStation";
   static const allBins = "$_BASE_URL/gateway/getAllBins";
   static const regionBins = "$_BASE_URL/gateway/getBinsByRegion?region=";
+  static const airIndexPredict =
+      "$_BASE_URL/gateway/getPredictedDetailedAirData";
 }

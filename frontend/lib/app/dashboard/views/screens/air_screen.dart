@@ -26,15 +26,16 @@ class _AirMapScreen extends StatefulWidget {
 class _AirMapScreenState extends State<_AirMapScreen> {
   final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
   final double _zoom = 15.0;
-
-  List<AirStation> airStations = <AirStation>[];
   final AirServices airService = AirServices();
-  final Set<Marker> _markers = {};
-  final Map<String, AqiData> _aqiData = {};
+
+  List<AirStation> _airStations = <AirStation>[];
+  Map<String, AqiData> _aqiData = {};
+  Set<Marker> _markers = {};
   final colorMap = <String, Color>{};
   final iconMap = <String, BitmapDescriptor>{};
+  bool _isFocastMode = false;
 
-  CustomInfoWindowController _customInfoWindowController =
+  final CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
 
   @override
@@ -47,12 +48,18 @@ class _AirMapScreenState extends State<_AirMapScreen> {
   void didChangeDependencies() async {
     super.didChangeDependencies();
     await addCustomMarker();
-    listAirStations();
+    _listAirStations();
   }
 
-  void listAirStations() async {
-    await airService.listAirStation().then((value) => setState(() {
-          airStations = value;
+  void _toggleDataMode() {
+    setState(() {
+      _isFocastMode = !_isFocastMode;
+    });
+  }
+
+  void _listAirStations() async {
+    await airService.listAirStation(_isFocastMode).then((value) => setState(() {
+          _airStations = value;
         }));
     addMarker();
   }
@@ -136,21 +143,6 @@ class _AirMapScreenState extends State<_AirMapScreen> {
                               backgroundColor: const Color(0xFFEEEEEE),
                               fontSize: 16,
                               fontWeight: FontWeight.w500),
-                          // Container(
-                          //   color: Color.fromARGB(255, 228, 228, 228),
-                          //   alignment: Alignment.centerLeft,
-                          //   child: Text.rich(TextSpan(children: [
-                          //     const WidgetSpan(
-                          //         child: Padding(
-                          //             padding: EdgeInsets.only(left: 8.0))),
-                          //     TextSpan(
-                          //         text: aqiTest.epa,
-                          //         style: const TextStyle(
-                          //             color: Colors.black87,
-                          //             fontSize: 18,
-                          //             fontWeight: FontWeight.w600))
-                          //   ])),
-                          // ),
                           Expanded(
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -185,15 +177,17 @@ class _AirMapScreenState extends State<_AirMapScreen> {
     }
   }
 
-  void addMarker() {
-    for (AirStation station in airStations) {
-      int aqi = station.aqi;
+  void addMarker() async {
+    Set<Marker> markers = {};
+    Map<String, AqiData> aqiDataMap = {};
+    for (AirStation station in _airStations) {
+      int aqi = station.aqi!;
+      // add aqi data to pop up window
+      await airService
+          .getAirIndices(station.stationId, _isFocastMode)
+          .then((aqiData) => {aqiDataMap[station.stationId] = aqiData});
 
-      airService
-          .getAirIndices(station.stationId)
-          .then((aqiData) => {_aqiData[station.stationId] = aqiData});
-
-      _markers.add(Marker(
+      markers.add(Marker(
         markerId: MarkerId(station.stationId),
         position: LatLng(station.latitude, station.longitude),
         icon: iconMap[getState(aqi)]!,
@@ -202,6 +196,10 @@ class _AirMapScreenState extends State<_AirMapScreen> {
         },
       ));
     }
+    setState(() {
+      _markers = markers;
+      _aqiData = aqiDataMap;
+    });
   }
 
   List<Widget> getAqiPanel() {
@@ -218,7 +216,6 @@ class _AirMapScreenState extends State<_AirMapScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // addMarker();
     return PageScaffold(
       title: 'Air Quality',
       body: Stack(
@@ -247,6 +244,21 @@ class _AirMapScreenState extends State<_AirMapScreen> {
             width: 255,
             offset: 30,
           ),
+          // add forcast button
+          Positioned(
+              top: 16,
+              right: 16,
+              child: FloatingActionButton(
+                onPressed: () {
+                  setState(() {
+                    _toggleDataMode();
+                    _listAirStations();
+                  });
+                },
+                backgroundColor: Colors.white,
+                elevation: 2,
+                child: const Icon(Icons.insights),
+              )),
           // aqi panel
           Container(
               alignment: Alignment.bottomLeft,
