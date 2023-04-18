@@ -60,8 +60,8 @@ message GetAirStationResponse {
   float co = 12;
   int64 insertTime = 13;
   int64 updateTime = 14;
-  float Latitude = 15;
-  float Longitude = 16;
+  float latitude = 15;
+  float longitude = 16;
 }
 
 message GetDetailedAirDataResponse {
@@ -83,8 +83,8 @@ message GetNoiseDataResponse {
 message InsideGetNoiseDataResponse {
   int32 monitorID = 1;
   string location = 2;
-  string latitude = 3;
-  string longitude = 4;
+  float latitude = 3;
+  float longitude = 4;
   string recordTime = 5;
   float laeq = 6;
   int32 currentRating = 7;

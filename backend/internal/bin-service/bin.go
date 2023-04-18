@@ -16,8 +16,8 @@ func (server *BinService) GetAllBins(ctx context.Context, in *pb.GetAllBinsReque
 	for _, each := range data {
 		res = append(res, &pb.Bin{
 			Id:        each.ID,
-			Latitude:  float32(each.Latitude),
-			Longitude: float32(each.Longitude),
+			Latitude:  float32(each.Longitude),
+			Longitude: float32(each.Latitude),
 			Region:    each.Region,
 			Status:    each.Status,
 		})
@@ -35,8 +35,8 @@ func (server *BinService) GetBinsByRegion(ctx context.Context, in *pb.GetBinsByR
 	for _, each := range data {
 		res = append(res, &pb.Bin{
 			Id:        each.ID,
-			Latitude:  float32(each.Latitude),
-			Longitude: float32(each.Longitude),
+			Latitude:  float32(each.Longitude),
+			Longitude: float32(each.Latitude),
 			Region:    each.Region,
 			Status:    each.Status,
 		})
