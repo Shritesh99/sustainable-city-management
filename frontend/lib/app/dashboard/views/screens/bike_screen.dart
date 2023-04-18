@@ -26,7 +26,7 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
   final Set<Marker> _markers = {};
   BikeServices bikeService = BikeServices();
 
-  CustomInfoWindowController _customInfoWindowController =
+  final CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
 
   @override
