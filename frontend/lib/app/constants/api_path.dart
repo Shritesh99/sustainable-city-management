@@ -17,4 +17,6 @@ class ApiPath {
   static const airStation = "$_BASE_URL/gateway/getDetailedAirData";
 
   static const airIndex = "$_BASE_URL/gateway/getAirStation";
+
+  static const bus = '$_BASE_URL/gateway/getBusDataByRouteId';
 }

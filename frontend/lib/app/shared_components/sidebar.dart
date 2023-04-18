@@ -150,7 +150,7 @@ class AppMenu extends ConsumerWidget {
                                 debugPrint("logout");
                                 UserServices().logout();
                                 Get.toNamed(Routes.login);
-                              } else if (value.label != MenuLable.bus) {
+                              } else {
                                 _selectPage(context, ref, value.label);
                               }
                             },

@@ -136,21 +136,6 @@ class _AirMapScreenState extends State<_AirMapScreen> {
                               backgroundColor: const Color(0xFFEEEEEE),
                               fontSize: 16,
                               fontWeight: FontWeight.w500),
-                          // Container(
-                          //   color: Color.fromARGB(255, 228, 228, 228),
-                          //   alignment: Alignment.centerLeft,
-                          //   child: Text.rich(TextSpan(children: [
-                          //     const WidgetSpan(
-                          //         child: Padding(
-                          //             padding: EdgeInsets.only(left: 8.0))),
-                          //     TextSpan(
-                          //         text: aqiTest.epa,
-                          //         style: const TextStyle(
-                          //             color: Colors.black87,
-                          //             fontSize: 18,
-                          //             fontWeight: FontWeight.w600))
-                          //   ])),
-                          // ),
                           Expanded(
                               child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
