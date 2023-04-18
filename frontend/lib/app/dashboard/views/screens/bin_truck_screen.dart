@@ -32,8 +32,8 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
   @override
   void initState() {
     super.initState();
-    //getBinPositons();
-    getTruckRoute();
+    getBinPositons();
+    // getTruckRoute();
   }
 
   @override
@@ -49,6 +49,7 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
         LatLng(53.42327222773603, -6.278387668190925),
       ],
       width: 5);
+
   void getTruckRoute() async {
     String points = "";
     await binTruckService.getRouteCoordinates().then((value) => setState(() {
