@@ -55,6 +55,7 @@ flutter:
     - assets/images/vector/.
     - assets/images/bin_truck/.
     - assets/images/air_scale/.
+    - assets/images/noise/.
     - assets/DublinBus1.geojson
     - assets/wave.json
   fonts:

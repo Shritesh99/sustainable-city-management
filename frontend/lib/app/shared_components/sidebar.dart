@@ -9,6 +9,7 @@ import 'package:sustainable_city_management/app/dashboard/views/screens/bike_scr
 import 'package:sustainable_city_management/app/dashboard/views/screens/bin_truck_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/bus_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/pedestrian_screen.dart';
+import 'package:sustainable_city_management/app/dashboard/views/screens/noise_screen.dart';
 import 'package:sustainable_city_management/app/services/user_services.dart';
 import 'package:sustainable_city_management/app/shared_components/profile_card.dart';
 import 'package:sustainable_city_management/app/shared_components/selection_button.dart';
@@ -20,6 +21,7 @@ final _availablePages = <String, WidgetBuilder>{
   MenuLable.binTruck: (_) => const BinTruckScreen(),
   MenuLable.bus: (_) => const BusScreen(),
   MenuLable.pedestrian: (_) => const PedestrianScreen(),
+  MenuLable.noise: (_) => const NoiseScreen(),
 };
 
 // make this a `StateProvider` so we can change its value

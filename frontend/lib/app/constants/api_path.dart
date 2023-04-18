@@ -17,15 +17,14 @@ class ApiPath {
   static const airStation = "$_BASE_URL/gateway/getDetailedAirData";
   static const airStationPredict = "$_BASE_URL/gateway/getPredictedAirStations";
   static const airIndex = "$_BASE_URL/gateway/getAirStation";
-<<<<<<< HEAD
 
   static const bus = '$_BASE_URL/gateway/getBusDataByRouteId';
-=======
   static const allBins = "$_BASE_URL/gateway/getAllBins";
   static const regionBins = "$_BASE_URL/gateway/getBinsByRegion?region=";
   static const airIndexPredict =
       "$_BASE_URL/gateway/getPredictedDetailedAirData";
   static const pedestrian =
       "$_BASE_URL/gateway/getPedestrianByTime?time=1680361200";
->>>>>>> 13c63d334b9686bc1086c97e16a79686577d9608
+
+  static const getNoiseData = "$_BASE_URL/gateway/getNoiseData";
 }
