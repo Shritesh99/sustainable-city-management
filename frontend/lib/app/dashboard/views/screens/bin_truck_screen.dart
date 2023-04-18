@@ -24,7 +24,7 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
   final double _zoom = 15.0;
   List<BinPositionModel> binPositons = <BinPositionModel>[];
   final Set<Marker> _markers = {};
-  BinTruckServices bikeService = BinTruckServices();
+  BinTruckServices binTruckService = BinTruckServices();
 
   final CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
@@ -51,20 +51,20 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
       width: 5);
   void getTruckRoute() async {
     String points = "";
-    await bikeService.getRouteCoordinates().then((value) => setState(() {
+    await binTruckService.getRouteCoordinates().then((value) => setState(() {
           points = value;
         }));
   }
 
   void getBinPositons() async {
-    await bikeService.listBinPosition().then((value) => setState(() {
+    await binTruckService.listBinPosition().then((value) => setState(() {
           binPositons = value;
         }));
     addMarkers();
   }
 
   void getRegionBinPositons(int region) async {
-    await bikeService
+    await binTruckService
         .listRegionBinPosition(region)
         .then((value) => setState(() {
               binPositons = value;

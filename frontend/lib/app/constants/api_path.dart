@@ -21,4 +21,6 @@ class ApiPath {
   static const regionBins = "$_BASE_URL/gateway/getBinsByRegion?region=";
   static const airIndexPredict =
       "$_BASE_URL/gateway/getPredictedDetailedAirData";
+  static const pedestrian =
+      "$_BASE_URL/gateway/getPedestrianByTime?time=1680361200";
 }

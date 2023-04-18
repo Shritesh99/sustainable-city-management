@@ -6,7 +6,7 @@ import 'package:sustainable_city_management/app/dashboard/views/screens/bike_scr
 import 'package:sustainable_city_management/app/dashboard/views/screens/bin_truck_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/login_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/signup_screen.dart';
-
+import 'package:sustainable_city_management/app/dashboard/views/screens/pedestrian_screen.dart';
 part 'app_routes.dart';
 
 /// contains all configuration pages
@@ -34,5 +34,6 @@ class AppPages {
     GetPage(name: _Paths.air, page: () => const AirScreen()),
     GetPage(name: _Paths.bin_truck, page: () => const BinTruckScreen()),
     GetPage(name: _Paths.bus, page: () => const BusScreen()),
+    GetPage(name: _Paths.pedestrian, page: () => const PedestrianScreen()),
   ];
 }
