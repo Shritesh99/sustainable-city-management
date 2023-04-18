@@ -27,21 +27,21 @@ db:
 ConnectedServices:
      - serviceName: AirService
        serviceType: service
-       serviceUrl: air-service
+       serviceUrl: localhost
        healthcheckPort: 4002
        grpcPort: 4000
      - serviceName: BusService
        serviceType: service
-       serviceUrl: bus-service
+       serviceUrl: localhost
        healthcheckPort: 6002
        grpcPort: 6000
      - serviceName: BikeService
        serviceType: service
-       serviceUrl: bike-service
+       serviceUrl: localhost
        healthcheckPort: 5002
        grpcPort: 5000
      - serviceName: BinService
        serviceType: service
-       serviceUrl: bin-service
+       serviceUrl: localhost
        healthcheckPort: 7002
        grpcPort: 7000

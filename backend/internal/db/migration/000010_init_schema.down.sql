@@ -1,0 +1,1 @@
+ALTER TABLE "aqi_forecast" DROP COLUMN "station_name";

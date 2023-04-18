@@ -10,7 +10,7 @@ import (
 )
 
 const getForecastAirData = `-- name: GetForecastAirData :many
-SELECT station_id, forecast_time, aqi, pm25, pm10, ozone, no2, so2, co, latitude, longitude FROM aqi_forecast
+SELECT station_id, forecast_time, aqi, pm25, pm10, ozone, no2, so2, co, latitude, longitude, station_name FROM aqi_forecast
 `
 
 func (q *Queries) GetForecastAirData(ctx context.Context) ([]AqiForecast, error) {
@@ -34,6 +34,7 @@ func (q *Queries) GetForecastAirData(ctx context.Context) ([]AqiForecast, error)
 			&i.Co,
 			&i.Latitude,
 			&i.Longitude,
+			&i.StationName,
 		); err != nil {
 			return nil, err
 		}
@@ -46,4 +47,28 @@ func (q *Queries) GetForecastAirData(ctx context.Context) ([]AqiForecast, error)
 		return nil, err
 	}
 	return items, nil
+}
+
+const getPredictedAirDataByStationId = `-- name: GetPredictedAirDataByStationId :one
+SELECT station_id, forecast_time, aqi, pm25, pm10, ozone, no2, so2, co, latitude, longitude, station_name FROM aqi_forecast WHERE station_id = $1 LIMIT 1
+`
+
+func (q *Queries) GetPredictedAirDataByStationId(ctx context.Context, stationID string) (AqiForecast, error) {
+	row := q.db.QueryRowContext(ctx, getPredictedAirDataByStationId, stationID)
+	var i AqiForecast
+	err := row.Scan(
+		&i.StationID,
+		&i.ForecastTime,
+		&i.Aqi,
+		&i.Pm25,
+		&i.Pm10,
+		&i.Ozone,
+		&i.No2,
+		&i.So2,
+		&i.Co,
+		&i.Latitude,
+		&i.Longitude,
+		&i.StationName,
+	)
+	return i, err
 }

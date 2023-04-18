@@ -27,6 +27,8 @@ type AirServiceClient interface {
 	GetNoiseData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetNoiseDataResponse, error)
 	GetPedestrianDataByTime(ctx context.Context, in *TimeRequest, opts ...grpc.CallOption) (*GetPedestrianDataResponse, error)
 	GetPredictedAirData(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetPredictedAirDataResponse, error)
+	GetPredictedAirStations(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetPredictedAirStationsResponse, error)
+	GetPredictedDetailedAirData(ctx context.Context, in *AirIdRequest, opts ...grpc.CallOption) (*GetPredictedDetailedAirDataResponse, error)
 }
 
 type airServiceClient struct {
@@ -82,6 +84,24 @@ func (c *airServiceClient) GetPredictedAirData(ctx context.Context, in *NilReque
 	return out, nil
 }
 
+func (c *airServiceClient) GetPredictedAirStations(ctx context.Context, in *NilRequest, opts ...grpc.CallOption) (*GetPredictedAirStationsResponse, error) {
+	out := new(GetPredictedAirStationsResponse)
+	err := c.cc.Invoke(ctx, "/AirService/GetPredictedAirStations", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *airServiceClient) GetPredictedDetailedAirData(ctx context.Context, in *AirIdRequest, opts ...grpc.CallOption) (*GetPredictedDetailedAirDataResponse, error) {
+	out := new(GetPredictedDetailedAirDataResponse)
+	err := c.cc.Invoke(ctx, "/AirService/GetPredictedDetailedAirData", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // AirServiceServer is the server API for AirService service.
 // All implementations must embed UnimplementedAirServiceServer
 // for forward compatibility
@@ -91,6 +111,8 @@ type AirServiceServer interface {
 	GetNoiseData(context.Context, *NilRequest) (*GetNoiseDataResponse, error)
 	GetPedestrianDataByTime(context.Context, *TimeRequest) (*GetPedestrianDataResponse, error)
 	GetPredictedAirData(context.Context, *NilRequest) (*GetPredictedAirDataResponse, error)
+	GetPredictedAirStations(context.Context, *NilRequest) (*GetPredictedAirStationsResponse, error)
+	GetPredictedDetailedAirData(context.Context, *AirIdRequest) (*GetPredictedDetailedAirDataResponse, error)
 	mustEmbedUnimplementedAirServiceServer()
 }
 
@@ -112,6 +134,12 @@ func (UnimplementedAirServiceServer) GetPedestrianDataByTime(context.Context, *T
 }
 func (UnimplementedAirServiceServer) GetPredictedAirData(context.Context, *NilRequest) (*GetPredictedAirDataResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetPredictedAirData not implemented")
+}
+func (UnimplementedAirServiceServer) GetPredictedAirStations(context.Context, *NilRequest) (*GetPredictedAirStationsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPredictedAirStations not implemented")
+}
+func (UnimplementedAirServiceServer) GetPredictedDetailedAirData(context.Context, *AirIdRequest) (*GetPredictedDetailedAirDataResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetPredictedDetailedAirData not implemented")
 }
 func (UnimplementedAirServiceServer) mustEmbedUnimplementedAirServiceServer() {}
 
@@ -216,6 +244,42 @@ func _AirService_GetPredictedAirData_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _AirService_GetPredictedAirStations_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(NilRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AirServiceServer).GetPredictedAirStations(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/AirService/GetPredictedAirStations",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AirServiceServer).GetPredictedAirStations(ctx, req.(*NilRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _AirService_GetPredictedDetailedAirData_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AirIdRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(AirServiceServer).GetPredictedDetailedAirData(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/AirService/GetPredictedDetailedAirData",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(AirServiceServer).GetPredictedDetailedAirData(ctx, req.(*AirIdRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // AirService_ServiceDesc is the grpc.ServiceDesc for AirService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -242,6 +306,14 @@ var AirService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetPredictedAirData",
 			Handler:    _AirService_GetPredictedAirData_Handler,
+		},
+		{
+			MethodName: "GetPredictedAirStations",
+			Handler:    _AirService_GetPredictedAirStations_Handler,
+		},
+		{
+			MethodName: "GetPredictedDetailedAirData",
+			Handler:    _AirService_GetPredictedDetailedAirData_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

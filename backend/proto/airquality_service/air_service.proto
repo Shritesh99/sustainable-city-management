@@ -8,6 +8,8 @@ service AirService {
   rpc GetNoiseData (NilRequest) returns (GetNoiseDataResponse) {}
   rpc GetPedestrianDataByTime (TimeRequest) returns (GetPedestrianDataResponse) {}
   rpc GetPredictedAirData (NilRequest) returns (GetPredictedAirDataResponse) {}
+  rpc GetPredictedAirStations (NilRequest) returns (GetPredictedAirStationsResponse) {}
+  rpc GetPredictedDetailedAirData (AirIdRequest) returns (GetPredictedDetailedAirDataResponse) {}
 }
 
 message NilRequest {
@@ -16,6 +18,31 @@ message NilRequest {
 
 message AirIdRequest {
   string stationId = 1;
+}
+
+message GetPredictedAirStationsResponse {
+  repeated InsideGetPredictedAirStationsResponse predictedAirStations = 1;
+}
+
+message InsideGetPredictedAirStationsResponse {
+  string stationID = 1;
+  float latitude = 2;
+  float longitude = 3;
+  int64 aqi = 4;
+}
+
+message GetPredictedDetailedAirDataResponse{
+  string stationId = 1;
+  string stationName = 2;
+  float latitude = 3;
+  float longitude = 4;
+  int64 aqi = 5;
+  int64 pm10 = 6;
+  int64 pm25 = 7;
+  int64 ozone = 8;
+  int64 no2 = 9;
+  int64 so2 = 10;
+  int64 co = 11;
 }
 
 message GetAirStationResponse {

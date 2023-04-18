@@ -479,3 +479,41 @@ func (server *GatewayService) GetPredictedAirData(c *fiber.Ctx) error {
 		"msg":            "success",
 	})
 }
+
+func (server *GatewayService) GetPredictedAirStations(c *fiber.Ctx) error {
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
+	client := pb_air.NewAirServiceClient(server.airClientConn)
+	req := pb_air.NilRequest{}
+	resp, err := client.GetPredictedAirStations(context.Background(), &req)
+	if err != nil {
+		server.log.Errorf("%v", err)
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
+	}
+	return c.JSON(fiber.Map{
+		"predicted_air_stations": resp,
+		"error":                  false,
+		"msg":                    "success",
+	})
+}
+
+func (server *GatewayService) GetPredictedDetailedAirData(c *fiber.Ctx) error {
+	err, done := validateUser(c, server)
+	if done {
+		return err
+	}
+	client := pb_air.NewAirServiceClient(server.airClientConn)
+	req := pb_air.AirIdRequest{StationId: c.Query("id")}
+	resp, err := client.GetPredictedDetailedAirData(context.Background(), &req)
+	if err != nil {
+		server.log.Errorf("%v", err)
+		return util.ErrorResponse500(c, fiber.StatusInternalServerError, err)
+	}
+	return c.JSON(fiber.Map{
+		"predicted_detailed_data": resp,
+		"error":                   false,
+		"msg":                     "success",
+	})
+}
