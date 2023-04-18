@@ -1,17 +1,17 @@
 class AirStation {
   AirStation({
     required this.stationId,
-    required this.stationName,
+    this.stationName,
     required this.latitude,
     required this.longitude,
-    required this.aqi,
+    this.aqi,
   });
 
   String stationId;
-  String stationName;
+  String? stationName;
   double latitude;
   double longitude;
-  int aqi;
+  int? aqi;
 
   factory AirStation.fromJson(Map<String, dynamic> json) => AirStation(
         stationId: json["stationID"],

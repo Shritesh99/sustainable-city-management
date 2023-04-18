@@ -1,11 +1,11 @@
 class AqiData {
   AqiData({
-    required this.id,
+    this.id,
     required this.stationId,
     required this.stationName,
     required this.aqi,
     this.measureTime,
-    required this.epa,
+    this.epa,
     this.pm25,
     this.pm10,
     this.ozone,
@@ -18,12 +18,12 @@ class AqiData {
     required this.longitude,
   });
 
-  int id;
+  int? id;
   String stationId;
   String stationName;
   int aqi;
   DateTime? measureTime;
-  String epa;
+  String? epa;
   int? pm25;
   int? pm10;
   double? ozone;
@@ -52,7 +52,6 @@ class AqiData {
         stationId: json["stationId"],
         stationName: json["stationName"],
         aqi: json["aqi"],
-        measureTime: DateTime.parse(json["measureTime"]),
         epa: json["epa"],
         pm25: json["pm25"],
         pm10: json["pm10"],
