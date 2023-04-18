@@ -241,6 +241,30 @@ func TestGatewayService_GetPedestrianDataByTime(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
+func TestGatewayService_GetPredictedAirStations(t *testing.T) {
+	var token = GenerateToken()
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getPredictedAirStations", nil)
+	req.Header.Set("Token", token)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestGatewayService_GetPredictedDetailedAirData(t *testing.T) {
+	var token = GenerateToken()
+	req, err := http.NewRequest("GET", "http://127.0.0.1:8000/gateway/getPredictedDetailedAirData?id=@14771", nil)
+	req.Header.Set("Token", token)
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return
+	}
+	assert.Nil(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
 func GenerateToken() string {
 	expirationTime := time.Now().Add(5 * time.Hour)
 	// Create the JWT claims, which includes the username and expiry time

@@ -135,4 +135,45 @@ func (server *AirService) GetPredictedAirData(ctx context.Context, in *pb.NilReq
 	}, err
 }
 
+func (server *AirService) GetPredictedAirStations(ctx context.Context, in *pb.NilRequest) (*pb.GetPredictedAirStationsResponse, error) {
+	data, err := server.store.GetForecastAirData(ctx)
+	if err != nil {
+		server.log.Infof("Error fetching Predicted Air stations: %v", err)
+		return &pb.GetPredictedAirStationsResponse{}, err
+	}
+	var res []*pb.InsideGetPredictedAirStationsResponse
+	for _, each := range data {
+		res = append(res, &pb.InsideGetPredictedAirStationsResponse{
+			StationID: each.StationID,
+			Latitude:  float32(each.Latitude),
+			Longitude: float32(each.Longitude),
+			Aqi:       int64(each.Aqi),
+		})
+	}
+	return &pb.GetPredictedAirStationsResponse{
+		PredictedAirStations: res,
+	}, err
+}
+
+func (server *AirService) GetPredictedDetailedAirData(ctx context.Context, in *pb.AirIdRequest) (*pb.GetPredictedDetailedAirDataResponse, error) {
+	data, err := server.store.GetPredictedAirDataByStationId(ctx, in.GetStationId())
+	if err != nil {
+		server.log.Infof("Error fetching Predicted Detailed Air data: %v", err)
+		return &pb.GetPredictedDetailedAirDataResponse{}, err
+	}
+	return &pb.GetPredictedDetailedAirDataResponse{
+		StationId:   data.StationID,
+		StationName: data.StationName,
+		Latitude:    float32(data.Latitude),
+		Longitude:   float32(data.Longitude),
+		Aqi:         int64(data.Aqi),
+		Pm10:        int64(data.Pm10),
+		Pm25:        int64(data.Pm25),
+		Ozone:       int64(data.Ozone),
+		No2:         int64(data.No2),
+		So2:         int64(data.So2),
+		Co:          int64(data.Co),
+	}, err
+}
+
 // lauda lasson functions

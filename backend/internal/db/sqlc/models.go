@@ -39,6 +39,7 @@ type AqiForecast struct {
 	Co           float64   `json:"co"`
 	Latitude     float64   `json:"latitude"`
 	Longitude    float64   `json:"longitude"`
+	StationName  string    `json:"station_name"`
 }
 
 type BikeDatum struct {
