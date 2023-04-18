@@ -45,7 +45,6 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
   @override
   void initState() {
     super.initState();
-    getBinPositons();
     getPedestrianPositions();
     getBikeStation();
   }
@@ -63,35 +62,11 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
     addPedestrianMarkers();
   }
 
-  void getBinPositons() async {
-    await binTruckService.listBinPosition().then((value) => setState(() {
-          binPositons = value;
-        }));
-    addBinPositonsMarkers();
-  }
-
   void getBikeStation() async {
     await bikeService.listBikeStation().then((value) => setState(() {
           bikeStations = value;
         }));
     addBikeMarkers();
-  }
-
-  void addBinPositonsMarkers() {
-    for (var bp in binPositons) {
-      String state = "unknow";
-      if (bp.status == 0) {
-        state = "empty";
-      } else if (bp.status == 1) {
-        state = "full";
-      }
-      _markers.add(Marker(
-        markerId: MarkerId(bp.id.toString()),
-        position: LatLng(bp.latitude, bp.longitude),
-        icon: BitmapDescriptor.defaultMarker,
-        infoWindow: InfoWindow(snippet: 'Bin $state.'),
-      ));
-    }
   }
 
   void addPedestrianMarkers() {
