@@ -49,12 +49,15 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
   }
 
   void addMarkers() {
-    for (var bp in pedestrianPositions) {
+    for (var pp in pedestrianPositions) {
+      String streetName = pp.streetName.toString();
+      String amount = pp.amount.toString();
+
       _markers.add(Marker(
-        markerId: MarkerId(bp.id.toString()),
-        position: LatLng(bp.longitude, bp.latitude),
+        markerId: MarkerId(pp.id.toString()),
+        position: LatLng(pp.latitude, pp.longitude),
         icon: BitmapDescriptor.defaultMarker,
-        infoWindow: InfoWindow(snippet: '$bp.streetName $bp.amount.'),
+        infoWindow: InfoWindow(snippet: '$streetName $amount.'),
       ));
     }
   }
