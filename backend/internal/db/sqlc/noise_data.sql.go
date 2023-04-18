@@ -29,8 +29,8 @@ RETURNING monitor_id, location, latitude, longitude, record_time, laeq, current_
 type CreateNoiseDataParams struct {
 	MonitorID     int32   `json:"monitor_id"`
 	Location      string  `json:"location"`
-	Latitude      string  `json:"latitude"`
-	Longitude     string  `json:"longitude"`
+	Latitude      float64 `json:"latitude"`
+	Longitude     float64 `json:"longitude"`
 	RecordTime    string  `json:"record_time"`
 	Laeq          float64 `json:"laeq"`
 	CurrentRating int32   `json:"current_rating"`

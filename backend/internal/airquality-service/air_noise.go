@@ -69,8 +69,8 @@ func (server *AirService) GetNoiseData(ctx context.Context, in *pb.NilRequest) (
 		res = append(res, &pb.InsideGetNoiseDataResponse{
 			MonitorID:     each.MonitorID,
 			Location:      each.Location,
-			Latitude:      each.Latitude,
-			Longitude:     each.Longitude,
+			Latitude:      float32(each.Latitude),
+			Longitude:     float32(each.Longitude),
 			RecordTime:    each.RecordTime,
 			Laeq:          float32(each.Laeq),
 			CurrentRating: each.CurrentRating,

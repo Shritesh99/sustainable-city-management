@@ -284,7 +284,13 @@ func (server *GatewayService) CollectNoiseData() NOISEDATA {
 		util.LogFatal("Cannot convert noise response body to json", err)
 		return nil
 	}
-	return noise
+	var res NOISEDATA
+	for _, v := range noise {
+		if v.MonitorType.Category == "noise" {
+			res = append(res, v)
+		}
+	}
+	return res
 }
 
 type BUSDATA struct {
