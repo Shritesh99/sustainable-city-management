@@ -80,7 +80,7 @@ class AqiData {
         "co": co,
         "insertTime": insertTime,
         "updateTime": updateTime,
-        "Latitude": latitude,
-        "Longitude": longitude,
+        "latitude": latitude,
+        "longitude": longitude,
       };
 }

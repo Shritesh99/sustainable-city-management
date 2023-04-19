@@ -1,16 +1,17 @@
 import 'dart:convert';
+import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
-import 'package:sustainable_city_management/app/services/user_services.dart';
+import 'package:sustainable_city_management/app/dashboard/models/bus_direction_model.dart';
 import '../constants/app_constants.dart';
 import 'package:sustainable_city_management/app/network/dio_client.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
+// import 'package:google_maps_webservice/directions.dart';
 
-import 'dart:convert' as convert;
-
-final UserServices userServices = UserServices();
 final dioClient = DioClient().dio;
+const String apiKey = 'AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk';
+final dio = Dio();
 
 /// contains all service to get data from Server
 class BinTruckServices {
@@ -21,40 +22,6 @@ class BinTruckServices {
     return _binTruckApiServices;
   }
   BinTruckServices._internal();
-
-  final String apiKey = 'AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk';
-  final dio = Dio();
-
-  Future<String> getRouteCoordinates() async {
-    // String url =
-    //     "https://maps.googleapis.com/maps/api/directions/json?origin=53.338046,-6.266340&destination=53.348046,-6.266340&key=AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk";
-    // http.Response response = await http.get(Uri.parse(url));
-    // debugPrint(url);
-    // debugPrint("what????");
-    // Map values = convert.jsonDecode(response.body);
-    // return values["routes"][0]["overview_polyline"]["points"];
-
-    String url =
-        "https://maps.googleapis.com/maps/api/directions/json?origin=53.338046,-6.266340&destination=53.348046,-6.266340&key=AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk";
-    // var parsedUrl = Uri.parse(url);
-    // Response response = await dio.get();
-    Response response = await dio.get(
-      'https://maps.googleapis.com/maps/api/directions/json',
-      queryParameters: {
-        'origin': '53.338046,-6.266340',
-        'destination': '53.348046,-6.266340',
-        'key': 'AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk'
-      },
-    );
-    var data = response.data;
-    return data;
-
-    // String url =
-    //     "https://maps.googleapis.com/maps/api/directions/json?origin=53.338046,-6.266340&destination=53.348046,-6.266340 &key=AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk";
-    // http.Response response = await http.get(url as Uri);
-    // Map values = jsonDecode(response.body);
-    // print("====================>>>>>>>>${values}");
-  }
 
   Future<List<BinPositionModel>> listBinPosition() async {
     List<BinPositionModel> binPositionModels = <BinPositionModel>[];
@@ -88,5 +55,40 @@ class BinTruckServices {
       debugPrint('Error: failed to fetch bin data $e');
     }
     return binPositionModels;
+  }
+
+  Future<Directions> getRouteCoordinates(
+      List<BinPositionModel> binModels, String mode) async {
+    if (binModels.isEmpty) {
+      return Directions.nullReturn;
+    }
+    List<BinPositionModel> modelsInOrder = extractFullBin(binModels);
+    String waypointStr = appendWaypoints(modelsInOrder);
+
+    String url =
+        "${ApiPath.busRouteDirection}?$waypointStr&mode=$mode&key=$apiKey";
+    Response rsp = await dio.get(url);
+
+    return Directions.fromMap(rsp.data);
+  }
+
+  String appendWaypoints(List<BinPositionModel> binModels) {
+    int endIdx = min(binModels.length - 1, 20);
+    // get the origin (the first element) and the dest (the last)
+    String uri =
+        "origin=${binModels[0].latitude},${binModels[0].longitude}&destination=${binModels[endIdx].latitude},${binModels[endIdx].longitude}&waypoints=optimize:true";
+
+    for (int i = 1; i < endIdx; i++) {
+      uri += "|${binModels[i].latitude},${binModels[i].longitude}";
+    }
+    return uri;
+  }
+
+  List<BinPositionModel> extractFullBin(List<BinPositionModel> models) {
+    List<BinPositionModel> newModels =
+        models.where(((bin) => bin.status == 1)).toList();
+    // reorder the binModels based on the latitude (low to height)
+    newModels.sort((o1, o2) => o1.latitude.compareTo(o2.latitude));
+    return newModels;
   }
 }

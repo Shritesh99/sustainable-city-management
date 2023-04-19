@@ -34,16 +34,3 @@ class LaeqLevelIcon {
   static const HIGH = "assets/images/noise/high.png";
   static const VERY_HIGH = "assets/images/noise/very_high.png";
 }
-
-class BusIcon {
-  static const BUS_ICON = "assets/images/bus/bus.png";
-}
-
-class BinIcon {
-  static const EMPTY_BIN = "assets/images/bin_truck/empty.png";
-  static const FULL_BIN = "assets/images/bin_truck/full.png";
-}
-
-class BikeIcon {
-  static const BIKE = "assets/images/bike/bike.png";
-}

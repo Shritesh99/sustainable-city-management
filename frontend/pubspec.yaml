@@ -38,6 +38,7 @@ dependencies:
   lottie: ^2.3.2
   google_fonts: ^4.0.3
   awesome_dialog: ^3.0.2
+  # google_maps_webservice: ^0.4.0
 
 dev_dependencies:
   test: ^1.21.7
@@ -58,6 +59,7 @@ flutter:
     - assets/DublinBus1.geojson
     - assets/wave.json
     - assets/images/bus/.
+    - assets/images/bike/.
   fonts:
     - family: Poppins
       fonts:

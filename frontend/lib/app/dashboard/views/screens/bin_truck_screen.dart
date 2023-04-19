@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_polyline_points/flutter_polyline_points.dart';
-import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sustainable_city_management/app/constants/icon_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
+import 'package:sustainable_city_management/app/dashboard/models/bus_direction_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/popup_menu.dart';
 import 'package:sustainable_city_management/app/services/bin_truck_services.dart';
@@ -23,20 +23,21 @@ class _BinTruckMapScreen extends StatefulWidget {
 }
 
 class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
+  final iconMap = <String, BitmapDescriptor>{};
   final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
   final double _zoom = 15.0;
   List<BinPositionModel> binPositons = <BinPositionModel>[];
-  Set<Marker> _markers = {};
-  BinTruckServices binTruckService = BinTruckServices();
 
+  Set<Marker> _markers = {};
+  Directions _route = Directions.nullReturn;
+  BinTruckServices binTruckService = BinTruckServices();
   final CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
 
   @override
   void initState() {
     super.initState();
-    // getBinPositons();
-    getTruckRoute();
+    getBinPositons();
   }
 
   @override
@@ -45,20 +46,31 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
     super.dispose();
   }
 
-  static const Polyline _kPolyline = Polyline(
-      polylineId: PolylineId('_kPolyline'),
-      points: [
-        LatLng(53.254074732846284, -6.262206917109597),
-        LatLng(53.42327222773603, -6.278387668190925),
-      ],
-      width: 5);
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    await addIcons();
+  }
+
+  Future<void> addIcons() async {
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), BinIcon.EMPTY_BIN)
+        .then((icon) => setState(() {
+              iconMap["empty"] = icon;
+            }));
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), BinIcon.FULL_BIN)
+        .then((icon) => setState(() {
+              iconMap["full"] = icon;
+            }));
+  }
 
   void getTruckRoute() async {
-    var points = "";
-    await binTruckService.getRouteCoordinates().then((value) => setState(() {
-          points = value;
-        }));
-    print("hi");
+    await binTruckService
+        .getRouteCoordinates(binPositons, "driving")
+        .then((value) => setState(() {
+              _route = value;
+            }));
   }
 
   void getBinPositons() async {
@@ -76,22 +88,22 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
             }));
 
     addMarkers();
+    getTruckRoute();
   }
 
   void addMarkers() {
     List<Marker> markerList = [];
     for (var bp in binPositons) {
-      String state = "unknow";
-      if (bp.status == 0) {
-        state = "empty";
-      } else if (bp.status == 1) {
-        state = "full";
+      String icon = "empty";
+      if (bp.status == 1) {
+        icon = "full";
       }
       markerList.add(Marker(
         markerId: MarkerId(bp.id.toString()),
         position: LatLng(bp.latitude, bp.longitude),
-        icon: BitmapDescriptor.defaultMarker,
-        infoWindow: InfoWindow(snippet: 'Bin $state.'),
+        icon: iconMap[icon]!,
+        // infoWindow:
+        //     InfoWindow(snippet: 'Bin $state. ${bp.latitude}, ${bp.longitude} '),
       ));
     }
     setState(() {
@@ -118,7 +130,15 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
             myLocationButtonEnabled: false,
             markers: _markers,
             polylines: {
-              _kPolyline,
+              if (_route.polylinePoints.isNotEmpty)
+                Polyline(
+                  polylineId: const PolylineId('overview_polyline'),
+                  color: Colors.blue.shade200,
+                  width: 5,
+                  points: _route.polylinePoints
+                      .map((e) => LatLng(e.latitude, e.longitude))
+                      .toList(),
+                ),
             },
             initialCameraPosition: CameraPosition(
               target: _initialLocation,

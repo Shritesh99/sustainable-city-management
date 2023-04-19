@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sustainable_city_management/app/constants/icon_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bike_station_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/services/bike_services.dart';
@@ -22,6 +23,7 @@ class _BikeMapScreen extends StatefulWidget {
 class _BikeMapScreenState extends State<_BikeMapScreen> {
   final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
   final double _zoom = 15.0;
+  late BitmapDescriptor bikeIcon;
   List<BikeStationModel> bikeStations = <BikeStationModel>[];
   final Set<Marker> _markers = {};
   BikeServices bikeService = BikeServices();
@@ -39,6 +41,20 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
   void dispose() {
     _customInfoWindowController.dispose();
     super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    addIcon();
+  }
+
+  Future<void> addIcon() async {
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), BikeIcon.BIKE)
+        .then((icon) => setState(() {
+              bikeIcon = icon;
+            }));
   }
 
   void getBikeStation() async {
@@ -157,10 +173,6 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
-      // appBar: AppBar(
-      //   title: const Text('Dublinbikes'),
-      //   backgroundColor: const Color.fromRGBO(29, 22, 70, 1),
-      // ),
       title: "Dublinbikes",
       body: Stack(
         children: <Widget>[

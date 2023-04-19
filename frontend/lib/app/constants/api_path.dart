@@ -27,4 +27,7 @@ class ApiPath {
       "$_BASE_URL/gateway/getPedestrianByTime?time=1680361200";
 
   static const getNoiseData = "$_BASE_URL/gateway/getNoiseData";
+
+  static const busRouteDirection =
+      "https://maps.googleapis.com/maps/api/directions/json";
 }
