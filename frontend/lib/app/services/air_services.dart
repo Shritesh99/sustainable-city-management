@@ -1,16 +1,29 @@
 import 'package:dio/dio.dart';
 import 'package:sustainable_city_management/app/dashboard/models/air_station_model.dart';
+import 'package:sustainable_city_management/app/services/user_services.dart';
 import '../constants/app_constants.dart';
 import '../dashboard/models/air_index_model.dart';
 import 'package:sustainable_city_management/app/network/dio_client.dart';
 
 class AirServices {
   static final AirServices _airServices = AirServices._internal();
-  static final dioClient = DioClient().dio;
-  factory AirServices() {
+  // static final dioClient = DioClient().dio;
+  factory AirServices({Dio? dio}) {
+    if (_airServices._dioInstance == null) {
+      _airServices._setDio(dio);
+    }
     return _airServices;
   }
+
   AirServices._internal();
+
+  Dio? _dioInstance;
+
+  void _setDio(Dio? dio) {
+    _dioInstance ??= dio ?? DioClient().dio;
+  }
+
+  Dio get dioClient => _dioInstance!;
 
   Future<List<AirStation>> listAirStation(bool isFocastMode) async {
     List<AirStation> airStationModels = <AirStation>[];

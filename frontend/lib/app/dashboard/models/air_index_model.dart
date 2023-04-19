@@ -56,7 +56,7 @@ class AqiData {
         pm25: json["pm25"],
         pm10: json["pm10"],
         ozone: json["ozone"],
-        no2: json["no2"],
+        no2: json["no2"]?.toDouble(),
         so2: json["so2"],
         co: json["co"],
         insertTime: json["insertTime"],

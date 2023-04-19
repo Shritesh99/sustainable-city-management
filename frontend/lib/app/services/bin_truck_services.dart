@@ -2,12 +2,14 @@ import 'dart:convert';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:sustainable_city_management/app/services/user_services.dart';
 import '../constants/app_constants.dart';
 import 'package:sustainable_city_management/app/network/dio_client.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
 
 import 'dart:convert' as convert;
 
+final UserServices userServices = UserServices();
 final dioClient = DioClient().dio;
 
 /// contains all service to get data from Server

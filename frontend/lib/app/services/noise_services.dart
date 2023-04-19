@@ -1,10 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:sustainable_city_management/app/dashboard/models/noise_model.dart';
+import 'package:sustainable_city_management/app/services/user_services.dart';
 import '../constants/app_constants.dart';
 import 'package:sustainable_city_management/app/network/dio_client.dart';
 
 class NoiseServices {
   static final NoiseServices _noiseServices = NoiseServices._internal();
+  static final UserServices userServices = UserServices();
   static final dioClient = DioClient().dio;
 
   factory NoiseServices() {

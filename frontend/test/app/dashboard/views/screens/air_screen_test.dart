@@ -21,7 +21,7 @@ void main() {
     expect(find.byType(CustomInfoWindow), findsOneWidget);
 
     // Find the AQI panel container and other containers
-    expect(find.byType(Container), findsNWidgets(3));
+    expect(find.byType(Container), findsNWidgets(4));
 
     // Find the AppBar with the title 'Air Quality'
     expect(find.widgetWithText(AppBar, 'Air Quality'), findsOneWidget);

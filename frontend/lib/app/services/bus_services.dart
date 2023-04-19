@@ -1,13 +1,17 @@
 import 'package:dio/dio.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bus_model.dart';
+import 'package:sustainable_city_management/app/services/user_services.dart';
 import '../constants/app_constants.dart';
 import '../dashboard/models/bus_model.dart';
 import 'package:sustainable_city_management/app/network/dio_client.dart';
 
 class BusServices {
   static final BusServices _busServices = BusServices._internal();
+  // static final dioClient = DioClient().dio;
+  static final UserServices userServices = UserServices();
   static final dioClient = DioClient().dio;
+
   factory BusServices() {
     return _busServices;
   }

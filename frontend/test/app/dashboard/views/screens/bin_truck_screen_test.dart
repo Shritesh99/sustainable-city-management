@@ -16,9 +16,9 @@ void main() {
     final googleMap = tester.widget<GoogleMap>(find.byType(GoogleMap));
     expect(
         googleMap.initialCameraPosition.target,
-        equals(const LatLng(53.34484562827169,
-            -6.254833978649337))); // Replace with your expected LatLng
+        equals(const LatLng(
+            53.342686, -6.267118))); // Replace with your expected LatLng
     expect(googleMap.initialCameraPosition.zoom,
-        equals(14.4746)); // Replace with your expected zoom level
+        equals(15.0)); // Replace with your expected zoom level
   });
 }
