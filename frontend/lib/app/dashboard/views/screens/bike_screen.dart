@@ -3,7 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bike_station_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/services/bike_services.dart';
-import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
 
 class BikeScreen extends StatelessWidget {
   const BikeScreen({super.key});

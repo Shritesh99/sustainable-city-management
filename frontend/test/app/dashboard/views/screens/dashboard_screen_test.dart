@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/dashboard_screen.dart';
-import 'package:sustainable_city_management/app/shared_components/sidebar.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/sidebar.dart';
 
 void main() {
   group('DashboardScreen', () {

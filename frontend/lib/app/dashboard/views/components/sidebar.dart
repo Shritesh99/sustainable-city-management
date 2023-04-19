@@ -11,8 +11,8 @@ import 'package:sustainable_city_management/app/dashboard/views/screens/bus_scre
 import 'package:sustainable_city_management/app/dashboard/views/screens/pedestrian_screen.dart';
 import 'package:sustainable_city_management/app/dashboard/views/screens/noise_screen.dart';
 import 'package:sustainable_city_management/app/services/user_services.dart';
-import 'package:sustainable_city_management/app/shared_components/profile_card.dart';
-import 'package:sustainable_city_management/app/shared_components/selection_button.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/profile_card.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/selection_button.dart';
 
 // a map of ("page name", WidgetBuilder) pairs
 final _availablePages = <String, WidgetBuilder>{

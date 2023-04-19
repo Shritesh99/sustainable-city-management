@@ -6,7 +6,7 @@ import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/popup_menu.dart';
 import 'package:sustainable_city_management/app/services/bin_truck_services.dart';
-import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
 
 class BinTruckScreen extends StatelessWidget {
   const BinTruckScreen({super.key});

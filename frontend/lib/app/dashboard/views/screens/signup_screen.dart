@@ -7,7 +7,7 @@ import 'package:sustainable_city_management/app/dashboard/models/roles_model.dar
 import 'package:sustainable_city_management/app/dashboard/models/user.dart';
 import 'package:sustainable_city_management/app/constants/app_constants.dart';
 import 'package:sustainable_city_management/app/services/user_services.dart';
-import 'package:sustainable_city_management/app/shared_components/custom_dialog.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/custom_dialog.dart';
 // import 'package:get/get.dart';
 
 class SignUpScreen extends StatefulWidget {

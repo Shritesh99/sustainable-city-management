@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:sustainable_city_management/app/shared_components/sidebar.dart';
-import 'package:sustainable_city_management/app/shared_components/screen_layout.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components//sidebar.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components//screen_layout.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class DashboardScreen extends ConsumerWidget {

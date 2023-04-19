@@ -7,7 +7,7 @@ import 'package:sustainable_city_management/app/controller/ui_controller.dart';
 import 'package:sustainable_city_management/app/constants/app_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/login_model.dart';
 import 'package:sustainable_city_management/app/services/user_services.dart';
-import 'package:sustainable_city_management/app/shared_components/custom_dialog.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components//custom_dialog.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);

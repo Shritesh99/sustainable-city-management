@@ -3,12 +3,10 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/dashboard/models/pedestrian_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/services/pedestrian_services.dart';
-import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
 import 'package:sustainable_city_management/app/services/bin_truck_services.dart';
 import 'package:sustainable_city_management/app/services/air_services.dart';
-import 'package:sustainable_city_management/app/dashboard/models/air_index_model.dart';
-import 'package:sustainable_city_management/app/dashboard/models/air_station_model.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bike_station_model.dart';
 import 'package:sustainable_city_management/app/services/bike_services.dart';
 

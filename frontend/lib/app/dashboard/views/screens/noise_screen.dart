@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sustainable_city_management/app/constants/aqi_level_constants.dart';
+import 'package:sustainable_city_management/app/constants/icon_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/noise_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/services/noise_services.dart';
-import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
-import 'package:sustainable_city_management/app/shared_components/text_card.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/text_card.dart';
 
 class NoiseScreen extends StatelessWidget {
   const NoiseScreen({super.key});
