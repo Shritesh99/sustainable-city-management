@@ -57,6 +57,7 @@ flutter:
     - assets/images/noise/.
     - assets/DublinBus1.geojson
     - assets/wave.json
+    - assets/images/bus/.
   fonts:
     - family: Poppins
       fonts:

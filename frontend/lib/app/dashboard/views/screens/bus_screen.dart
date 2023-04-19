@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sustainable_city_management/app/constants/icon_constants.dart';
 import 'package:uuid/uuid.dart';
 //import 'package:google_maps_flutter_geojson/google_maps_flutter_geojson.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bus_model.dart';
@@ -73,6 +74,7 @@ class BusScreenState extends State<BusScreen> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
+    await addCustomMarker();
     // await addCustomMarker();
     // listBusStations('TEST');
   }
@@ -84,8 +86,22 @@ class BusScreenState extends State<BusScreen> {
     addMarker();
   }
 
+  // Custom marker icon
+  late BitmapDescriptor icon;
+
+  Future<void> addCustomMarker() async {
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), BusIcon.BUS_ICON)
+        .then((value) => setState(() {
+              icon = value;
+            }));
+  }
+
+//directions_bus
   void addMarker() {
     List<Marker> listMarker = <Marker>[];
+    // final icon = BitmapDescriptor.fromAssetImage(
+    //     ImageConfiguration(), 'assets/images/bus_icon.png');
 
     for (BusModel station in ListBusModels) {
       String routeid = station.routeId;
@@ -94,7 +110,9 @@ class BusScreenState extends State<BusScreen> {
       listMarker.add(Marker(
         markerId: MarkerId(station.vehicleId),
         position: LatLng(station.latitude, station.longitude),
-        icon: BitmapDescriptor.defaultMarker,
+        //icon: BitmapDescriptor.defaultMarker,
+        icon: icon,
+        // icon: const Icon(Icons.directions_bus),
       ));
     }
     setState(() => {_markers = listMarker.toSet()});
@@ -117,14 +135,6 @@ class BusScreenState extends State<BusScreen> {
       icon: BitmapDescriptor.defaultMarker,
       position: LatLng(53.34484562827169, -6.254833978649337));
 */
-  String _iconImage = 'assets/images/' + 'bus_icon'.toString() + '.png';
-  Future<void> addCustomMarker() async {
-    await BitmapDescriptor.fromAssetImage(
-            ImageConfiguration(size: Size(7, 7)), 'assets/images/bus_icon.png')
-        .then((onValue) {
-      myIcon = onValue;
-    });
-  }
 
   static const Marker homeMarker = Marker(
       markerId: MarkerId('_homeMarker'),
