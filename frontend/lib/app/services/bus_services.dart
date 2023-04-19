@@ -13,11 +13,11 @@ class BusServices {
   }
   BusServices._internal();
 
-  Map<String, List<List<double>>> testMarkerData = {
-    '2954_46048': [
-      [53.3464062899053, -6.2570863424236]
-    ],
-  };
+  // Map<String, List<List<double>>> testMarkerData = {
+  //   '2954_46048': [
+  //     [53.3464062899053, -6.2570863424236]
+  //   ],
+  // };
 
   Future<List<BusModel>> listBusState(String routeId) async {
     List<BusModel> NewBusModels = <BusModel>[];
@@ -34,7 +34,7 @@ class BusServices {
     return NewBusModels;
   }
 
-  List<List<double>> listBusCoordinates(String routeId) {
-    return testMarkerData[routeId]!;
-  }
+  // List<List<double>> listBusCoordinates(String routeId) {
+  //   return testMarkerData[routeId]!;
+  // }
 }

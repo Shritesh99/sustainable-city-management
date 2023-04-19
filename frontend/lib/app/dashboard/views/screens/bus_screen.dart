@@ -40,7 +40,8 @@ CustomInfoWindowController _customInfoWindowController =
 // }
 
 Future<String> loadAsset(BuildContext context) async {
-  return await DefaultAssetBundle.of(context).loadString('/Test3.geojson');
+  return await DefaultAssetBundle.of(context)
+      .loadString('/DublinBusMain.geojson');
   // .loadString('/DublinBus1.geojson'); //This is for the one line. testing.
   //.loadString('/DublinBus1.geojson'); // This is the original one.
 }
@@ -53,56 +54,54 @@ class BusScreenState extends State<BusScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  final Set<Marker> _markers = {};
+  Set<Marker> _markers = {};
   final BusServices BusService = BusServices();
   List<BusModel> ListBusModels = <BusModel>[];
   final Map<String, BusModel> _busData = {};
+
+  List<BusModel> GettheBusList = [];
   final iconMap = <String, BitmapDescriptor>{};
+  late BitmapDescriptor myIcon;
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(53.34484562827169, -6.254833978649337),
     zoom: 14.4746,
   );
+  get color => null;
+  Set<Polyline> _polylineSet = Set<Polyline>();
 
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    listBusStations("abc");
+    // await addCustomMarker();
+    // listBusStations('TEST');
   }
 
   void listBusStations(String routeId) async {
-    // await BusService.listBusState(routeId).then((value) => setState(() {
-    //       ListBusModels = value;
-    //     }));
+    await BusService.listBusState(routeId).then((value) => setState(() {
+          ListBusModels = value;
+        }));
     addMarker();
   }
 
-  get color => null;
-  Set<Polyline> _polylineSet = Set<Polyline>();
-
   void addMarker() {
-    // for (BusModel station in ListBusModels) {
-    //   String routeid = station.routeId;
+    List<Marker> listMarker = <Marker>[];
 
-    //   BusService.listBusState(station.routeId)
-    //       .then((busData) => {_busData[station.routeId] = busData as BusModel});
+    for (BusModel station in ListBusModels) {
+      String routeid = station.routeId;
 
-    //   _markers.add(Marker(
-    //     markerId: MarkerId(station.routeId),
-    //     position: LatLng(station.latitude, station.longitude),
-    //     icon: iconMap[(routeid)]!,
-    //   ));
-    // }
-    _markers.add(homeMarker);
+      // This marker will be replaced after calling one job.
+      listMarker.add(Marker(
+        markerId: MarkerId(station.vehicleId),
+        position: LatLng(station.latitude, station.longitude),
+        icon: BitmapDescriptor.defaultMarker,
+      ));
+    }
+    setState(() => {_markers = listMarker.toSet()});
+    //_markers.add(homeMarker);
   }
-
-  static const Polyline myLine = Polyline(
-      polylineId: PolylineId('_kPolyline'),
-      points: [
-        LatLng(-6.2874245, 53.3850812),
-        LatLng(-6.3079592281912, 53.3162469203004),
-      ],
-      width: 5);
+  //Put route id and get the routes.like a printinfo()
+  //BusService.listBusState(UniqueRouteIds[index]);
 
   Polyline featureToGooglePolyline(List<dynamic> coordinates) {
     return Polyline(
@@ -118,11 +117,20 @@ class BusScreenState extends State<BusScreen> {
       icon: BitmapDescriptor.defaultMarker,
       position: LatLng(53.34484562827169, -6.254833978649337));
 */
+  String _iconImage = 'assets/images/' + 'bus_icon'.toString() + '.png';
+  Future<void> addCustomMarker() async {
+    await BitmapDescriptor.fromAssetImage(
+            ImageConfiguration(size: Size(7, 7)), 'assets/images/bus_icon.png')
+        .then((onValue) {
+      myIcon = onValue;
+    });
+  }
+
   static const Marker homeMarker = Marker(
       markerId: MarkerId('_homeMarker'),
       infoWindow: InfoWindow(title: 'Home'),
       icon: BitmapDescriptor.defaultMarker,
-      position: LatLng(53.35186061923727, -6.267747047089646));
+      position: LatLng(53.3464062899053, -6.2570863424236));
 
   @override
   Widget build(BuildContext context) {
@@ -164,7 +172,7 @@ class BusScreenState extends State<BusScreen> {
             final UniqueCoordinates = routeCoordinatesList.toSet().toList();
             //BusService.listBusState("2954_46038");#
 
-            BusService.listBusCoordinates('2954_46048');
+            //BusService.listBusCoordinates('2954_46048');
 
             final UniqueRouteIds = routeIDList.toSet().toList();
             //BusService.listBusState("");
@@ -223,9 +231,9 @@ class BusScreenState extends State<BusScreen> {
                   mapType: MapType.normal,
                   markers: _markers,
                   polylines: //Set<Polyline>.of([routeMap['69']!]),
-                      //_polylineSet,
-                      Set<Polyline>.of(layers
-                          .polylines), // Show bus route gray color as a default
+                      _polylineSet,
+                  // Set<Polyline>.of(layers
+                  //     .polylines), // Show bus route gray color as a default
 
                   //Set<Polyline>.of(layers.polylines),
                   //polylines: //_polyline1,
@@ -252,12 +260,12 @@ class BusScreenState extends State<BusScreen> {
                             setState(() {
                               //UniqueStrings[index].isBool = value!;
                               _value = value!;
-                              _polylineSet = //Set<Polyline>.of([myLine]);
-                                  Set<Polyline>.of(
-                                      [routeMap[UniqueStrings[index]]!]);
-                              // markers:
-                              // _markers;
-                              BusService.listBusState(UniqueRouteIds[index]);
+                              _polylineSet = Set<Polyline>.of(
+                                  [routeMap[UniqueStrings[index]]!]);
+                              listBusStations(UniqueRouteIds[index]);
+
+                              //Calling marker
+                              //BusService.listBusState(UniqueRouteIds[index]);
                               // I need to do, when I click the bus number,
                               // Not only shows the bus route but also shows current bus locations.
                               // which needs, mapping route id, route_short_name_coordinates and values(for checkbox)
