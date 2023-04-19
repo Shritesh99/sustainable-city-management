@@ -68,8 +68,8 @@ class NoiseDatum {
 
   int monitorId;
   String location;
-  String latitude;
-  String longitude;
+  double latitude;
+  double longitude;
   DateTime recordTime;
   int currentRating;
   double laeq;
@@ -79,17 +79,13 @@ class NoiseDatum {
   factory NoiseDatum.fromJson(Map<String, dynamic> json) => NoiseDatum(
         monitorId: json["monitorID"],
         location: json["location"],
-        latitude: json["latitude"],
-        longitude: json["longitude"],
+        latitude: json["latitude"].toDouble(),
+        longitude: json["longitude"].toDouble(),
         recordTime: DateTime.parse(json["recordTime"]),
-        // currentRating: json["currentRating"],
-        currentRating: 6,
-        // laeq: json["laeq"]?.toDouble(),
-        // dailyAvg: json["dailyAvg"]?.toDouble(),
-        // hourlyAvg: json["hourlyAvg"]?.toDouble(),
-        laeq: 50,
-        dailyAvg: 65,
-        hourlyAvg: 75,
+        currentRating: json["currentRating"],
+        laeq: json["laeq"].toDouble(),
+        dailyAvg: json["dailyAvg"].toDouble(),
+        hourlyAvg: json["hourlyAvg"].toDouble(),
       );
 
   Map<String, dynamic> toJson() => {

@@ -151,8 +151,7 @@ class _NoiseMapScreenState extends State<_NoiseMapScreen> {
                         ]),
                   )
                 ])),
-        LatLng(double.parse(noiseData.latitude),
-            double.parse(noiseData.longitude)));
+        LatLng(noiseData.latitude, noiseData.longitude));
   }
 
   String getState(double laeq) {
@@ -175,12 +174,11 @@ class _NoiseMapScreenState extends State<_NoiseMapScreen> {
     for (NoiseDatum monitor in noiseMonitors) {
       double laeq = monitor.laeq;
       _noiseData[monitor.monitorId.toString()] = monitor;
-      debugPrint(
-          "addMarker: $laeq, ${monitor.monitorId}, ${monitor.latitude}, ${monitor.longitude}");
+      // debugPrint(
+      // "addMarker: $laeq, ${monitor.monitorId}, ${monitor.latitude}, ${monitor.longitude}");
       _markers.add(Marker(
         markerId: MarkerId(monitor.monitorId.toString()),
-        position: LatLng(
-            double.parse(monitor.latitude), double.parse(monitor.longitude)),
+        position: LatLng(monitor.latitude, monitor.longitude),
         icon: iconMap[getState(laeq)]!,
         onTap: () {
           addPopup(monitor.monitorId.toString());
