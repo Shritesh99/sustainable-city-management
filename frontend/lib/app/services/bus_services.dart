@@ -10,12 +10,21 @@ class BusServices {
   static final BusServices _busServices = BusServices._internal();
   // static final dioClient = DioClient().dio;
   static final UserServices userServices = UserServices();
-  static final dioClient = DioClient().dio;
+  // static final dioClient = DioClient().dio;
 
-  factory BusServices() {
+  factory BusServices({Dio? dio}) {
+    if (_busServices._dioInstance == null) {
+      _busServices._setDio(dio);
+    }
     return _busServices;
   }
   BusServices._internal();
+  Dio? _dioInstance;
+  void _setDio(Dio? dio) {
+    _dioInstance ??= dio ?? DioClient().dio;
+  }
+
+  Dio get dioClient => _dioInstance!;
 
   // Map<String, List<List<double>>> testMarkerData = {
   //   '2954_46048': [
