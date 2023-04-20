@@ -32,10 +32,11 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
   List<PedestrianModel> pedestrianPositions = <PedestrianModel>[];
   List<BinPositionModel> binPositons = <BinPositionModel>[];
   final Set<Marker> _markers = {};
-  AirServices airService = AirServices();
-  PedestrianServices pedestrianService = PedestrianServices();
-  BinTruckServices binTruckService = BinTruckServices();
-  BikeServices bikeService = BikeServices();
+
+  final AirServices airService = AirServices();
+  final PedestrianServices pedestrianService = PedestrianServices();
+  final BinTruckServices binTruckService = BinTruckServices();
+  final BikeServices bikeService = BikeServices();
 
   final CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();

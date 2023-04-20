@@ -278,7 +278,7 @@ class _AirMapScreenState extends State<_AirMapScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: getAqiPanel(),
                     )),
-              ))
+              )),
         ],
       ),
     );
