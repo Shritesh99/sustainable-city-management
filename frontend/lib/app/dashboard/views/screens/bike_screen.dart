@@ -69,6 +69,7 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
       _markers.add(Marker(
           markerId: MarkerId(bs.number.toString()),
           position: LatLng(bs.position.latitude, bs.position.longitude),
+          icon: bikeIcon,
           onTap: () {
             _customInfoWindowController.addInfoWindow!(
               Container(

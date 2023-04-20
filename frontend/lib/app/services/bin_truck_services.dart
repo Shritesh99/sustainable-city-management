@@ -7,7 +7,6 @@ import 'package:sustainable_city_management/app/dashboard/models/bus_direction_m
 import '../constants/app_constants.dart';
 import 'package:sustainable_city_management/app/network/dio_client.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
-// import 'package:google_maps_webservice/directions.dart';
 
 final dioClient = DioClient().dio;
 const String apiKey = 'AIzaSyC92NVVdg26txxNpjy3ffDYIFX6TlQk2Mk';

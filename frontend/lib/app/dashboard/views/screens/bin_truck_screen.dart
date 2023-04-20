@@ -3,7 +3,6 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/constants/icon_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bus_direction_model.dart';
-import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/popup_menu.dart';
 import 'package:sustainable_city_management/app/services/bin_truck_services.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
@@ -31,19 +30,11 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
   Set<Marker> _markers = {};
   Directions _route = Directions.nullReturn;
   BinTruckServices binTruckService = BinTruckServices();
-  final CustomInfoWindowController _customInfoWindowController =
-      CustomInfoWindowController();
 
   @override
   void initState() {
     super.initState();
     getBinPositons();
-  }
-
-  @override
-  void dispose() {
-    _customInfoWindowController.dispose();
-    super.dispose();
   }
 
   @override
@@ -102,8 +93,6 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
         markerId: MarkerId(bp.id.toString()),
         position: LatLng(bp.latitude, bp.longitude),
         icon: iconMap[icon]!,
-        // infoWindow:
-        //     InfoWindow(snippet: 'Bin $state. ${bp.latitude}, ${bp.longitude} '),
       ));
     }
     setState(() {
@@ -118,22 +107,13 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
       body: Stack(
         children: <Widget>[
           GoogleMap(
-            onTap: (position) {
-              _customInfoWindowController.hideInfoWindow!();
-            },
-            onCameraMove: (position) {
-              _customInfoWindowController.onCameraMove!();
-            },
-            onMapCreated: (GoogleMapController controller) async {
-              _customInfoWindowController.googleMapController = controller;
-            },
             myLocationButtonEnabled: false,
             markers: _markers,
             polylines: {
               if (_route.polylinePoints.isNotEmpty)
                 Polyline(
                   polylineId: const PolylineId('overview_polyline'),
-                  color: Colors.blue.shade200,
+                  color: Colors.blue.shade500,
                   width: 5,
                   points: _route.polylinePoints
                       .map((e) => LatLng(e.latitude, e.longitude))
@@ -164,13 +144,6 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
                           },
                         )),
               )),
-          CustomInfoWindow(
-            (top, left, width, height) => null,
-            controller: _customInfoWindowController,
-            height: 130,
-            width: 250,
-            offset: 30,
-          ),
         ],
       ),
     );
