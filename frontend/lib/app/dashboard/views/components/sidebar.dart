@@ -131,15 +131,6 @@ class AppMenu extends ConsumerWidget {
                                   label: MenuLable.binTruck,
                                 ),
                               SelectionButtonData(
-                                activeIcon: const IconData(0xe22a,
-                                    fontFamily: 'MaterialIcons'),
-                                // outline style when isn't seleted
-                                icon: const IconData(0xf018,
-                                    fontFamily: 'MaterialIcons'),
-                                label: MenuLable.message,
-                                totalNotif: 20,
-                              ),
-                              SelectionButtonData(
                                 activeIcon: const IconData(0xe243,
                                     fontFamily: 'MaterialIcons'),
                                 icon: const IconData(0xf031,
