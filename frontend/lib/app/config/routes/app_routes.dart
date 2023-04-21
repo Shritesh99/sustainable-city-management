@@ -5,13 +5,13 @@ class Routes {
   static const dashboard = _Paths.dashboard;
   static const login = _Paths.login;
   static const register = _Paths.register;
-  //login
-  //static const loginpage = _Paths.loginpage;
-  static const bike = _Paths.bike;
 
   static const air = _Paths.air;
+  static const noise = _Paths.noise;
+  static const bike = _Paths.bike;
   static const bin_truck = _Paths.bin_truck;
   static const bus = _Paths.bus;
+  static const pedestrian = _Paths.pedestrian;
 }
 
 /// contains a list of route names.
@@ -24,5 +24,7 @@ class _Paths {
   static const bike = '/bike';
   static const bus = '/bus';
   static const air = '/air';
+  static const noise = '/noise';
   static const bin_truck = '/bin_truck';
+  static const pedestrian = '/pedestrian';
 }

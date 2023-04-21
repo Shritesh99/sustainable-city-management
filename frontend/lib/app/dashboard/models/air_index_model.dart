@@ -1,11 +1,11 @@
 class AqiData {
   AqiData({
-    required this.id,
+    this.id,
     required this.stationId,
     required this.stationName,
     required this.aqi,
     this.measureTime,
-    required this.epa,
+    this.epa,
     this.pm25,
     this.pm10,
     this.ozone,
@@ -18,12 +18,12 @@ class AqiData {
     required this.longitude,
   });
 
-  int id;
+  int? id;
   String stationId;
   String stationName;
   int aqi;
   DateTime? measureTime;
-  String epa;
+  String? epa;
   int? pm25;
   int? pm10;
   double? ozone;
@@ -52,18 +52,17 @@ class AqiData {
         stationId: json["stationId"],
         stationName: json["stationName"],
         aqi: json["aqi"],
-        measureTime: DateTime.parse(json["measureTime"]),
         epa: json["epa"],
         pm25: json["pm25"],
         pm10: json["pm10"],
         ozone: json["ozone"],
-        no2: json["no2"],
+        no2: json["no2"]?.toDouble(),
         so2: json["so2"],
         co: json["co"],
         insertTime: json["insertTime"],
         updateTime: json["updateTime"],
-        latitude: json["Latitude"].toDouble(),
-        longitude: json["Longitude"].toDouble(),
+        latitude: json["latitude"].toDouble(),
+        longitude: json["longitude"].toDouble(),
       );
 
   Map<String, dynamic> toJson() => {
@@ -81,7 +80,7 @@ class AqiData {
         "co": co,
         "insertTime": insertTime,
         "updateTime": updateTime,
-        "Latitude": latitude,
-        "Longitude": longitude,
+        "latitude": latitude,
+        "longitude": longitude,
       };
 }

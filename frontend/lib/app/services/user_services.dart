@@ -11,16 +11,28 @@ import 'package:sustainable_city_management/app/network/dio_client.dart';
 import 'package:sustainable_city_management/app/dashboard/models/error_model.dart';
 
 final LocalStorageServices localStorageServices = LocalStorageServices();
-final dioClient = DioClient().dio;
 
 // User Account APIs
 class UserServices {
   static final UserServices _userServices = UserServices._internal();
 
-  factory UserServices() {
+  factory UserServices({Dio? dio}) {
+    _userServices._setDio(dio);
     return _userServices;
   }
+
   UserServices._internal();
+
+  Dio? _dioInstance;
+
+  void _setDio(Dio? dio) {
+    _dioInstance ??= dio ?? DioClient().dio;
+  }
+
+  Dio get dioClient {
+    _dioInstance ??= DioClient().dio;
+    return _dioInstance!;
+  }
 
   // register
   Future<ErrorModel> register(User user) async {

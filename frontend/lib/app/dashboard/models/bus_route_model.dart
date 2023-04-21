@@ -47,6 +47,8 @@ class Feature {
         geometry: Geometry.fromJson(json["geometry"]),
       );
 
+  set isActive(bool isActive) {}
+
   Map<String, dynamic> toJson() => {
         "type": type,
         "properties": properties.toJson(),

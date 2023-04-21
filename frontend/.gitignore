@@ -70,6 +70,9 @@ pubspec.lock
 !**/ios/**/default.perspectivev3
 !/packages/flutter_tools/test/data/dart_dependencies_test/**/.packages
 
+# Web
+web/*.html
+
 # Miscellaneous
 *.class
 *.log

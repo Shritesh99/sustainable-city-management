@@ -1,12 +1,10 @@
 part of network;
 
 class DioInterceptor extends Interceptor {
-  final services = UserServices();
-
   @override
   void onRequest(
       RequestOptions options, RequestInterceptorHandler handler) async {
-    var token = await services.loadToken();
+    var token = await loadToken();
     options.headers['Token'] = token;
     options.headers['Content-Type'] = 'application/json';
     debugPrint('Dio: the request url are: ${options.uri}');
@@ -26,5 +24,25 @@ class DioInterceptor extends Interceptor {
     // TODO: implement onError
     debugPrint('DioError: $err');
     super.onError(err, handler);
+  }
+
+  //get token from from local storage
+  Future<String?> loadToken() async {
+    final services = LocalStorageServices();
+    var userInfo = await services.read(LocalStorageKey.USER_INFO);
+    var token;
+    var expires;
+
+    if (userInfo != '') {
+      LoginModel userModel = loginModelFromJson(userInfo);
+      token = userModel.token;
+      expires = userModel.expires;
+      var now = DateTime.now().millisecondsSinceEpoch / 1000;
+      if (expires == null || (expires < now)) {
+        await services.deleteAll();
+        return null;
+      }
+    }
+    return token;
   }
 }

@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sustainable_city_management/app/constants/icon_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bike_station_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/services/bike_services.dart';
-import 'package:sustainable_city_management/app/shared_components/page_scaffold.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
 
 class BikeScreen extends StatelessWidget {
   const BikeScreen({super.key});
@@ -22,11 +23,12 @@ class _BikeMapScreen extends StatefulWidget {
 class _BikeMapScreenState extends State<_BikeMapScreen> {
   final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
   final double _zoom = 15.0;
+  late BitmapDescriptor bikeIcon;
   List<BikeStationModel> bikeStations = <BikeStationModel>[];
   final Set<Marker> _markers = {};
   BikeServices bikeService = BikeServices();
 
-  CustomInfoWindowController _customInfoWindowController =
+  final CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
 
   @override
@@ -41,6 +43,20 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
     super.dispose();
   }
 
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    addIcon();
+  }
+
+  Future<void> addIcon() async {
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), BikeIcon.BIKE)
+        .then((icon) => setState(() {
+              bikeIcon = icon;
+            }));
+  }
+
   void getBikeStation() async {
     await bikeService.listBikeStation().then((value) => setState(() {
           bikeStations = value;
@@ -53,6 +69,7 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
       _markers.add(Marker(
           markerId: MarkerId(bs.number.toString()),
           position: LatLng(bs.position.latitude, bs.position.longitude),
+          icon: bikeIcon,
           onTap: () {
             _customInfoWindowController.addInfoWindow!(
               Container(
@@ -157,10 +174,6 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
   @override
   Widget build(BuildContext context) {
     return PageScaffold(
-      // appBar: AppBar(
-      //   title: const Text('Dublinbikes'),
-      //   backgroundColor: const Color.fromRGBO(29, 22, 70, 1),
-      // ),
       title: "Dublinbikes",
       body: Stack(
         children: <Widget>[
