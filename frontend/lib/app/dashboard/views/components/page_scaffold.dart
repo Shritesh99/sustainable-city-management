@@ -7,11 +7,14 @@ class PageScaffold extends StatelessWidget {
     this.actions = const [],
     this.body,
     this.floatingActionButton,
+    this.endDrawer,
   }) : super(key: key);
   final String title;
   final List<Widget> actions;
   final Widget? body;
   final Widget? floatingActionButton;
+  // accept Drawer wrapped with SafeArea
+  final Widget? endDrawer;
 
   @override
   Widget build(BuildContext context) {
@@ -36,6 +39,7 @@ class PageScaffold extends StatelessWidget {
         automaticallyImplyLeading: false,
         shape: Border(bottom: BorderSide(color: Colors.grey[350]!, width: 0.5)),
       ),
+      endDrawer: endDrawer,
       body: body,
       floatingActionButton: floatingActionButton,
     );
