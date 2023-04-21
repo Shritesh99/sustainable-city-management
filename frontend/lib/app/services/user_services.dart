@@ -102,7 +102,9 @@ class UserServices {
       rsp = await dioClient.post(ApiPath.logout, data: reqData);
       print(rsp.data);
     }
-    await localStorageServices.delete("user");
+    await localStorageServices.delete(LocalStorageKey.USER_INFO);
+    await localStorageServices.delete(LocalStorageKey.ROLE);
+    await localStorageServices.delete(LocalStorageKey.AUTHS);
   }
 
   // get roles from API
