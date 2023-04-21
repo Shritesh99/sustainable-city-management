@@ -51,7 +51,7 @@ class PedestrianServices {
     var currentDate = DateTime.fromMillisecondsSinceEpoch(now);
     var marchDate = DateTime(currentDate.year, 3, 1);
     var marchWithHour = DateTime(marchDate.year, marchDate.month, 31,
-        min(currentDate.hour + afterHour, 9));
+        min(currentDate.hour + afterHour, 21));
 
     int res = marchWithHour.millisecondsSinceEpoch / 1000 as int;
     return res;
