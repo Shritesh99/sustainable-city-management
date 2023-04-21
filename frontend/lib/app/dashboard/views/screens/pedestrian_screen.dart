@@ -78,7 +78,7 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
     await airService.addCustomMarker(iconMap, colorMap);
     await noiseServices.addCustomMarker(colorMap, iconMap);
     listAirStations();
-    addNoiseMarker();
+    getNoiseData();
   }
 
   //Obtain pedestrian data from backend
@@ -105,6 +105,20 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
     addNoiseMarker();
   }
 
+  void addPedestrianCircles() {
+    for (var pp in pedestrianPositions) {
+      _ppCircles.add(
+        Circle(
+          circleId: CircleId((pp.id + 1).toString()),
+          center: LatLng(pp.latitude, pp.longitude),
+          radius: sqrt(pp.amount / pi) * 5,
+          fillColor: pedestrianService.getColorBasedOnAmt(pp.amount),
+          strokeWidth: 0,
+        ),
+      );
+    }
+  }
+
   void addAirMarker() async {
     for (AirStation station in _airStations) {
       int aqi = station.aqi!;
@@ -114,20 +128,6 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
         position: LatLng(station.latitude, station.longitude),
         icon: iconMap[airService.getState(aqi)]!,
       ));
-    }
-  }
-
-  void addPedestrianCircles() {
-    for (var pp in pedestrianPositions) {
-      _ppCircles.add(
-        Circle(
-          circleId: CircleId((pp.id + 1).toString()),
-          center: LatLng(pp.latitude, pp.longitude),
-          radius: sqrt(pp.amount / pi) * 4,
-          fillColor: pedestrianService.getColorBasedOnAmt(pp.amount),
-          strokeWidth: 0,
-        ),
-      );
     }
   }
 
@@ -142,6 +142,8 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
       ));
     }
   }
+
+  void _toggleMarkers() {}
 
   @override
   Widget build(BuildContext context) {
@@ -180,6 +182,19 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
                       onPressed: () {
                         setState(() {
                           _airIsPressed = !_airIsPressed;
+                          if (_airIsPressed) {
+                            setState(() {
+                              _markers.addAll(airMarkers);
+                              _markers = Set.from(_markers);
+                            });
+                          } else {
+                            setState((() {
+                              _markers = {};
+                              if (_noiseIsPressed) {
+                                _markers.addAll(noiseMarkers);
+                              }
+                            }));
+                          }
                         });
                       },
                       backgroundColor:
@@ -191,6 +206,19 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
                       onPressed: () {
                         setState(() {
                           _noiseIsPressed = !_noiseIsPressed;
+                          if (_noiseIsPressed) {
+                            setState(() {
+                              _markers.addAll(noiseMarkers);
+                              _markers = Set.from(_markers);
+                            });
+                          } else {
+                            setState(() {
+                              _markers = {};
+                              if (_airIsPressed) {
+                                _markers.addAll(airMarkers);
+                              }
+                            });
+                          }
                         });
                       },
                       backgroundColor:
