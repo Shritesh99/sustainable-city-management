@@ -178,8 +178,10 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    //  control whether to display air data
                     FloatingActionButton(
                       onPressed: () {
+                        debugPrint("FloatingActionButton1 be pressed");
                         setState(() {
                           _airIsPressed = !_airIsPressed;
                           if (_airIsPressed) {
@@ -202,8 +204,10 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
                       elevation: 2,
                       child: const Icon(Icons.air),
                     ),
+                    // control whether to display noise data
                     FloatingActionButton(
                       onPressed: () {
+                        debugPrint("FloatingActionButton2 be pressed");
                         setState(() {
                           _noiseIsPressed = !_noiseIsPressed;
                           if (_noiseIsPressed) {
@@ -230,15 +234,44 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
           Positioned(
               top: 16,
               left: 16,
-              child: GestureDetector(
-                  onTap: () => {},
-                  child: Container(
-                      color: Colors.white70,
-                      child: Slider(
-                          value: currentSliderValue,
-                          divisions: 3,
-                          label: currentSliderValue.round().toString(),
-                          onChanged: (double value) => {})))),
+              child: IgnorePointer(
+                ignoring: false,
+                child: Container(
+                  width: 200,
+                  color: Colors.white70,
+                  child: Slider(
+                    max: 3,
+                    value: currentSliderValue,
+                    divisions: 3,
+                    label: currentSliderValue.round().toString(),
+                    onChanged: (double value) {
+                      setState(() {
+                        currentSliderValue = value;
+                      });
+                    },
+                  ),
+                ),
+              )),
+
+          // Positioned(
+          //     top: 16,
+          //     left: 16,
+          //     child: Container(
+          //         color: Colors.white70,
+          //         child: Expanded(
+          //             child: Slider(
+          //           value: currentSliderValue,
+          //           divisions: 3,
+          //           label: currentSliderValue.round().toString(),
+          //           onChanged: (double value) {
+          //             setState(() {
+          //               debugPrint("Slider onChanged ${value}");
+          //               currentSliderValue = value;
+          //             });
+          //           },
+
+          //           // onChanged: (double value) => {}),
+          //         )))),
         ],
       ),
     );
