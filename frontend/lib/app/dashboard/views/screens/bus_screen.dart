@@ -37,10 +37,8 @@ class BusScreenState extends State<BusScreen> {
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
-  //////////////////////////////////////////////////////////////////////////////////
   Set<Marker> _markers = {};
-  //////////////////////////////////////////////////////////////////////////////////
-
+  bool isInitialized = true;
   final BusServices BusService = BusServices();
   List<BusModel> ListBusModels = <BusModel>[];
   final Map<String, BusModel> _busData = {};
@@ -48,6 +46,7 @@ class BusScreenState extends State<BusScreen> {
   List<BusModel> GettheBusList = [];
   final iconMap = <String, BitmapDescriptor>{};
   late BitmapDescriptor myIcon;
+  Map<String, MapPolylineWrapper> routeMap = {};
 
   static const CameraPosition _kGooglePlex = CameraPosition(
     target: LatLng(53.34484562827169, -6.254833978649337),
@@ -66,8 +65,6 @@ class BusScreenState extends State<BusScreen> {
   void didChangeDependencies() async {
     super.didChangeDependencies();
     await addCustomMarker();
-    // await addCustomMarker();
-    // listBusStations('TEST');
   }
 
   //obtain bus position from backend
@@ -202,7 +199,6 @@ class BusScreenState extends State<BusScreen> {
 
   Set<Polyline> _polylines = {};
   Set<Marker> _MarkerList = {};
-  // late Polyline polyline;
   List<BusModel> BusMarkersList = <BusModel>[];
 
   @override
@@ -223,20 +219,18 @@ class BusScreenState extends State<BusScreen> {
             List<String> routeShortNameList = [];
             List<dynamic> routeCoordinatesList = [];
             List<String> routeIDList = [];
+
             for (int i = 0; i < uniqueString.length; i++) {
-              //print(uniqueString[i].properties.routeShortName);
               routeShortNameList.add(uniqueString[i].properties.routeShortName);
               routeCoordinatesList.add(uniqueString[i].geometry.coordinates);
               routeIDList.add(uniqueString[i].properties.routeId);
             }
 
             var UniqueStrings = routeShortNameList.toSet().toList();
-
             final UniqueCoordinates = routeCoordinatesList.toSet().toList();
-
             final UniqueRouteIds = routeIDList.toSet().toList();
 
-            Map<String, MapPolylineWrapper> routeMap = {};
+            // Map<String, MapPolylineWrapper> routeMap = {};
 
             for (int i = 0; i < UniqueStrings.length; i++) {
               List<LatLng> NewrouteCoordinatesList = [];
@@ -244,8 +238,9 @@ class BusScreenState extends State<BusScreen> {
                 NewrouteCoordinatesList.add(LatLng(
                     UniqueCoordinates[i][j][1], UniqueCoordinates[i][j][0]));
               }
-              routeMap[UniqueStrings[i]] = MapPolylineWrapper();
-
+              if (isInitialized) {
+                routeMap[UniqueStrings[i]] = MapPolylineWrapper();
+              }
               routeMap[UniqueStrings[i]]?.polyline = Polyline(
                   //consumeTapEvents: false,
                   polylineId: PolylineId(UniqueStrings[i]),
@@ -253,90 +248,87 @@ class BusScreenState extends State<BusScreen> {
                   width: 5,
                   color: Colors.green);
             }
+            isInitialized = false;
 
-            return PageScaffold(
-              title: 'BUS',
-              body: Stack(children: <Widget>[
-                GoogleMap(
-                  initialCameraPosition: _kGooglePlex,
-                  onTap: (position) {
-                    _customInfoWindowController.hideInfoWindow!();
-                  },
-                  onCameraMove: (position) {
-                    _customInfoWindowController.onCameraMove!();
-                  },
-                  onMapCreated: (GoogleMapController controller) async {
-                    _customInfoWindowController.googleMapController =
-                        controller;
-                  },
-                  myLocationButtonEnabled: false,
-                  markers: //_markers,
-                      _MarkerList,
-                  polylines: _polylines,
-                ),
-                CustomInfoWindow(
-                  (top, left, width, height) => null,
-                  controller: _customInfoWindowController,
-                  height: 130,
-                  width: 200,
-                  offset: 30,
-                ),
-              ]),
-              endDrawer: Drawer(
-                child: ListView(padding: EdgeInsets.zero, children: [
-                  Column(
-                    children: List.generate(
-                      routeMap.length,
-                      <Widget>(index) => CheckboxListTile(
-                        controlAffinity: ListTileControlAffinity.leading,
-                        contentPadding: const EdgeInsets.all(0),
-                        dense: true,
-                        title: Text(UniqueStrings[index]),
-                        activeColor: Colors.transparent,
-                        checkColor: Colors.green,
-                        value: routeMap[UniqueStrings[index]]?.value,
-                        //multipleSelected[index],
-                        onChanged: (value) {
-                          setState(() => {
-                                routeMap[UniqueStrings[index]]?.value = value!,
-                                if (_polylines.contains(
-                                    routeMap[UniqueStrings[index]]!.polyline))
-                                  {
-                                    routeMap[UniqueStrings[index]]?.value =
-                                        value!,
-                                    multipleSelected.remove(
-                                        routeMap[UniqueStrings[index]]?.value),
-                                    routeMap[UniqueStrings[index]]?.value =
-                                        value!,
-                                    _polylines.remove(
-                                        routeMap[UniqueStrings[index]]!
-                                            .polyline),
-                                    _MarkerList.remove((key, value) =>
-                                        key == UniqueStrings[index]),
-                                    _polylines = Set<Polyline>.of(_polylines),
-                                    listBusStations2(UniqueRouteIds[index]),
-                                  }
-                                else
-                                  {
-                                    listBusStations(UniqueRouteIds[index],
-                                        UniqueStrings[index]),
-                                    multipleSelected.add(
-                                        routeMap[UniqueStrings[index]]?.value),
-                                    routeMap[UniqueStrings[index]]?.value =
-                                        value!,
-                                    _polylines.add(
-                                        routeMap[UniqueStrings[index]]!
-                                            .polyline),
-                                    _polylines = Set<Polyline>.of(_polylines),
-                                  }
-                              });
-                        },
-                      ),
-                    ),
-                  )
+            return StatefulBuilder(
+                builder: (BuildContext context, StateSetter setState) {
+              return PageScaffold(
+                title: 'BUS',
+                body: Stack(children: <Widget>[
+                  GoogleMap(
+                    initialCameraPosition: _kGooglePlex,
+                    onTap: (position) {
+                      _customInfoWindowController.hideInfoWindow!();
+                    },
+                    onCameraMove: (position) {
+                      _customInfoWindowController.onCameraMove!();
+                    },
+                    onMapCreated: (GoogleMapController controller) async {
+                      _customInfoWindowController.googleMapController =
+                          controller;
+                    },
+                    myLocationButtonEnabled: false,
+                    markers: //_markers,
+                        _MarkerList,
+                    polylines: _polylines,
+                  ),
+                  CustomInfoWindow(
+                    (top, left, width, height) => null,
+                    controller: _customInfoWindowController,
+                    height: 130,
+                    width: 200,
+                    offset: 30,
+                  ),
                 ]),
-              ),
-            );
+                endDrawer: Drawer(
+                  child: ListView(padding: EdgeInsets.zero, children: [
+                    Column(
+                      children: List.generate(
+                        routeMap.length,
+                        <Widget>(index) => CheckboxListTile(
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: const EdgeInsets.all(0),
+                          dense: true,
+                          title: Text(UniqueStrings[index]),
+                          activeColor: Colors.transparent,
+                          checkColor: Colors.green,
+                          value: routeMap[UniqueStrings[index]]!.value,
+                          //multipleSelected[index],
+                          onChanged: (value) {
+                            setState(() => {
+                                  if (_polylines.contains(
+                                      routeMap[UniqueStrings[index]]!.polyline))
+                                    {
+                                      _polylines.remove(
+                                          routeMap[UniqueStrings[index]]!
+                                              .polyline),
+                                      _MarkerList.remove((key, value) =>
+                                          key == UniqueStrings[index]),
+                                      _polylines = Set<Polyline>.of(_polylines),
+                                      listBusStations2(UniqueRouteIds[index]),
+                                      routeMap[UniqueStrings[index]]!.value =
+                                          value!,
+                                    }
+                                  else
+                                    {
+                                      listBusStations(UniqueRouteIds[index],
+                                          UniqueStrings[index]),
+                                      _polylines.add(
+                                          routeMap[UniqueStrings[index]]!
+                                              .polyline),
+                                      _polylines = Set<Polyline>.of(_polylines),
+                                      routeMap[UniqueStrings[index]]!.value =
+                                          value!,
+                                    }
+                                });
+                          },
+                        ),
+                      ),
+                    )
+                  ]),
+                ),
+              );
+            });
           } else {
             return const Text("Loading......");
           }
