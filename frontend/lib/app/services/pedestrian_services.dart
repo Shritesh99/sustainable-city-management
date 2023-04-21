@@ -2,12 +2,11 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:sustainable_city_management/app/services/user_services.dart';
+import 'package:sustainable_city_management/app/constants/icon_level_constants.dart';
 import '../constants/app_constants.dart';
 import 'package:sustainable_city_management/app/network/dio_client.dart';
 import 'package:sustainable_city_management/app/dashboard/models/pedestrian_model.dart';
 
-final UserServices userServices = UserServices();
 final dioClient = DioClient().dio;
 
 /// contains all service to get data from Server
@@ -40,11 +39,11 @@ class PedestrianServices {
 
   Color getColorBasedOnAmt(int amt) {
     if (amt > 5000) {
-      return Colors.redAccent.withOpacity(0.5);
+      return PedestrianLevel.levelColorMap["High Density"]!;
     } else if (amt > 3000) {
-      return Colors.yellowAccent.withOpacity(0.4);
+      return PedestrianLevel.levelColorMap["Moderate Density"]!;
     } else {
-      return Colors.greenAccent.withOpacity(0.3);
+      return PedestrianLevel.levelColorMap["Low Density"]!;
     }
   }
 
@@ -53,7 +52,7 @@ class PedestrianServices {
     var currentDate = DateTime.fromMillisecondsSinceEpoch(now);
     var marchDate = DateTime(currentDate.year, 3, 1);
     var marchWithHour = DateTime(marchDate.year, marchDate.month, 31,
-        min(currentDate.hour + afterHour, 9));
+        min(currentDate.hour + afterHour, 21));
 
     int res = marchWithHour.millisecondsSinceEpoch / 1000 as int;
     return res;

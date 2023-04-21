@@ -2,10 +2,13 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sustainable_city_management/app/constants/icon_level_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/air_station_model.dart';
 import 'package:sustainable_city_management/app/dashboard/models/noise_model.dart';
 import 'package:sustainable_city_management/app/dashboard/models/pedestrian_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/legend_wrapper.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/text_card.dart';
 import 'package:sustainable_city_management/app/services/noise_services.dart';
 import 'package:sustainable_city_management/app/services/pedestrian_services.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
@@ -106,8 +109,9 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
   }
 
   void addPedestrianCircles() {
+    Set<Circle> circles = {};
     for (var pp in pedestrianPositions) {
-      _ppCircles.add(
+      circles.add(
         Circle(
           circleId: CircleId((pp.id + 1).toString()),
           center: LatLng(pp.latitude, pp.longitude),
@@ -117,6 +121,9 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
         ),
       );
     }
+    setState(() {
+      _ppCircles = circles;
+    });
   }
 
   void addAirMarker() async {
@@ -143,7 +150,17 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
     }
   }
 
-  void _toggleMarkers() {}
+  List<Widget> getPedestrianLegend() {
+    return PedestrianLevel.levelColorMap.entries
+        .map((e) => TextContainer(
+              text: e.key,
+              textColor: Colors.black,
+              backgroundColor: e.value,
+              fontSize: 14,
+              fontWeight: FontWeight.w500,
+            ))
+        .toList();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -247,31 +264,16 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
                     onChanged: (double value) {
                       setState(() {
                         currentSliderValue = value;
+                        getPedestrianPositions(value.round());
                       });
                     },
                   ),
                 ),
               )),
-
-          // Positioned(
-          //     top: 16,
-          //     left: 16,
-          //     child: Container(
-          //         color: Colors.white70,
-          //         child: Expanded(
-          //             child: Slider(
-          //           value: currentSliderValue,
-          //           divisions: 3,
-          //           label: currentSliderValue.round().toString(),
-          //           onChanged: (double value) {
-          //             setState(() {
-          //               debugPrint("Slider onChanged ${value}");
-          //               currentSliderValue = value;
-          //             });
-          //           },
-
-          //           // onChanged: (double value) => {}),
-          //         )))),
+          // pedestrian legend
+          LegendWrapper(
+            textCards: getPedestrianLegend(),
+          ),
         ],
       ),
     );

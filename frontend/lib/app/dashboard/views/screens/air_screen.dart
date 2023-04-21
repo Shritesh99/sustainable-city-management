@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/dashboard/models/air_index_model.dart';
 import 'package:sustainable_city_management/app/dashboard/models/air_station_model.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/legend_wrapper.dart';
 import 'package:sustainable_city_management/app/services/air_services.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
@@ -206,25 +207,7 @@ class _AirMapScreenState extends State<_AirMapScreen> {
                 child: const Icon(Icons.insights),
               )),
           // aqi panel
-          Container(
-              alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * .01,
-                  bottom: MediaQuery.of(context).size.height * .05),
-              child: Container(
-                height: MediaQuery.of(context).size.height * .3,
-                width: (defaultTargetPlatform == TargetPlatform.android ||
-                        defaultTargetPlatform == TargetPlatform.iOS)
-                    ? MediaQuery.of(context).size.width * .3
-                    : MediaQuery.of(context).size.width * .1,
-                child: Card(
-                    color: Colors.white,
-                    elevation: 4.0,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: getAqiPanel(),
-                    )),
-              )),
+          LegendWrapper(textCards: getAqiPanel()),
         ],
       ),
     );

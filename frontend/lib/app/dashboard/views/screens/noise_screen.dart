@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/dashboard/models/noise_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
+import 'package:sustainable_city_management/app/dashboard/views/components/legend_wrapper.dart';
 import 'package:sustainable_city_management/app/services/noise_services.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/text_card.dart';
@@ -23,7 +24,7 @@ class _NoiseMapScreen extends StatefulWidget {
 
 class _NoiseMapScreenState extends State<_NoiseMapScreen> {
   final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
-  final double _zoom = 15.0;
+  final double _zoom = 14.0;
 
   List<NoiseDatum> noiseMonitors = <NoiseDatum>[];
   final NoiseServices noiseServices = NoiseServices();
@@ -180,25 +181,7 @@ class _NoiseMapScreenState extends State<_NoiseMapScreen> {
             offset: 30,
           ),
           // noise panel
-          Container(
-              alignment: Alignment.bottomLeft,
-              padding: EdgeInsets.only(
-                  left: MediaQuery.of(context).size.width * .01,
-                  bottom: MediaQuery.of(context).size.height * .05),
-              child: Container(
-                height: MediaQuery.of(context).size.height * .3,
-                width: (defaultTargetPlatform == TargetPlatform.android ||
-                        defaultTargetPlatform == TargetPlatform.iOS)
-                    ? MediaQuery.of(context).size.width * .3
-                    : MediaQuery.of(context).size.width * .1,
-                child: Card(
-                    color: Colors.white,
-                    elevation: 4.0,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: getLaeqPanel(),
-                    )),
-              ))
+          LegendWrapper(textCards: getLaeqPanel()),
         ],
       ),
     );

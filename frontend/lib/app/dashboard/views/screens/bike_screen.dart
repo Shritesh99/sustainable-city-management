@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sustainable_city_management/app/constants/icon_constants.dart';
+import 'package:sustainable_city_management/app/constants/icon_level_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bike_station_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/services/bike_services.dart';
@@ -67,8 +67,8 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
   void addMarkers() {
     for (var bs in bikeStations) {
       _markers.add(Marker(
-          markerId: MarkerId(bs.number.toString()),
-          position: LatLng(bs.position.latitude, bs.position.longitude),
+          markerId: MarkerId(bs.id.toString()),
+          position: LatLng(bs.latitude, bs.longitude),
           icon: bikeIcon,
           onTap: () {
             _customInfoWindowController.addInfoWindow!(
@@ -113,9 +113,10 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
                                       children: <Widget>[
                                         Text.rich(TextSpan(children: [
                                           TextSpan(
-                                              text: bs.mainStands.availabilities
-                                                  .mechanicalBikes
-                                                  .toString(),
+                                              text: bs.mechanicalBikes != null
+                                                  ? bs.mechanicalBikes
+                                                      .toString()
+                                                  : "0",
                                               style: const TextStyle(
                                                 color: Colors.black87,
                                                 fontSize: 20,
@@ -132,9 +133,10 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
                                             padding: EdgeInsets.only(left: 4.0),
                                           )),
                                           TextSpan(
-                                              text: bs.mainStands.availabilities
-                                                  .electricalBikes
-                                                  .toString(),
+                                              text: bs.electricalBikes != null
+                                                  ? bs.electricalBikes
+                                                      .toString()
+                                                  : "0",
                                               style: const TextStyle(
                                                   color: Colors.black87,
                                                   fontSize: 20)),
@@ -150,9 +152,7 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
                                             padding: EdgeInsets.only(left: 4.0),
                                           )),
                                           TextSpan(
-                                              text: bs.mainStands.availabilities
-                                                  .stands
-                                                  .toString(),
+                                              text: bs.stands.toString(),
                                               style: const TextStyle(
                                                   color: Colors.black87,
                                                   fontSize: 20)),
@@ -165,7 +165,7 @@ class _BikeMapScreenState extends State<_BikeMapScreen> {
                               )))
                     ],
                   )),
-              LatLng(bs.position.latitude, bs.position.longitude),
+              LatLng(bs.latitude, bs.longitude),
             );
           }));
     }
