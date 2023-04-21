@@ -1,7 +1,12 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sustainable_city_management/app/dashboard/models/air_station_model.dart';
+import 'package:sustainable_city_management/app/dashboard/models/noise_model.dart';
 import 'package:sustainable_city_management/app/dashboard/models/pedestrian_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
+import 'package:sustainable_city_management/app/services/noise_services.dart';
 import 'package:sustainable_city_management/app/services/pedestrian_services.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
@@ -25,18 +30,31 @@ class _PedestrianMapScreen extends StatefulWidget {
 }
 
 class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
-  final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
-  final double _zoom = 15.0;
-
+  final LatLng _initialLocation = const LatLng(53.34973, -6.2609);
+  final double _zoom = 16.0;
+  double currentSliderValue = 0;
+  bool isSliderDragging = true;
+  bool _noiseIsPressed = false;
+  bool _airIsPressed = false;
   List<BikeStationModel> bikeStations = <BikeStationModel>[];
   List<PedestrianModel> pedestrianPositions = <PedestrianModel>[];
   List<BinPositionModel> binPositons = <BinPositionModel>[];
-  final Set<Marker> _markers = {};
+  List<AirStation> _airStations = <AirStation>[];
+  List<NoiseDatum> noiseMonitors = <NoiseDatum>[];
+
+  final Set<Marker> airMarkers = {};
+  final Set<Marker> noiseMarkers = {};
+  Set<Circle> _ppCircles = {};
+  Set<Marker> _markers = {};
+
+  final Map<String, BitmapDescriptor> iconMap = {};
+  final Map<String, Color> colorMap = {};
 
   final AirServices airService = AirServices();
   final PedestrianServices pedestrianService = PedestrianServices();
   final BinTruckServices binTruckService = BinTruckServices();
   final BikeServices bikeService = BikeServices();
+  final NoiseServices noiseServices = NoiseServices();
 
   final CustomInfoWindowController _customInfoWindowController =
       CustomInfoWindowController();
@@ -44,8 +62,7 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
   @override
   void initState() {
     super.initState();
-    getPedestrianPositions();
-    getBikeStation();
+    getPedestrianPositions(0);
   }
 
   @override
@@ -54,137 +71,73 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
     super.dispose();
   }
 
-  void getPedestrianPositions() async {
-    await pedestrianService.getPedestrianByTime().then((value) => setState(() {
-          pedestrianPositions = value;
-        }));
-    addPedestrianMarkers();
+  @override
+  void didChangeDependencies() async {
+    super.didChangeDependencies();
+    await airService.addCustomMarker(iconMap, colorMap);
+    await noiseServices.addCustomMarker(colorMap, iconMap);
+    listAirStations();
+    addNoiseMarker();
   }
 
-  void getBikeStation() async {
-    await bikeService.listBikeStation().then((value) => setState(() {
-          bikeStations = value;
-        }));
-    addBikeMarkers();
+  void getPedestrianPositions(int afterHour) async {
+    await pedestrianService
+        .getPedestrianByTime(afterHour)
+        .then((value) => setState(() {
+              pedestrianPositions = value;
+            }));
+    addPedestrianCircles();
   }
 
-  void addPedestrianMarkers() {
-    for (var pp in pedestrianPositions) {
-      String streetName = pp.streetName.toString();
-      String amount = pp.amount.toString();
+  void listAirStations() async {
+    await airService.listAirStation(false).then((value) => setState(() {
+          _airStations = value;
+        }));
+    addAirMarker();
+  }
 
-      _markers.add(Marker(
-        markerId: MarkerId(pp.id.toString()),
-        position: LatLng(pp.latitude, pp.longitude),
-        icon: BitmapDescriptor.defaultMarker,
-        infoWindow: InfoWindow(snippet: '$streetName $amount.'),
+  void getNoiseData() async {
+    await noiseServices.getNoiseData().then((value) => setState(() {
+          noiseMonitors = value;
+        }));
+    addNoiseMarker();
+  }
+
+  void addAirMarker() async {
+    for (AirStation station in _airStations) {
+      int aqi = station.aqi!;
+      // add aqi data to pop up window
+      airMarkers.add(Marker(
+        markerId: MarkerId(station.stationId),
+        position: LatLng(station.latitude, station.longitude),
+        icon: iconMap[airService.getState(aqi)]!,
       ));
     }
   }
 
-  void addBikeMarkers() {
-    for (var bs in bikeStations) {
-      _markers.add(Marker(
-          markerId: MarkerId(bs.number.toString()),
-          position: LatLng(bs.position.latitude, bs.position.longitude),
-          onTap: () {
-            _customInfoWindowController.addInfoWindow!(
-              Container(
-                  margin: const EdgeInsets.all(20),
-                  height: 70,
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: const BorderRadius.all(Radius.circular(50)),
-                      boxShadow: <BoxShadow>[
-                        BoxShadow(
-                            blurRadius: 20,
-                            offset: Offset.zero,
-                            color: Colors.grey.withOpacity(0.5))
-                      ]),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: <Widget>[
-                      Expanded(
-                          child: Container(
-                              margin: const EdgeInsets.only(left: 20),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  Text(
-                                    bs.name,
-                                    style:
-                                        const TextStyle(color: Colors.black87),
-                                  ),
-                                  Text(
-                                    bs.address,
-                                    style: const TextStyle(
-                                        color: Colors.grey, fontSize: 8),
-                                  ),
-                                  Row(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.start,
-                                      children: <Widget>[
-                                        Text.rich(TextSpan(children: [
-                                          TextSpan(
-                                              text: bs.mainStands.availabilities
-                                                  .mechanicalBikes
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                color: Colors.black87,
-                                                fontSize: 20,
-                                              )),
-                                          const WidgetSpan(
-                                              child: Padding(
-                                            padding: EdgeInsets.only(left: 2.0),
-                                          )),
-                                          const WidgetSpan(
-                                              child: Icon(Icons.directions_bike,
-                                                  color: Colors.black87)),
-                                          const WidgetSpan(
-                                              child: Padding(
-                                            padding: EdgeInsets.only(left: 4.0),
-                                          )),
-                                          TextSpan(
-                                              text: bs.mainStands.availabilities
-                                                  .electricalBikes
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 20)),
-                                          const WidgetSpan(
-                                              child: Padding(
-                                            padding: EdgeInsets.only(left: 2.0),
-                                          )),
-                                          const WidgetSpan(
-                                              child: Icon(Icons.electric_bike,
-                                                  color: Colors.black87)),
-                                          const WidgetSpan(
-                                              child: Padding(
-                                            padding: EdgeInsets.only(left: 4.0),
-                                          )),
-                                          TextSpan(
-                                              text: bs.mainStands.availabilities
-                                                  .stands
-                                                  .toString(),
-                                              style: const TextStyle(
-                                                  color: Colors.black87,
-                                                  fontSize: 20)),
-                                          const WidgetSpan(
-                                              child: Icon(Icons.local_parking,
-                                                  color: Colors.black87)),
-                                        ])),
-                                      ])
-                                ],
-                              )))
-                    ],
-                  )),
-              LatLng(bs.position.latitude, bs.position.longitude),
-            );
-          }));
+  void addPedestrianCircles() {
+    for (var pp in pedestrianPositions) {
+      _ppCircles.add(
+        Circle(
+          circleId: CircleId((pp.id + 1).toString()),
+          center: LatLng(pp.latitude, pp.longitude),
+          radius: sqrt(pp.amount / pi) * 4,
+          fillColor: pedestrianService.getColorBasedOnAmt(pp.amount),
+          strokeWidth: 0,
+        ),
+      );
+    }
+  }
+
+  void addNoiseMarker() {
+    debugPrint("iconMap: $iconMap");
+    for (NoiseDatum monitor in noiseMonitors) {
+      double laeq = monitor.laeq;
+      noiseMarkers.add(Marker(
+        markerId: MarkerId(monitor.monitorId.toString()),
+        position: LatLng(monitor.latitude, monitor.longitude),
+        icon: iconMap[noiseServices.getState(laeq)]!,
+      ));
     }
   }
 
@@ -199,25 +152,78 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
               _customInfoWindowController.hideInfoWindow!();
             },
             onCameraMove: (position) {
-              _customInfoWindowController.onCameraMove!();
+              if (!isSliderDragging) {
+                _customInfoWindowController.onCameraMove!();
+              }
             },
             onMapCreated: (GoogleMapController controller) async {
               _customInfoWindowController.googleMapController = controller;
             },
             myLocationButtonEnabled: false,
             markers: _markers,
+            circles: _ppCircles,
             initialCameraPosition: CameraPosition(
               target: _initialLocation,
               zoom: _zoom,
             ),
           ),
-          CustomInfoWindow(
-            (top, left, width, height) => null,
-            controller: _customInfoWindowController,
-            height: 130,
-            width: 250,
-            offset: 30,
-          ),
+          Positioned(
+              top: 16,
+              right: 16,
+              child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    FloatingActionButton(
+                      onPressed: () {
+                        setState(() {
+                          _airIsPressed = !_airIsPressed;
+                        });
+                      },
+                      backgroundColor:
+                          _airIsPressed ? Colors.white60 : Colors.white,
+                      elevation: 2,
+                      child: const Icon(Icons.air),
+                    ),
+                    FloatingActionButton(
+                      onPressed: () {
+                        setState(() {
+                          _noiseIsPressed = !_noiseIsPressed;
+                        });
+                      },
+                      backgroundColor:
+                          _noiseIsPressed ? Colors.white60 : Colors.white,
+                      elevation: 2,
+                      child: const Icon(Icons.mic),
+                    )
+                  ])),
+          Positioned(
+              top: 16,
+              left: 16,
+              child: GestureDetector(
+                  onTap: () => {},
+                  child: Container(
+                      color: Colors.white70,
+                      child: Slider(
+                          value: currentSliderValue,
+                          divisions: 3,
+                          label: currentSliderValue.round().toString(),
+                          onChanged: (double value) => {})))),
+
+          // Positioned(
+          //   top: 16,
+          //   right: 16,
+          //   child: Container(
+          //       height: 20,
+          //       width: 16,
+          //       color: Colors.white70,
+          //       child: Column(
+          //         children: [
+          //           Checkbox(value: false, onChanged: (bool? newValue) {}),
+          //           Spacer(),
+          //         ],
+          //       )),
+          // ),
         ],
       ),
     );

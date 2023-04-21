@@ -1,4 +1,7 @@
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sustainable_city_management/app/constants/icon_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/air_station_model.dart';
 import '../constants/app_constants.dart';
 import '../dashboard/models/air_index_model.dart';
@@ -62,6 +65,62 @@ class AirServices {
       return AqiData.fromJson(rsp.data["aqi_data"]);
     } else {
       return AqiData.fromJson(rsp.data["predicted_detailed_data"]);
+    }
+  }
+
+  Future<void> addCustomMarker(Map<String, BitmapDescriptor> iconMap,
+      Map<String, Color> colorMap) async {
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), AqiLevelIcon.GOOD)
+        .then((icon) {
+      iconMap[AqiLevel.GOOD] = icon;
+      colorMap[AqiLevel.GOOD] = const Color(0xFF118b53);
+    });
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), AqiLevelIcon.MODERATE)
+        .then((icon) {
+      iconMap[AqiLevel.MODERATE] = icon;
+      colorMap[AqiLevel.MODERATE] = const Color(0xFFffd928);
+    });
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), AqiLevelIcon.UNHEALTHY_SENSITIVE)
+        .then((icon) {
+      iconMap[AqiLevel.UNHEALTHY_SENSITIVE] = icon;
+      colorMap[AqiLevel.UNHEALTHY_SENSITIVE] = const Color(0xFFfd8628);
+    });
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), AqiLevelIcon.UNHEALTHY)
+        .then((icon) {
+      iconMap[AqiLevel.UNHEALTHY] = icon;
+      colorMap[AqiLevel.UNHEALTHY] = const Color(0xFFbd0027);
+    });
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), AqiLevelIcon.VERY_UNHEALTHY)
+        .then((icon) {
+      iconMap[AqiLevel.VERY_UNHEALTHY] = icon;
+      colorMap[AqiLevel.VERY_UNHEALTHY] = const Color(0xFF520087);
+    });
+    await BitmapDescriptor.fromAssetImage(
+            const ImageConfiguration(), AqiLevelIcon.HAZARDOUS)
+        .then((icon) {
+      iconMap[AqiLevel.HAZARDOUS] = icon;
+      colorMap[AqiLevel.HAZARDOUS] = const Color(0xFF69001a);
+    });
+  }
+
+  String getState(int aqi) {
+    if (aqi > 300) {
+      return AqiLevel.HAZARDOUS;
+    } else if (aqi >= 201) {
+      return AqiLevel.VERY_UNHEALTHY;
+    } else if (aqi >= 151) {
+      return AqiLevel.UNHEALTHY;
+    } else if (aqi >= 101) {
+      return AqiLevel.UNHEALTHY_SENSITIVE;
+    } else if (aqi >= 51) {
+      return AqiLevel.MODERATE;
+    } else {
+      return AqiLevel.GOOD;
     }
   }
 }

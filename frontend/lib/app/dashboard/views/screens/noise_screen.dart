@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sustainable_city_management/app/constants/level_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/noise_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
 import 'package:sustainable_city_management/app/services/noise_services.dart';
@@ -45,7 +44,7 @@ class _NoiseMapScreenState extends State<_NoiseMapScreen> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    await addCustomMarker();
+    await noiseServices.addCustomMarker(colorMap, iconMap);
     getNoiseData();
   }
 
@@ -54,41 +53,6 @@ class _NoiseMapScreenState extends State<_NoiseMapScreen> {
           noiseMonitors = value;
         }));
     addMarker();
-  }
-
-  Future<void> addCustomMarker() async {
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), LaeqLevelIcon.VERY_LOW)
-        .then((icon) => setState(() {
-              iconMap[LaeqLevel.VERY_LOW] = icon;
-              colorMap[LaeqLevel.VERY_LOW] = Color.fromARGB(255, 169, 211, 109);
-            }));
-
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), LaeqLevelIcon.LOW)
-        .then((icon) => setState(() {
-              iconMap[LaeqLevel.LOW] = icon;
-              colorMap[LaeqLevel.LOW] = const Color.fromARGB(255, 5, 138, 56);
-            }));
-
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), LaeqLevelIcon.MODERATE)
-        .then((icon) => setState(() {
-              iconMap[LaeqLevel.MODERATE] = icon;
-              colorMap[LaeqLevel.MODERATE] = const Color(0xFFffd928);
-            }));
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), LaeqLevelIcon.HIGH)
-        .then((icon) => setState(() {
-              iconMap[LaeqLevel.HIGH] = icon;
-              colorMap[LaeqLevel.HIGH] = const Color(0xFFfd8628);
-            }));
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), LaeqLevelIcon.VERY_HIGH)
-        .then((icon) => setState(() {
-              iconMap[LaeqLevel.VERY_HIGH] = icon;
-              colorMap[LaeqLevel.VERY_HIGH] = const Color(0xFFbd0027);
-            }));
   }
 
   void addPopup(String stateId) {
@@ -118,7 +82,8 @@ class _NoiseMapScreenState extends State<_NoiseMapScreen> {
                           Container(
                             height: 30,
                             decoration: BoxDecoration(
-                              color: colorMap[getState(noiseData.laeq)],
+                              color: colorMap[
+                                  noiseServices.getState(noiseData.laeq)],
                               borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(10),
                                   bottom: Radius.circular(0)),
@@ -126,7 +91,7 @@ class _NoiseMapScreenState extends State<_NoiseMapScreen> {
                             // color: backgroundColor,
                             child: Center(
                                 child: Text(
-                                    "CURRENT RATING: ${getState(noiseData.laeq).toUpperCase()}")),
+                                    "CURRENT RATING: ${noiseServices.getState(noiseData.laeq).toUpperCase()}")),
                           ),
                           TextContainer(
                             text: noiseData.location,
@@ -154,32 +119,15 @@ class _NoiseMapScreenState extends State<_NoiseMapScreen> {
         LatLng(noiseData.latitude, noiseData.longitude));
   }
 
-  String getState(double laeq) {
-    if (laeq > 75) {
-      return LaeqLevel.VERY_HIGH;
-    } else if (laeq > 65 && laeq <= 75) {
-      return LaeqLevel.HIGH;
-    } else if (laeq > 55 && laeq <= 65) {
-      return LaeqLevel.MODERATE;
-    } else if (laeq > 45 && laeq <= 55) {
-      return LaeqLevel.LOW;
-    } else {
-      return LaeqLevel.VERY_LOW;
-    }
-  }
-
   void addMarker() {
     debugPrint("iconMap: $iconMap");
-
     for (NoiseDatum monitor in noiseMonitors) {
       double laeq = monitor.laeq;
       _noiseData[monitor.monitorId.toString()] = monitor;
-      // debugPrint(
-      // "addMarker: $laeq, ${monitor.monitorId}, ${monitor.latitude}, ${monitor.longitude}");
       _markers.add(Marker(
         markerId: MarkerId(monitor.monitorId.toString()),
         position: LatLng(monitor.latitude, monitor.longitude),
-        icon: iconMap[getState(laeq)]!,
+        icon: iconMap[noiseServices.getState(laeq)]!,
         onTap: () {
           addPopup(monitor.monitorId.toString());
         },

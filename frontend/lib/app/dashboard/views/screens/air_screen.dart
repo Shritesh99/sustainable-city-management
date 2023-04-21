@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sustainable_city_management/app/constants/level_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/air_index_model.dart';
 import 'package:sustainable_city_management/app/dashboard/models/air_station_model.dart';
 import 'package:sustainable_city_management/app/services/air_services.dart';
@@ -24,8 +23,9 @@ class _AirMapScreen extends StatefulWidget {
 }
 
 class _AirMapScreenState extends State<_AirMapScreen> {
+  bool _isPressed = false;
   final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
-  final double _zoom = 15.0;
+  final double _zoom = 14.0;
   final AirServices airService = AirServices();
 
   List<AirStation> _airStations = <AirStation>[];
@@ -47,7 +47,7 @@ class _AirMapScreenState extends State<_AirMapScreen> {
   @override
   void didChangeDependencies() async {
     super.didChangeDependencies();
-    await addCustomMarker();
+    await airService.addCustomMarker(iconMap, colorMap);
     _listAirStations();
   }
 
@@ -62,45 +62,6 @@ class _AirMapScreenState extends State<_AirMapScreen> {
           _airStations = value;
         }));
     addMarker();
-  }
-
-  Future<void> addCustomMarker() async {
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), AqiLevelIcon.GOOD)
-        .then((icon) => setState(() {
-              iconMap[AqiLevel.GOOD] = icon;
-              colorMap[AqiLevel.GOOD] = const Color(0xFF118b53);
-            }));
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), AqiLevelIcon.MODERATE)
-        .then((icon) => setState(() {
-              iconMap[AqiLevel.MODERATE] = icon;
-              colorMap[AqiLevel.MODERATE] = const Color(0xFFffd928);
-            }));
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), AqiLevelIcon.UNHEALTHY_SENSITIVE)
-        .then((icon) => setState(() {
-              iconMap[AqiLevel.UNHEALTHY_SENSITIVE] = icon;
-              colorMap[AqiLevel.UNHEALTHY_SENSITIVE] = const Color(0xFFfd8628);
-            }));
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), AqiLevelIcon.UNHEALTHY)
-        .then((icon) => setState(() {
-              iconMap[AqiLevel.UNHEALTHY] = icon;
-              colorMap[AqiLevel.UNHEALTHY] = const Color(0xFFbd0027);
-            }));
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), AqiLevelIcon.VERY_UNHEALTHY)
-        .then((icon) => setState(() {
-              iconMap[AqiLevel.VERY_UNHEALTHY] = icon;
-              colorMap[AqiLevel.VERY_UNHEALTHY] = const Color(0xFF520087);
-            }));
-    await BitmapDescriptor.fromAssetImage(
-            const ImageConfiguration(), AqiLevelIcon.HAZARDOUS)
-        .then((icon) => setState(() {
-              iconMap[AqiLevel.HAZARDOUS] = icon;
-              colorMap[AqiLevel.HAZARDOUS] = const Color(0xFF69001a);
-            }));
   }
 
   void addPopup(String stateId) {
@@ -129,7 +90,7 @@ class _AirMapScreenState extends State<_AirMapScreen> {
                         children: <Widget>[
                           Container(
                             decoration: BoxDecoration(
-                              color: colorMap[getState(aqiData.aqi)],
+                              color: colorMap[airService.getState(aqiData.aqi)],
                               borderRadius: const BorderRadius.vertical(
                                   top: Radius.circular(10),
                                   bottom: Radius.circular(0)),
@@ -161,22 +122,6 @@ class _AirMapScreenState extends State<_AirMapScreen> {
         LatLng(aqiData.latitude, aqiData.longitude));
   }
 
-  String getState(int aqi) {
-    if (aqi > 300) {
-      return AqiLevel.HAZARDOUS;
-    } else if (aqi >= 201) {
-      return AqiLevel.VERY_UNHEALTHY;
-    } else if (aqi >= 151) {
-      return AqiLevel.UNHEALTHY;
-    } else if (aqi >= 101) {
-      return AqiLevel.UNHEALTHY_SENSITIVE;
-    } else if (aqi >= 51) {
-      return AqiLevel.MODERATE;
-    } else {
-      return AqiLevel.GOOD;
-    }
-  }
-
   void addMarker() async {
     Set<Marker> markers = {};
     Map<String, AqiData> aqiDataMap = {};
@@ -190,7 +135,7 @@ class _AirMapScreenState extends State<_AirMapScreen> {
       markers.add(Marker(
         markerId: MarkerId(station.stationId),
         position: LatLng(station.latitude, station.longitude),
-        icon: iconMap[getState(aqi)]!,
+        icon: iconMap[airService.getState(aqi)]!,
         onTap: () {
           addPopup(station.stationId);
         },
@@ -253,9 +198,10 @@ class _AirMapScreenState extends State<_AirMapScreen> {
                   setState(() {
                     _toggleDataMode();
                     _listAirStations();
+                    _isPressed = !_isPressed;
                   });
                 },
-                backgroundColor: Colors.white,
+                backgroundColor: _isPressed ? Colors.white60 : Colors.white,
                 elevation: 2,
                 child: const Icon(Icons.insights),
               )),

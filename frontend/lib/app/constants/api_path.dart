@@ -2,8 +2,6 @@ part of app_constants;
 
 /// all endpoint api
 class ApiPath {
-  //static const _BASE_URL = "https://scm-backend.rxshri99.live";
-  //static const _LOCALHOST = "http://127.0.0.1:8000";
   static const _BASE_URL = "https://scm-backend.rxshri99.live";
 
   static const login = "$_BASE_URL/gateway/login";
@@ -23,8 +21,7 @@ class ApiPath {
   static const regionBins = "$_BASE_URL/gateway/getBinsByRegion?region=";
   static const airIndexPredict =
       "$_BASE_URL/gateway/getPredictedDetailedAirData";
-  static const pedestrian =
-      "$_BASE_URL/gateway/getPedestrianByTime?time=1680361200";
+  static const pedestrian = "$_BASE_URL/gateway/getPedestrianByTime?time=";
 
   static const getNoiseData = "$_BASE_URL/gateway/getNoiseData";
 
