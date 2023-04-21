@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/constants/icon_constants.dart';
 import 'package:uuid/uuid.dart';
@@ -11,7 +10,6 @@ import 'package:sustainable_city_management/google_maps_flutter_geojson.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bus_route_model.dart';
 import 'package:sustainable_city_management/app/services/bus_services.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
-import 'package:collection/iterable_zip.dart';
 
 class BusScreen extends StatefulWidget {
   const BusScreen({Key? key}) : super(key: key);
@@ -23,39 +21,25 @@ class BusScreen extends StatefulWidget {
 CustomInfoWindowController _customInfoWindowController =
     CustomInfoWindowController();
 
-// class CheckBoxExample extends StatefulWidget {
-//   const CheckBoxExample({Key? key}) : super(key: key);
-
-//   @override
-//   State<CheckBoxExample> createState() => _CheckBoxExampleState();
-// }
-
-// class _CheckBoxExampleState extends State<CheckBoxExample> {
-//   List multipleSelected = [];
-
-//   @override
-//   Widget build(BuildContext context) {
-//     // TODO: implement build
-//     throw UnimplementedError();
-//   }
-// }
+class MapPolylineWrapper {
+  late Polyline polyline;
+  bool value = false;
+}
 
 Future<String> loadAsset(BuildContext context) async {
   return await DefaultAssetBundle.of(context)
       .loadString('/DublinBusMain.geojson');
-  // .loadString('/DublinBus1.geojson'); //This is for the one line. testing.
-  //.loadString('/DublinBus1.geojson'); // This is the original one.
-}
-
-Future<String> loadAsset2(BuildContext context) async {
-  return await DefaultAssetBundle.of(context).loadString('/Station.geojson');
 }
 
 class BusScreenState extends State<BusScreen> {
+  List multipleSelected = [];
   final Completer<GoogleMapController> _controller =
       Completer<GoogleMapController>();
 
+  //////////////////////////////////////////////////////////////////////////////////
   Set<Marker> _markers = {};
+  //////////////////////////////////////////////////////////////////////////////////
+
   final BusServices BusService = BusServices();
   List<BusModel> ListBusModels = <BusModel>[];
   final Map<String, BusModel> _busData = {};
@@ -87,6 +71,32 @@ class BusScreenState extends State<BusScreen> {
     addMarker();
   }
 
+  void listBusStations2(String routeId) async {
+    await BusService.listBusState(routeId).then((value) => setState(() {
+          ListBusModels = value;
+        }));
+    removeMarker();
+  }
+
+  void removeMarker() {
+    List<Marker> listMarker = <Marker>[];
+
+    for (BusModel station in ListBusModels) {
+      String routeid = station.routeId;
+
+      // This marker will be replaced after calling one job.
+      listMarker.add(Marker(
+        markerId: MarkerId(station.vehicleId),
+        position: LatLng(station.latitude, station.longitude),
+        icon: icon,
+      ));
+    }
+    setState(() => {
+          _markers = listMarker.toSet(),
+          _MarkerList.removeAll(listMarker),
+        });
+  }
+
   // Custom marker icon
   late BitmapDescriptor icon;
 
@@ -99,10 +109,10 @@ class BusScreenState extends State<BusScreen> {
   }
 
 //directions_bus
+//Everytime it get new marker, when click.
+// so. Need to store the marker, until path is on.
   void addMarker() {
     List<Marker> listMarker = <Marker>[];
-    // final icon = BitmapDescriptor.fromAssetImage(
-    //     ImageConfiguration(), 'assets/images/bus_icon.png');
 
     for (BusModel station in ListBusModels) {
       String routeid = station.routeId;
@@ -111,16 +121,14 @@ class BusScreenState extends State<BusScreen> {
       listMarker.add(Marker(
         markerId: MarkerId(station.vehicleId),
         position: LatLng(station.latitude, station.longitude),
-        //icon: BitmapDescriptor.defaultMarker,
         icon: icon,
-        // icon: const Icon(Icons.directions_bus),
       ));
     }
-    setState(() => {_markers = listMarker.toSet()});
-    //_markers.add(homeMarker);
+    setState(() => {
+          _markers = listMarker.toSet(),
+          _MarkerList.addAll(_markers),
+        });
   }
-  //Put route id and get the routes.like a printinfo()
-  //BusService.listBusState(UniqueRouteIds[index]);
 
   Polyline featureToGooglePolyline(List<dynamic> coordinates) {
     return Polyline(
@@ -128,19 +136,10 @@ class BusScreenState extends State<BusScreen> {
         points: coordinates.map((x) => LatLng(x[1], x[0])).toList());
   }
 
-  /*
-  static const Marker schoolMarker = Marker(
-      markerId: MarkerId('_schoolMarker'),
-      infoWindow: InfoWindow(title: 'Trinity'),
-      icon: BitmapDescriptor.defaultMarker,
-      position: LatLng(53.34484562827169, -6.254833978649337));
-*/
-
-  static const Marker homeMarker = Marker(
-      markerId: MarkerId('_homeMarker'),
-      infoWindow: InfoWindow(title: 'Home'),
-      icon: BitmapDescriptor.defaultMarker,
-      position: LatLng(53.3464062899053, -6.2570863424236));
+  Set<Polyline> _polylines = {};
+  Set<Marker> _MarkerList = {};
+  // late Polyline polyline;
+  List<BusModel> BusMarkersList = <BusModel>[];
 
   @override
   Widget build(BuildContext context) {
@@ -168,9 +167,12 @@ class BusScreenState extends State<BusScreen> {
             }
 
             var UniqueStrings = routeShortNameList.toSet().toList();
+
             final UniqueCoordinates = routeCoordinatesList.toSet().toList();
+
             final UniqueRouteIds = routeIDList.toSet().toList();
-            Map<String, Polyline> routeMap = {};
+
+            Map<String, MapPolylineWrapper> routeMap = {};
 
             for (int i = 0; i < UniqueStrings.length; i++) {
               List<LatLng> NewrouteCoordinatesList = [];
@@ -178,25 +180,15 @@ class BusScreenState extends State<BusScreen> {
                 NewrouteCoordinatesList.add(LatLng(
                     UniqueCoordinates[i][j][1], UniqueCoordinates[i][j][0]));
               }
-              routeMap[UniqueStrings[i]] = Polyline(
+              routeMap[UniqueStrings[i]] = MapPolylineWrapper();
+
+              routeMap[UniqueStrings[i]]?.polyline = Polyline(
+                  //consumeTapEvents: false,
                   polylineId: PolylineId(UniqueStrings[i]),
                   points: NewrouteCoordinatesList,
                   width: 5,
                   color: Colors.green);
             }
-
-            String StringUniqueStrings = UniqueStrings.toString();
-            String StringUniqueCoordinates = UniqueCoordinates.toString();
-
-            var latlong = StringUniqueStrings[0].split(",");
-            final Map<String, dynamic> combinedlist =
-                Map.fromIterables(UniqueStrings, UniqueCoordinates);
-
-            final StringCombinedlist = combinedlist.toString();
-
-            bool isBool = false;
-            bool _value = false;
-            List<bool> checkBoxesCheckedStates = [false];
 
             return SafeArea(
               child: Scaffold(
@@ -208,10 +200,17 @@ class BusScreenState extends State<BusScreen> {
                 ),
                 body: GoogleMap(
                   mapType: MapType.normal,
-                  markers: _markers,
-                  polylines: //Set<Polyline>.of([routeMap['69']!]),
-                      _polylineSet,
-                  // Show bus route gray color as a default
+                  markers: //_markers,
+                      _MarkerList,
+                  polylines: _polylines, //Set<Polyline>.of([routeMap['69']!]),
+                  //polylines,
+                  //_polylineSet,
+                  // Set<Polyline>.of(layers
+                  //     .polylines), // Show bus route gray color as a default
+
+                  //Set<Polyline>.of(layers.polylines),
+                  //polylines: //_polyline1,
+                  //Set<Polyline>.of(UniqueCoordinates[0].polylines),
 
                   initialCameraPosition: _kGooglePlex,
                   onMapCreated: (GoogleMapController controller) {
@@ -222,29 +221,78 @@ class BusScreenState extends State<BusScreen> {
                   child: ListView(padding: EdgeInsets.zero, children: [
                     Column(
                       children: List.generate(
-                        UniqueStrings.length,
+                        routeMap.length,
                         <Widget>(index) => CheckboxListTile(
+                          controlAffinity: ListTileControlAffinity.leading,
+                          contentPadding: EdgeInsets.all(0),
+                          dense: true,
                           title: Text(UniqueStrings[index]),
-                          autofocus: false,
-                          activeColor: Colors.green,
-                          checkColor: Colors.white,
-                          value: UniqueStrings[index].isBool, //unchecked
-                          selected: UniqueStrings[index].isBool,
-                          onChanged: (bool? value) {
-                            setState(() {
-                              //UniqueStrings[index].isBool = value!;
-                              _value = value!;
-                              _polylineSet = Set<Polyline>.of(
-                                  [routeMap[UniqueStrings[index]]!]);
-                              listBusStations(UniqueRouteIds[index]);
+                          activeColor: Colors.transparent,
+                          checkColor: Colors.green,
+                          value: routeMap[UniqueStrings[index]]?.value,
+                          //multipleSelected[index],
+                          onChanged: (value) {
+                            setState(() => {
+                                  routeMap[UniqueStrings[index]]?.value =
+                                      value!,
+                                  // _polylineSet = Set<Polyline>.of(
+                                  //     [routeMap[UniqueStrings[index]]!.polyline]);
+                                  //_MarkerList.addAll(_markers),
 
-                              //Calling marker
-                              //BusService.listBusState(UniqueRouteIds[index]);
-                              // I need to do, when I click the bus number,
-                              // Not only shows the bus route but also shows current bus locations.
-                              // which needs, mapping route id, route_short_name_coordinates and values(for checkbox)
-                              // If I have a time....... (and Station?????)
-                            });
+                                  if (_polylines.contains(
+                                      routeMap[UniqueStrings[index]]!.polyline))
+                                    {
+                                      routeMap[UniqueStrings[index]]?.value =
+                                          value!,
+                                      multipleSelected.remove(
+                                          routeMap[UniqueStrings[index]]
+                                              ?.value),
+                                      routeMap[UniqueStrings[index]]?.value =
+                                          value!,
+                                      _polylines.remove(
+                                          routeMap[UniqueStrings[index]]!
+                                              .polyline),
+                                      _MarkerList.remove((key, value) =>
+                                          key == UniqueStrings[index]),
+                                      _polylines = Set<Polyline>.of(_polylines),
+                                      //_MarkerList = _markers.toSet(),
+                                      listBusStations2(UniqueRouteIds[index]),
+                                      //_MarkerList.remove(_markers as Marker),
+                                      //listBusStations(UniqueRouteIds[index]),
+                                      // routeMap[UniqueStrings[index]]?.value =
+                                      //     value!
+                                    }
+                                  else
+                                    {
+                                      //_MarkerList.addAll(_markers),
+                                      listBusStations(UniqueRouteIds[index]),
+                                      multipleSelected.add(
+                                          routeMap[UniqueStrings[index]]
+                                              ?.value),
+                                      //_polylineSet = Set<Polyline>.of([routeMap[UniqueStrings[index]]!.polyline]);
+                                      routeMap[UniqueStrings[index]]?.value =
+                                          value!,
+
+                                      _polylines.add(
+                                          routeMap[UniqueStrings[index]]!
+                                              .polyline),
+                                      //_MarkerList.addAll(_markers),
+
+                                      _polylines = Set<Polyline>.of(_polylines),
+                                      // Calling bus location from the backend
+                                      //_MarkerList.add(listBusStations(UniqueRouteIds[index]));
+                                      //listBusStations(UniqueRouteIds[index]),
+
+                                      //_MarkerList = _markers,
+
+                                      // routeMap[UniqueStrings[index]]?.value =
+                                      //     value!,
+
+                                      //print(multipleSelected[index])
+
+                                      // If Uniquestring[index] thing is in the list, keep mark on the map.
+                                    }
+                                });
                           },
                         ),
                       ),
