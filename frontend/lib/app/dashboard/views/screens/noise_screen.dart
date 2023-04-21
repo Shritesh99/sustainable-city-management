@@ -23,7 +23,7 @@ class _NoiseMapScreen extends StatefulWidget {
 
 class _NoiseMapScreenState extends State<_NoiseMapScreen> {
   final LatLng _initialLocation = const LatLng(53.342686, -6.267118);
-  final double _zoom = 15.0;
+  final double _zoom = 14.0;
 
   List<NoiseDatum> noiseMonitors = <NoiseDatum>[];
   final NoiseServices noiseServices = NoiseServices();

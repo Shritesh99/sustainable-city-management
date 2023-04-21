@@ -106,8 +106,9 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
   }
 
   void addPedestrianCircles() {
+    Set<Circle> circles = {};
     for (var pp in pedestrianPositions) {
-      _ppCircles.add(
+      circles.add(
         Circle(
           circleId: CircleId((pp.id + 1).toString()),
           center: LatLng(pp.latitude, pp.longitude),
@@ -117,6 +118,9 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
         ),
       );
     }
+    setState(() {
+      _ppCircles = circles;
+    });
   }
 
   void addAirMarker() async {
@@ -247,31 +251,12 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
                     onChanged: (double value) {
                       setState(() {
                         currentSliderValue = value;
+                        getPedestrianPositions(value.round());
                       });
                     },
                   ),
                 ),
               )),
-
-          // Positioned(
-          //     top: 16,
-          //     left: 16,
-          //     child: Container(
-          //         color: Colors.white70,
-          //         child: Expanded(
-          //             child: Slider(
-          //           value: currentSliderValue,
-          //           divisions: 3,
-          //           label: currentSliderValue.round().toString(),
-          //           onChanged: (double value) {
-          //             setState(() {
-          //               debugPrint("Slider onChanged ${value}");
-          //               currentSliderValue = value;
-          //             });
-          //           },
-
-          //           // onChanged: (double value) => {}),
-          //         )))),
         ],
       ),
     );

@@ -9,8 +9,9 @@ class ApiPath {
   static const register = "$_BASE_URL/gateway/register";
   static const getRoles = "$_BASE_URL/gateway/getRoles";
 
-  static const bike =
-      "https://api.jcdecaux.com/vls/v3/stations?apiKey=frifk0jbxfefqqniqez09tw4jvk37wyf823b5j1i&contract=dublin";
+  // static const bike =
+  //     "https://api.jcdecaux.com/vls/v3/stations?apiKey=frifk0jbxfefqqniqez09tw4jvk37wyf823b5j1i&contract=dublin";
+  static const bike = "https://scm-backend.rxshri99.live/gateway/getBikes";
 
   static const airStation = "$_BASE_URL/gateway/getDetailedAirData";
   static const airStationPredict = "$_BASE_URL/gateway/getPredictedAirStations";

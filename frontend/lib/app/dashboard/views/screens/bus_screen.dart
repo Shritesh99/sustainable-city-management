@@ -29,7 +29,7 @@ class MapPolylineWrapper {
 
 Future<String> loadAsset(BuildContext context) async {
   return await DefaultAssetBundle.of(context)
-      .loadString('/DublinBusMain.geojson');
+      .loadString('assets/DublinBusMain.geojson');
 }
 
 class BusScreenState extends State<BusScreen> {

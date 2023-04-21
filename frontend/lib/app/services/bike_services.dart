@@ -24,14 +24,15 @@ class BikeServices {
 
   Dio get dioClient => _dioInstance!;
 
-  // get bike stations detail from api
+  // get bike stations detail from backend
   Future<List<BikeStationModel>> listBikeStation() async {
     List<BikeStationModel> bikeStationModels = <BikeStationModel>[];
     var uri = Uri.parse(ApiPath.bike);
     try {
       Response rsp;
       rsp = await dioClient.getUri(uri);
-      for (var bs in (rsp.data as List)) {
+      List<dynamic> data = rsp.data['bike_data']['bikes'];
+      for (var bs in data) {
         bikeStationModels.add(BikeStationModel.fromJson(bs));
       }
       return bikeStationModels;
