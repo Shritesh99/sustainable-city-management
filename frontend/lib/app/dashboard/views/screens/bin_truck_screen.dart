@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:sustainable_city_management/app/constants/icon_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bin_truck_model.dart';
-import 'package:sustainable_city_management/app/dashboard/models/bus_direction_model.dart';
+import 'package:sustainable_city_management/app/dashboard/models/bin_truck_direction_model.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/popup_menu.dart';
 import 'package:sustainable_city_management/app/services/bin_truck_services.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';

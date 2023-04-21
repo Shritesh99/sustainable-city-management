@@ -122,14 +122,14 @@ class AppMenu extends ConsumerWidget {
                                       fontFamily: 'MaterialIcons'),
                                   label: MenuLable.pedestrian,
                                 ),
-                              if (auths.contains(AuthList.binTruck))
-                                SelectionButtonData(
-                                  activeIcon: const IconData(0xf07a2,
-                                      fontFamily: 'MaterialIcons'),
-                                  icon: const IconData(0xf06f2,
-                                      fontFamily: 'MaterialIcons'),
-                                  label: MenuLable.binTruck,
-                                ),
+                              // if (auths.contains(AuthList.binTruck))
+                              //   SelectionButtonData(
+                              //     activeIcon: const IconData(0xf07a2,
+                              //         fontFamily: 'MaterialIcons'),
+                              //     icon: const IconData(0xf06f2,
+                              //         fontFamily: 'MaterialIcons'),
+                              //     label: MenuLable.binTruck,
+                              //   ),
                               SelectionButtonData(
                                 activeIcon: const IconData(0xe243,
                                     fontFamily: 'MaterialIcons'),
@@ -145,7 +145,7 @@ class AppMenu extends ConsumerWidget {
                                 debugPrint("logout");
                                 UserServices().logout();
                                 Get.toNamed(Routes.login);
-                              } else {
+                              } else if (value.label != MenuLable.binTruck) {
                                 _selectPage(context, ref, value.label);
                               }
                             },

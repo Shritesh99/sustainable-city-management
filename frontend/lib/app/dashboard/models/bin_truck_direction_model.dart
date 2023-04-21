@@ -2,7 +2,7 @@ import 'dart:math';
 
 import 'package:flutter_polyline_points/flutter_polyline_points.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'dart:js';
+// import 'dart:js';
 
 class Directions {
   final LatLngBounds bounds;
@@ -33,14 +33,14 @@ class Directions {
       southwest: LatLng(southwest['lat'], southwest['lng']),
     );
 
-    List points =
-        context.callMethod('decodeLine', [data['overview_polyline']['points']])
-            as List;
+    // List points =
+    //     context.callMethod('decodeLine', [data['overview_polyline']['points']])
+    //         as List;
     List<PointLatLng> pointList = [];
-    for (int i = 0; i < points.length; i++) {
-      pointList
-          .add(PointLatLng(points[i][0] as double, points[i][1] as double));
-    }
+    // for (int i = 0; i < points.length; i++) {
+    //   pointList
+    //       .add(PointLatLng(points[i][0] as double, points[i][1] as double));
+    // }
     return Directions(
       bounds: bounds,
       polylinePoints: pointList,
