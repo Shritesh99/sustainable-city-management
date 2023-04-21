@@ -10,7 +10,6 @@ import 'package:sustainable_city_management/app/network/dio_client.dart';
 class NoiseServices {
   static final NoiseServices _noiseServices = NoiseServices._internal();
   static final UserServices userServices = UserServices();
-  // static Dio dioClient = DioClient().dio;
 
   factory NoiseServices({Dio? dio}) {
     if (_noiseServices._dioInstance == null) {

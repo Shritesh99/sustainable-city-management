@@ -30,7 +30,6 @@ class BikeServices {
     var uri = Uri.parse(ApiPath.bike);
     try {
       Response rsp;
-      // rsp = await Dio().getUri(uri);
       rsp = await dioClient.getUri(uri);
       for (var bs in (rsp.data as List)) {
         bikeStationModels.add(BikeStationModel.fromJson(bs));

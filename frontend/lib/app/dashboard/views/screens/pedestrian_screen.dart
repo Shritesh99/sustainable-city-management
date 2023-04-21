@@ -36,6 +36,7 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
   bool isSliderDragging = true;
   bool _noiseIsPressed = false;
   bool _airIsPressed = false;
+  //Data model List
   List<BikeStationModel> bikeStations = <BikeStationModel>[];
   List<PedestrianModel> pedestrianPositions = <PedestrianModel>[];
   List<BinPositionModel> binPositons = <BinPositionModel>[];
@@ -80,6 +81,7 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
     addNoiseMarker();
   }
 
+  //Obtain pedestrian data from backend
   void getPedestrianPositions(int afterHour) async {
     await pedestrianService
         .getPedestrianByTime(afterHour)
@@ -209,21 +211,6 @@ class _PedestrianMapScreenState extends State<_PedestrianMapScreen> {
                           divisions: 3,
                           label: currentSliderValue.round().toString(),
                           onChanged: (double value) => {})))),
-
-          // Positioned(
-          //   top: 16,
-          //   right: 16,
-          //   child: Container(
-          //       height: 20,
-          //       width: 16,
-          //       color: Colors.white70,
-          //       child: Column(
-          //         children: [
-          //           Checkbox(value: false, onChanged: (bool? newValue) {}),
-          //           Spacer(),
-          //         ],
-          //       )),
-          // ),
         ],
       ),
     );

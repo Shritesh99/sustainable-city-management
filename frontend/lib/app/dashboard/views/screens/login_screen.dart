@@ -281,8 +281,6 @@ class _LoginScreenState extends State<LoginScreen> {
 
             if (result != null) {
               if (result.error) {
-                // _emailController.text = "";
-                // _passwordController.text = "";
                 CustomShowDialog.showErrorDialog(
                   context,
                   "Login Failed",

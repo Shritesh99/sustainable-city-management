@@ -8,9 +8,7 @@ import 'package:sustainable_city_management/app/network/dio_client.dart';
 
 class BusServices {
   static final BusServices _busServices = BusServices._internal();
-  // static final dioClient = DioClient().dio;
   static final UserServices userServices = UserServices();
-  // static final dioClient = DioClient().dio;
 
   factory BusServices({Dio? dio}) {
     if (_busServices._dioInstance == null) {
@@ -26,12 +24,6 @@ class BusServices {
 
   Dio get dioClient => _dioInstance!;
 
-  // Map<String, List<List<double>>> testMarkerData = {
-  //   '2954_46048': [
-  //     [53.3464062899053, -6.2570863424236]
-  //   ],
-  // };
-
   Future<List<BusModel>> listBusState(String routeId) async {
     List<BusModel> NewBusModels = <BusModel>[];
 
@@ -46,8 +38,4 @@ class BusServices {
     }
     return NewBusModels;
   }
-
-  // List<List<double>> listBusCoordinates(String routeId) {
-  //   return testMarkerData[routeId]!;
-  // }
 }

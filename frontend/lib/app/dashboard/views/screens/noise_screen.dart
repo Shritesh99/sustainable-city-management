@@ -48,6 +48,7 @@ class _NoiseMapScreenState extends State<_NoiseMapScreen> {
     getNoiseData();
   }
 
+  // Obtain noise data from backend
   void getNoiseData() async {
     await noiseServices.getNoiseData().then((value) => setState(() {
           noiseMonitors = value;

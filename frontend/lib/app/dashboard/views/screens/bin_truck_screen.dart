@@ -56,6 +56,7 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
             }));
   }
 
+  //Obtain data from goole map api
   void getTruckRoute() async {
     await binTruckService
         .getRouteCoordinates(binPositons, "driving")
@@ -64,6 +65,7 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
             }));
   }
 
+  //get all bin data from backend
   void getBinPositons() async {
     await binTruckService.listBinPosition().then((value) => setState(() {
           binPositons = value;
@@ -71,6 +73,7 @@ class _BinTruckMapScreenState extends State<_BinTruckMapScreen> {
     addMarkers();
   }
 
+  //get regional bin data from api
   void getRegionBinPositons(int region) async {
     await binTruckService
         .listRegionBinPosition(region)

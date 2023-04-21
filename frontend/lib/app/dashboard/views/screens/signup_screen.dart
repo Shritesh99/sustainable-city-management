@@ -40,6 +40,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
     super.dispose();
   }
 
+  //Get Roles data
   void _fetchRolesData() async {
     await UserServices().getRolesFromApi().then((rolesList) => setState(() {
           _rolesData = rolesList;

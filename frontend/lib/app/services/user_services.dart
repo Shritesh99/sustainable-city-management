@@ -11,7 +11,6 @@ import 'package:sustainable_city_management/app/network/dio_client.dart';
 import 'package:sustainable_city_management/app/dashboard/models/error_model.dart';
 
 final LocalStorageServices localStorageServices = LocalStorageServices();
-// final dioClient = DioClient().dio;
 
 // User Account APIs
 class UserServices {

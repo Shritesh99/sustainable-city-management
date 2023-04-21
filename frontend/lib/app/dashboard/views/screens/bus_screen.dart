@@ -79,6 +79,7 @@ class BusScreenState extends State<BusScreen> {
     // listBusStations('TEST');
   }
 
+  //obtain bus position from backend
   void listBusStations(String routeId) async {
     await BusService.listBusState(routeId).then((value) => setState(() {
           ListBusModels = value;
@@ -128,7 +129,6 @@ class BusScreenState extends State<BusScreen> {
   }
 
   /*
-  
   static const Marker schoolMarker = Marker(
       markerId: MarkerId('_schoolMarker'),
       infoWindow: InfoWindow(title: 'Trinity'),
@@ -154,15 +154,9 @@ class BusScreenState extends State<BusScreen> {
             // This line below has an error.
             final layers =
                 GeoJSONGoogleMapsResult.fromJson(jsonDecode(geojson!));
-
-            //final getGeojsondata = GetJsonData.fromJson(geojson);
-
             final busRouteModel = busRouteModelFromJson(geojson);
-
             List<Feature> features = busRouteModel.features.toSet().toList();
-
             final uniqueString = features.toSet().toList();
-
             List<String> routeShortNameList = [];
             List<dynamic> routeCoordinatesList = [];
             List<String> routeIDList = [];
@@ -174,29 +168,13 @@ class BusScreenState extends State<BusScreen> {
             }
 
             var UniqueStrings = routeShortNameList.toSet().toList();
-            // for (int i = 0; i < UniqueStrings.length; i++) {
-            //   uniqueString[i].le
-            // }
-
-            //print(uniqueString[0]);
             final UniqueCoordinates = routeCoordinatesList.toSet().toList();
-            //BusService.listBusState("2954_46038");#
-
-            //BusService.listBusCoordinates('2954_46048');
-
             final UniqueRouteIds = routeIDList.toSet().toList();
-            //BusService.listBusState("");
-            // for (int i = 0; i < UniqueStrings.length; i++) {
-            //   print(UniqueStrings[i]);
-            //   print(UniqueRouteIds[i]);
-            // }
             Map<String, Polyline> routeMap = {};
 
             for (int i = 0; i < UniqueStrings.length; i++) {
-              //print(UniqueRouteIds[i]);
               List<LatLng> NewrouteCoordinatesList = [];
               for (int j = 0; j < UniqueCoordinates[i].length; j++) {
-                //print(UniqueCoordinates[i][j][1].runtimeType);
                 NewrouteCoordinatesList.add(LatLng(
                     UniqueCoordinates[i][j][1], UniqueCoordinates[i][j][0]));
               }
@@ -207,19 +185,10 @@ class BusScreenState extends State<BusScreen> {
                   color: Colors.green);
             }
 
-            //Multiple Selection of the Bus route.
-
-            // Map<String, String> CheckboxMapping = {};
-            // List multipleSelected = [];
-            // for (int i = 0; i < routeMap.length; i++) {}
-
             String StringUniqueStrings = UniqueStrings.toString();
-
             String StringUniqueCoordinates = UniqueCoordinates.toString();
 
             var latlong = StringUniqueStrings[0].split(",");
-            // var latitude = parseFloat(latlong[0]);
-
             final Map<String, dynamic> combinedlist =
                 Map.fromIterables(UniqueStrings, UniqueCoordinates);
 
@@ -242,12 +211,7 @@ class BusScreenState extends State<BusScreen> {
                   markers: _markers,
                   polylines: //Set<Polyline>.of([routeMap['69']!]),
                       _polylineSet,
-                  // Set<Polyline>.of(layers
-                  //     .polylines), // Show bus route gray color as a default
-
-                  //Set<Polyline>.of(layers.polylines),
-                  //polylines: //_polyline1,
-                  //Set<Polyline>.of(UniqueCoordinates[0].polylines),
+                  // Show bus route gray color as a default
 
                   initialCameraPosition: _kGooglePlex,
                   onMapCreated: (GoogleMapController controller) {
