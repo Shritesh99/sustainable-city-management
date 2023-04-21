@@ -1,13 +1,10 @@
 import 'dart:async';
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:sustainable_city_management/app/constants/icon_constants.dart';
+import 'package:sustainable_city_management/app/constants/icon_level_constants.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/page_scaffold.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/text_card.dart';
-import 'package:uuid/uuid.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bus_model.dart';
-import 'package:sustainable_city_management/google_maps_flutter_geojson.dart';
 import 'package:sustainable_city_management/app/dashboard/models/bus_route_model.dart';
 import 'package:sustainable_city_management/app/services/bus_services.dart';
 import 'package:sustainable_city_management/app/dashboard/views/components/custom_info_window.dart';
@@ -33,27 +30,20 @@ Future<String> loadAsset(BuildContext context) async {
 }
 
 class BusScreenState extends State<BusScreen> {
-  List multipleSelected = [];
-  final Completer<GoogleMapController> _controller =
-      Completer<GoogleMapController>();
-
+  final Set<Marker> _markerList = {};
+  final BusServices busService = BusServices();
+  Set<Polyline> _polylines = {};
   Set<Marker> _markers = {};
   bool isInitialized = true;
-  final BusServices BusService = BusServices();
-  List<BusModel> ListBusModels = <BusModel>[];
-  final Map<String, BusModel> _busData = {};
-
-  List<BusModel> GettheBusList = [];
-  final iconMap = <String, BitmapDescriptor>{};
-  late BitmapDescriptor myIcon;
+  List<BusModel> busModels = <BusModel>[];
+  late BitmapDescriptor busIcon;
   Map<String, MapPolylineWrapper> routeMap = {};
 
-  static const CameraPosition _kGooglePlex = CameraPosition(
+  static const CameraPosition _initialPosition = CameraPosition(
     target: LatLng(53.34484562827169, -6.254833978649337),
     zoom: 12,
   );
   get color => null;
-  Set<Polyline> _polylineSet = Set<Polyline>();
 
   @override
   void dispose() {
@@ -68,68 +58,57 @@ class BusScreenState extends State<BusScreen> {
   }
 
   //obtain bus position from backend
-  void listBusStations(String routeId, String busNumber) async {
-    await BusService.listBusState(routeId).then((value) => setState(() {
-          ListBusModels = value;
+  void listBusStations(String routeId, String busNumber, bool isRemove) async {
+    await busService.listBusState(routeId).then((value) => setState(() {
+          busModels = value;
         }));
-    addMarker(busNumber);
-  }
-
-  void listBusStations2(String routeId) async {
-    await BusService.listBusState(routeId).then((value) => setState(() {
-          ListBusModels = value;
-        }));
-    removeMarker();
-  }
-
-  void removeMarker() {
-    List<Marker> listMarker = <Marker>[];
-
-    for (BusModel station in ListBusModels) {
-      String routeid = station.routeId;
-
-      // This marker will be replaced after calling one job.
-      listMarker.add(Marker(
-        markerId: MarkerId(station.vehicleId),
-        position: LatLng(station.latitude, station.longitude),
-        icon: icon,
-      ));
+    if (isRemove) {
+      removeMarker();
+    } else {
+      addMarker(busNumber);
     }
-    setState(() => {
-          _markers = listMarker.toSet(),
-          _MarkerList.removeAll(listMarker),
-        });
   }
-
-  // Custom marker icon
-  late BitmapDescriptor icon;
 
   Future<void> addCustomMarker() async {
     await BitmapDescriptor.fromAssetImage(
             const ImageConfiguration(), BusIcon.BUS_ICON)
         .then((value) => setState(() {
-              icon = value;
+              busIcon = value;
             }));
   }
 
-//directions_bus
-//Everytime it get new marker, when click.
-// so. Need to store the marker, until path is on.
-  void addMarker(String busNumber) {
+  void removeMarker() {
     List<Marker> listMarker = <Marker>[];
 
-    for (BusModel station in ListBusModels) {
+    for (BusModel station in busModels) {
       // This marker will be replaced after calling one job.
       listMarker.add(Marker(
         markerId: MarkerId(station.vehicleId),
         position: LatLng(station.latitude, station.longitude),
-        icon: icon,
+        icon: busIcon,
+      ));
+    }
+    setState(() => {
+          _markers = listMarker.toSet(),
+          _markerList.removeAll(listMarker),
+        });
+  }
+
+  void addMarker(String busNumber) {
+    List<Marker> listMarker = <Marker>[];
+
+    for (BusModel station in busModels) {
+      // This marker will be replaced after calling one job.
+      listMarker.add(Marker(
+        markerId: MarkerId(station.vehicleId),
+        position: LatLng(station.latitude, station.longitude),
+        icon: busIcon,
         onTap: () => addPopup(station, busNumber),
       ));
     }
     setState(() => {
           _markers = listMarker.toSet(),
-          _MarkerList.addAll(_markers),
+          _markerList.addAll(_markers),
         });
   }
 
@@ -191,16 +170,6 @@ class BusScreenState extends State<BusScreen> {
         LatLng(busModel.latitude, busModel.longitude));
   }
 
-  Polyline featureToGooglePolyline(List<dynamic> coordinates) {
-    return Polyline(
-        polylineId: PolylineId(Uuid().v4()),
-        points: coordinates.map((x) => LatLng(x[1], x[0])).toList());
-  }
-
-  Set<Polyline> _polylines = {};
-  Set<Marker> _MarkerList = {};
-  List<BusModel> BusMarkersList = <BusModel>[];
-
   @override
   Widget build(BuildContext context) {
     return FutureBuilder<String>(
@@ -209,13 +178,9 @@ class BusScreenState extends State<BusScreen> {
         builder: (BuildContext context, AsyncSnapshot<String> snapshot) {
           if (snapshot.data != null) {
             String? geojson = snapshot.data;
-
-            // This line below has an error.
-            final layers =
-                GeoJSONGoogleMapsResult.fromJson(jsonDecode(geojson!));
-            final busRouteModel = busRouteModelFromJson(geojson);
-            List<Feature> features = busRouteModel.features.toSet().toList();
-            final uniqueString = features.toSet().toList();
+            final busRouteModel = busRouteModelFromJson(geojson!);
+            List<Feature> uniqueString =
+                busRouteModel.features.toSet().toList();
             List<String> routeShortNameList = [];
             List<dynamic> routeCoordinatesList = [];
             List<String> routeIDList = [];
@@ -226,25 +191,23 @@ class BusScreenState extends State<BusScreen> {
               routeIDList.add(uniqueString[i].properties.routeId);
             }
 
-            var UniqueStrings = routeShortNameList.toSet().toList();
-            final UniqueCoordinates = routeCoordinatesList.toSet().toList();
-            final UniqueRouteIds = routeIDList.toSet().toList();
+            var uniqueStringList = routeShortNameList.toSet().toList();
+            final uniqueCoordinates = routeCoordinatesList.toSet().toList();
+            final uniqueRouteIds = routeIDList.toSet().toList();
 
-            // Map<String, MapPolylineWrapper> routeMap = {};
-
-            for (int i = 0; i < UniqueStrings.length; i++) {
-              List<LatLng> NewrouteCoordinatesList = [];
-              for (int j = 0; j < UniqueCoordinates[i].length; j++) {
-                NewrouteCoordinatesList.add(LatLng(
-                    UniqueCoordinates[i][j][1], UniqueCoordinates[i][j][0]));
+            for (int i = 0; i < uniqueStringList.length; i++) {
+              List<LatLng> newRouteCoordinatesList = [];
+              for (int j = 0; j < uniqueCoordinates[i].length; j++) {
+                newRouteCoordinatesList.add(LatLng(
+                    uniqueCoordinates[i][j][1], uniqueCoordinates[i][j][0]));
               }
               if (isInitialized) {
-                routeMap[UniqueStrings[i]] = MapPolylineWrapper();
+                routeMap[uniqueStringList[i]] = MapPolylineWrapper();
               }
-              routeMap[UniqueStrings[i]]?.polyline = Polyline(
+              routeMap[uniqueStringList[i]]?.polyline = Polyline(
                   //consumeTapEvents: false,
-                  polylineId: PolylineId(UniqueStrings[i]),
-                  points: NewrouteCoordinatesList,
+                  polylineId: PolylineId(uniqueStringList[i]),
+                  points: newRouteCoordinatesList,
                   width: 5,
                   color: Colors.green);
             }
@@ -256,7 +219,7 @@ class BusScreenState extends State<BusScreen> {
                 title: 'BUS',
                 body: Stack(children: <Widget>[
                   GoogleMap(
-                    initialCameraPosition: _kGooglePlex,
+                    initialCameraPosition: _initialPosition,
                     onTap: (position) {
                       _customInfoWindowController.hideInfoWindow!();
                     },
@@ -269,7 +232,7 @@ class BusScreenState extends State<BusScreen> {
                     },
                     myLocationButtonEnabled: false,
                     markers: //_markers,
-                        _MarkerList,
+                        _markerList,
                     polylines: _polylines,
                   ),
                   CustomInfoWindow(
@@ -289,35 +252,37 @@ class BusScreenState extends State<BusScreen> {
                           controlAffinity: ListTileControlAffinity.leading,
                           contentPadding: const EdgeInsets.all(0),
                           dense: true,
-                          title: Text(UniqueStrings[index]),
+                          title: Text(uniqueStringList[index]),
                           activeColor: Colors.transparent,
                           checkColor: Colors.green,
-                          value: routeMap[UniqueStrings[index]]!.value,
+                          value: routeMap[uniqueStringList[index]]!.value,
                           //multipleSelected[index],
                           onChanged: (value) {
                             setState(() => {
                                   if (_polylines.contains(
-                                      routeMap[UniqueStrings[index]]!.polyline))
+                                      routeMap[uniqueStringList[index]]!
+                                          .polyline))
                                     {
                                       _polylines.remove(
-                                          routeMap[UniqueStrings[index]]!
+                                          routeMap[uniqueStringList[index]]!
                                               .polyline),
-                                      _MarkerList.remove((key, value) =>
-                                          key == UniqueStrings[index]),
+                                      _markerList.remove((key, value) =>
+                                          key == uniqueStringList[index]),
                                       _polylines = Set<Polyline>.of(_polylines),
-                                      listBusStations2(UniqueRouteIds[index]),
-                                      routeMap[UniqueStrings[index]]!.value =
+                                      listBusStations(
+                                          uniqueRouteIds[index], "", true),
+                                      routeMap[uniqueStringList[index]]!.value =
                                           value!,
                                     }
                                   else
                                     {
-                                      listBusStations(UniqueRouteIds[index],
-                                          UniqueStrings[index]),
+                                      listBusStations(uniqueRouteIds[index],
+                                          uniqueStringList[index], false),
                                       _polylines.add(
-                                          routeMap[UniqueStrings[index]]!
+                                          routeMap[uniqueStringList[index]]!
                                               .polyline),
                                       _polylines = Set<Polyline>.of(_polylines),
-                                      routeMap[UniqueStrings[index]]!.value =
+                                      routeMap[uniqueStringList[index]]!.value =
                                           value!,
                                     }
                                 });

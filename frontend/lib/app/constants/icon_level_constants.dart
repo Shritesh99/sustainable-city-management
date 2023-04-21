@@ -1,4 +1,6 @@
 // air
+import 'package:flutter/material.dart';
+
 class AqiLevel {
   static const GOOD = "Good";
   static const MODERATE = "Moderate";
@@ -46,4 +48,12 @@ class BinIcon {
 
 class BikeIcon {
   static const BIKE = "assets/images/bike/bike.png";
+}
+
+class PedestrianLevel {
+  static Map<String, Color> levelColorMap = {
+    "High Density": Colors.redAccent.withOpacity(0.5),
+    "Moderate Density": Colors.yellowAccent.withOpacity(0.4),
+    "Low Density": Colors.greenAccent.withOpacity(0.3),
+  };
 }
